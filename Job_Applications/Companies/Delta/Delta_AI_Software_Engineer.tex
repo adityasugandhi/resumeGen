@@ -1,0 +1,153 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,fontawesome5,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{darkgray}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 4485006857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{event-driven microservices} and \textbf{serverless applications on AWS}. Expert in \textbf{Python}, \textbf{Java}, and \textbf{Node.js} with production experience in \textbf{AWS Lambda, DynamoDB, S3, SQS/SNS, Step Functions, EventBridge, API Gateway, EKS, and Fargate}. Architected \textbf{multi-agent AI systems} with \textbf{LangChain/RAG} processing \textbf{35k+ interactions}. Proven \textbf{24/7 on-call support} experience with \textbf{Kubernetes}, \textbf{Docker}, \textbf{CI/CD}, and \textbf{Agile/TDD/BDD} methodologies.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, Node.js/JavaScript/TypeScript, Java, Go, Scala, SQL, Bash}
+\resumeItem{\textbf{AWS Serverless:} Lambda, DynamoDB, S3, SQS/SNS, Step Functions, EventBridge, API Gateway, ECS Fargate, MSK, CloudWatch}
+\resumeItem{\textbf{Containers \& DevOps:} Docker, Kubernetes, AWS EKS/Fargate, Terraform, Jenkins, GitHub Actions, CI/CD Pipelines, DevSecOps, Infrastructure-as-Code}
+\resumeItem{\textbf{AI/Conversational Systems:} LangGraph, LangChain, RAG Pipelines, Chatbot Design, Multi-Agent Orchestration, OpenAI API, Claude API, Prompt Engineering}
+\resumeItem{\textbf{Backend \& APIs:} FastAPI, Express.js, Spring Boot, gRPC, PostgreSQL, MongoDB, Redis, REST/GraphQL, OAuth2/JWT, RBAC, Firebase Auth}
+\resumeItem{\textbf{Testing \& Methodologies:} TDD, BDD, Unit Testing, Integration Testing, E2E Testing, Agile/Scrum, Prometheus, Grafana, 24/7 On-Call Support}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{BAS Software Developer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{event-driven microservices} using \textbf{Python}, \textbf{Java}, \textbf{Node.js}, and \textbf{FastAPI}, implementing \textbf{AWS Lambda} and \textbf{Step Functions} patterns with \textbf{async/await}; served \textbf{795+ devices} across \textbf{162 networks} with \textbf{real-time WebSocket} and \textbf{REST API Gateway}.}
+\resumeItem{Implemented \textbf{TDD} and \textbf{BDD} with \textbf{360+ unit tests} and \textbf{integration tests} achieving \textbf{85\%+ coverage}; built \textbf{CI/CD pipelines} with \textbf{GitHub Actions} and \textbf{Jenkins} for automated \textbf{DevSecOps} deployment across environments.}
+\resumeItem{Designed \textbf{SQS/SNS} message queue system with \textbf{EventBridge} event routing for \textbf{async} task processing; implemented \textbf{API Gateway} with \textbf{37 REST endpoints}, \textbf{DynamoDB} caching, and \textbf{S3} file storage integration.}
+\resumeItem{Containerized services using \textbf{Docker} and \textbf{Kubernetes/EKS}-ready architecture; orchestrated \textbf{PostgreSQL}, \textbf{MongoDB}, \textbf{Redis} with \textbf{CloudWatch} monitoring and \textbf{Grafana} dashboards for \textbf{24/7 on-call support} and \textbf{incident response}.}
+\resumeItem{Implemented \textbf{3-tier RBAC system} with \textbf{JWT} authentication and role-based access control (owner/admin/member); developed using \textbf{Claude AI} for code generation, with \textbf{DynamoDB}-pattern storage and \textbf{EventBridge}-equivalent event routing.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{serverless ML pipelines} on \textbf{AWS Lambda} and \textbf{Step Functions} processing \textbf{1TB+ datasets} with \textbf{Python}; implemented \textbf{RAG} with vector embeddings, monitored via \textbf{Prometheus/Grafana/CloudWatch} with automated drift detection.}
+\resumeItem{Built optimized \textbf{Spark (Scala/PySpark) jobs on Kubernetes/EKS/EMR} with \textbf{S3} data lake; achieved \textbf{+40\% throughput} and \textbf{99\% job success rate} through \textbf{async} processing and partitioning optimization.}
+\resumeItem{Implemented \textbf{event-driven batch processing} with \textbf{SQS} queues and \textbf{Lambda} triggers, reducing \textbf{ML pipeline runtime by 50\%} and \textbf{AWS} infrastructure costs by \textbf{30\%} while maintaining model accuracy.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{monolith-to-microservices migration} using \textbf{Java Spring Boot} and \textbf{Node.js} on \textbf{AWS EKS}; designed \textbf{event-driven serverless architecture} with \textbf{Lambda, DynamoDB, SQS/SNS, EventBridge, and API Gateway}; improved availability to \textbf{99.5\%}, reduced costs by \textbf{20\%}.}
+\resumeItem{Architected \textbf{real-time event streaming} using \textbf{AWS MSK (Kafka)}, \textbf{Lambda}, and \textbf{EventBridge}; processed \textbf{500k+ events/day} with \textbf{DynamoDB Streams} and \textbf{SQS dead-letter queues} for fault-tolerant \textbf{async} message delivery.}
+\resumeItem{Built \textbf{customer-facing chatbot backend} using \textbf{Java} and \textbf{Python}; implemented \textbf{conversation flows and decision trees} with \textbf{Step Functions orchestration}, processing \textbf{10k+ daily interactions} with \textbf{95\% resolution rate}.}
+\resumeItem{Deployed \textbf{auto-scaling EKS/Kubernetes clusters} with \textbf{Fargate} serverless compute and \textbf{API Gateway}; configured autoscaling for \textbf{10x traffic spikes}; implemented \textbf{Terraform} and \textbf{Docker} IaC across dev/staging/prod environments.}
+\resumeItem{Established \textbf{24/7 on-call support} with \textbf{CloudWatch} alarms, \textbf{Prometheus}, \textbf{Grafana} dashboards, and PagerDuty; reduced \textbf{MTTR by 60\%} through \textbf{Lambda}-triggered runbooks and \textbf{Step Functions} incident automation.}
+\resumeItem{Implemented \textbf{CI/CD pipelines} with \textbf{Jenkins}, \textbf{GitHub Actions}, and \textbf{DevSecOps} practices; achieved \textbf{90\% unit test coverage} with \textbf{TDD/BDD}; mentored \textbf{5 developers} on \textbf{Agile/Scrum}, \textbf{Java Spring Boot}, and \textbf{AWS Lambda} patterns.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{\textbf{Multi-Provider AI Agent Platform (LangChain/LangGraph)} \href{https://github.com/adityasugandhi}{GitHub} --- Architected \textbf{multi-agent AI system} with \textbf{LangChain} and \textbf{LangGraph} orchestrating \textbf{5+ provider integrations} (VAPI, Retell AI, webhooks). Implemented \textbf{real-time event processing} with \textbf{Celery/Redis} task queues, \textbf{20+ API endpoints}. Tech: \textbf{Python, FastAPI, LangChain, DynamoDB, SQS}.}
+
+\resumeItem{\textbf{Executive Intelligence Dashboard (Multi-Agent)} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{3-agent AI system} (Market Intelligence, Strategic Reasoning, Executive Synthesis) with \textbf{Step Functions} orchestration. Implemented \textbf{13 function-calling tools}, \textbf{ChromaDB RAG pipeline} with vector embeddings. Tech: \textbf{Python, FastAPI, Lambda, DynamoDB, S3}.}
+
+\resumeItem{\textbf{Serverless Data Processing Pipeline} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{event-driven ETL} using \textbf{AWS Lambda, S3, SQS, DynamoDB, Step Functions, Fargate}. Implemented \textbf{Terraform IaC}, \textbf{Kubernetes} deployment, \textbf{CloudWatch} monitoring. Processes \textbf{1000+ documents}. Tech: \textbf{Python, Java, Node.js, AWS}.}
+
+\end{itemize}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{Aug 2022 -- May 2024}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Data Communications, Advanced Database Systems, Distributed Systems, Data Mining}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{Aug 2016 -- May 2020}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

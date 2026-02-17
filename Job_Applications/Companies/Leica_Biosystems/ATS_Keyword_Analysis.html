@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATS Keyword Analysis — Leica Biosystems</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; padding: 24px; line-height: 1.5; }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 28px; color: #f8fafc; margin-bottom: 4px; }
+  .subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 32px; }
+
+  /* Score Card */
+  .score-card { background: linear-gradient(135deg, #1e293b, #334155); border-radius: 16px; padding: 32px; margin-bottom: 24px; display: flex; align-items: center; gap: 32px; border: 1px solid #475569; }
+  .score-ring { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+  .score-ring svg { transform: rotate(-90deg); }
+  .score-ring .bg { fill: none; stroke: #1e293b; stroke-width: 10; }
+  .score-ring .fg { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .score-number { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; font-weight: 800; }
+  .score-label { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+  .score-details h2 { font-size: 20px; margin-bottom: 8px; }
+  .score-details p { color: #94a3b8; font-size: 14px; }
+  .verdict { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 8px; }
+  .verdict.pass { background: #065f46; color: #6ee7b7; }
+  .verdict.fail { background: #7f1d1d; color: #fca5a5; }
+
+  /* Breakdown Bars */
+  .breakdown { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .breakdown-card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+  .breakdown-card h3 { font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .breakdown-card .pct { font-size: 28px; font-weight: 700; }
+  .breakdown-card .bar { height: 6px; background: #334155; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .breakdown-card .bar-fill { height: 100%; border-radius: 3px; }
+  .breakdown-card .ratio { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+  /* Keyword Table */
+  .section-title { font-size: 18px; font-weight: 700; margin: 32px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #334155; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; padding: 8px 12px; border-bottom: 1px solid #334155; }
+  td { padding: 10px 12px; border-bottom: 1px solid #1e293b; font-size: 14px; }
+  tr:hover { background: #1e293b; }
+  .kw { font-weight: 600; color: #f1f5f9; }
+  .found { color: #34d399; }
+  .missing { color: #f87171; }
+  .weak { color: #fbbf24; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .badge.green { background: #065f46; color: #6ee7b7; }
+  .badge.red { background: #7f1d1d; color: #fca5a5; }
+  .badge.yellow { background: #713f12; color: #fde68a; }
+  .freq { display: inline-flex; align-items: center; gap: 4px; }
+  .freq-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Recommendations */
+  .rec-card { background: #1e293b; border-radius: 12px; padding: 20px; margin-bottom: 12px; border-left: 4px solid #3b82f6; }
+  .rec-card.critical { border-left-color: #ef4444; }
+  .rec-card.moderate { border-left-color: #f59e0b; }
+  .rec-card h4 { font-size: 15px; margin-bottom: 6px; }
+  .rec-card p { font-size: 13px; color: #94a3b8; }
+  .rec-card code { background: #334155; padding: 1px 6px; border-radius: 4px; font-size: 12px; color: #93c5fd; }
+
+  /* HR Perspective */
+  .hr-box { background: linear-gradient(135deg, #1e1b4b, #312e81); border-radius: 12px; padding: 24px; margin-top: 32px; border: 1px solid #4338ca; }
+  .hr-box h3 { color: #a5b4fc; margin-bottom: 12px; }
+  .hr-box p { color: #c7d2fe; font-size: 14px; margin-bottom: 8px; }
+  .hr-timeline { margin-top: 16px; }
+  .hr-step { display: flex; gap: 12px; margin-bottom: 12px; }
+  .hr-step .dot { width: 24px; height: 24px; border-radius: 50%; background: #4338ca; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .hr-step .text { font-size: 13px; color: #c7d2fe; }
+  .hr-step .text strong { color: #e0e7ff; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>ATS Keyword Analysis</h1>
+  <p class="subtitle">Leica Biosystems — Senior Engineer, AI Software &nbsp;|&nbsp; Resume: Aditya Sugandhi</p>
+
+  <!-- OVERALL SCORE -->
+  <div class="score-card">
+    <div class="score-ring">
+      <svg viewBox="0 0 120 120" width="140" height="140">
+        <circle class="bg" cx="60" cy="60" r="52"/>
+        <circle class="fg" cx="60" cy="60" r="52"
+          stroke="#34d399"
+          stroke-dasharray="326.7"
+          stroke-dashoffset="42.5"/>
+      </svg>
+      <div class="score-number" style="color:#34d399;">87%</div>
+    </div>
+    <div class="score-details">
+      <h2>Overall ATS Match Score</h2>
+      <p>Weighted across essential requirements (60%), role responsibilities (25%), and preferred qualifications (15%). Most ATS systems pass resumes scoring 75%+ to the recruiter.</p>
+      <span class="verdict pass">LIKELY TO PASS ATS SCREENING</span>
+    </div>
+  </div>
+
+  <!-- BREAKDOWN -->
+  <div class="breakdown">
+    <div class="breakdown-card">
+      <h3>Essential Requirements</h3>
+      <div class="pct" style="color:#34d399;">100%</div>
+      <div class="bar"><div class="bar-fill" style="width:100%; background:#34d399;"></div></div>
+      <div class="ratio">21 / 21 keywords matched</div>
+    </div>
+    <div class="breakdown-card">
+      <h3>Role Responsibilities</h3>
+      <div class="pct" style="color:#fbbf24;">79%</div>
+      <div class="bar"><div class="bar-fill" style="width:79%; background:#fbbf24;"></div></div>
+      <div class="ratio">11 / 14 keywords matched</div>
+    </div>
+    <div class="breakdown-card">
+      <h3>Preferred Qualifications</h3>
+      <div class="pct" style="color:#f87171;">50%</div>
+      <div class="bar"><div class="bar-fill" style="width:50%; background:#f87171;"></div></div>
+      <div class="ratio">6 / 12 keywords matched</div>
+    </div>
+  </div>
+
+  <!-- ESSENTIAL REQUIREMENTS -->
+  <div class="section-title">Essential Requirements (Must-Have)</div>
+  <table>
+    <tr><th>Keyword</th><th>Status</th><th>Frequency</th><th>Where Found</th></tr>
+    <tr><td class="kw">Go</td><td><span class="badge green">FOUND</span></td><td class="found">5x</td><td>Skills, Summary, FSU Bullet 1, Project 1, Backend & APIs</td></tr>
+    <tr><td class="kw">JavaScript / TypeScript</td><td><span class="badge green">FOUND</span></td><td class="found">7x</td><td>Skills, Summary, FSU, Aspire, Project 3</td></tr>
+    <tr><td class="kw">SQL</td><td><span class="badge green">FOUND</span></td><td class="found">8x</td><td>Skills, Summary, all 3 roles, all 3 projects</td></tr>
+    <tr><td class="kw">AWS</td><td><span class="badge green">FOUND</span></td><td class="found">10+x</td><td>Skills, Summary, all roles, all projects</td></tr>
+    <tr><td class="kw">HTML/CSS</td><td><span class="badge green">FOUND</span></td><td class="found">3x</td><td>Skills, Summary, Project 2</td></tr>
+    <tr><td class="kw">Docker</td><td><span class="badge green">FOUND</span></td><td class="found">10+x</td><td>Skills, Summary, all roles, all projects</td></tr>
+    <tr><td class="kw">Linux</td><td><span class="badge green">FOUND</span></td><td class="found">7x</td><td>Skills, Summary, FSU, ML Researcher, Aspire, Projects</td></tr>
+    <tr><td class="kw">4+ years Agile</td><td><span class="badge green">FOUND</span></td><td class="found">4x</td><td>Skills, Summary, FSU Bullet 5, Aspire Bullet 5</td></tr>
+    <tr><td class="kw">Code review</td><td><span class="badge green">FOUND</span></td><td class="found">3x</td><td>Skills, Summary, FSU Bullet 2, Aspire Bullet 5</td></tr>
+    <tr><td class="kw">Source control</td><td><span class="badge green">FOUND</span></td><td class="found">3x</td><td>Summary, FSU Bullet 2, Aspire Bullet 5</td></tr>
+    <tr><td class="kw">GitHub</td><td><span class="badge green">FOUND</span></td><td class="found">5x</td><td>Skills, Header, FSU, Aspire, Projects</td></tr>
+    <tr><td class="kw">Bitbucket</td><td><span class="badge green">FOUND</span></td><td class="found">2x</td><td>Skills, Aspire Bullet 5</td></tr>
+    <tr><td class="kw">SVN</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>Skills line (Containers & DevOps)</td></tr>
+    <tr><td class="kw">Perforce</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>Skills line (Containers & DevOps)</td></tr>
+    <tr><td class="kw">Python</td><td><span class="badge green">FOUND</span></td><td class="found">8x</td><td>Skills, Summary, all 3 roles, Project 2</td></tr>
+    <tr><td class="kw">R</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>Skills line (Languages)</td></tr>
+    <tr><td class="kw">PowerShell</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>Skills line (Languages)</td></tr>
+    <tr><td class="kw">Scripting</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>ML Researcher Bullet 2 ("Python scripting")</td></tr>
+    <tr><td class="kw">Software development</td><td><span class="badge green">FOUND</span></td><td class="found">implied</td><td>Throughout — title, bullets, summary</td></tr>
+    <tr><td class="kw">Bachelor's degree CS</td><td><span class="badge green">FOUND</span></td><td class="found">—</td><td>Education: B.Tech CS + M.S. CS (exceeds requirement)</td></tr>
+    <tr><td class="kw">C# (alternative to Go)</td><td><span class="badge yellow">N/A</span></td><td class="weak">—</td><td>Not needed — Go satisfies "Go or C#" requirement</td></tr>
+  </table>
+
+  <!-- ROLE RESPONSIBILITIES -->
+  <div class="section-title">Role Responsibilities (Should-Have)</div>
+  <table>
+    <tr><th>Keyword</th><th>Status</th><th>Frequency</th><th>Notes</th></tr>
+    <tr><td class="kw">AI-based software solutions</td><td><span class="badge green">FOUND</span></td><td class="found">5+x</td><td>Summary, FSU Bullet 1, Project 1, Project 2</td></tr>
+    <tr><td class="kw">Build / develop / release</td><td><span class="badge green">FOUND</span></td><td class="found">4x</td><td>FSU Bullet 1 "Developed and released", FSU Bullet 3</td></tr>
+    <tr><td class="kw">Unit testing</td><td><span class="badge green">FOUND</span></td><td class="found">4x</td><td>Skills, FSU Bullet 2, Aspire Bullet 5, Project 1</td></tr>
+    <tr><td class="kw">System testing</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>Skills line (Testing & Quality)</td></tr>
+    <tr><td class="kw">Integration testing</td><td><span class="badge green">FOUND</span></td><td class="found">3x</td><td>Skills, Summary, FSU Bullet 2</td></tr>
+    <tr><td class="kw">Cross-functional teams</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>FSU Bullet 5</td></tr>
+    <tr><td class="kw">Software requirements</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>FSU Bullet 5</td></tr>
+    <tr><td class="kw">Regulated environment</td><td><span class="badge green">FOUND</span></td><td class="found">2x</td><td>Summary, FSU Bullet 1</td></tr>
+    <tr><td class="kw">Troubleshooting</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>Aspire Bullet 4</td></tr>
+    <tr><td class="kw">Process improvement</td><td><span class="badge green">FOUND</span></td><td class="found">implied</td><td>Metrics throughout (40% faster, 50% reduction, etc.)</td></tr>
+    <tr><td class="kw">Field support</td><td><span class="badge green">FOUND</span></td><td class="found">1x</td><td>Aspire Bullet 4 "production troubleshooting"</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Windows environment</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>JD says "Linux/Windows" — Windows not mentioned anywhere</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Deep Learning</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>Have TensorFlow/PyTorch but "deep learning" not explicit</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Bug fixing</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>JD explicitly lists "bug fixing" as a responsibility</td></tr>
+  </table>
+
+  <!-- PREFERRED QUALIFICATIONS -->
+  <div class="section-title">Preferred Qualifications (Nice-to-Have)</div>
+  <table>
+    <tr><th>Keyword</th><th>Status</th><th>Frequency</th><th>Notes</th></tr>
+    <tr><td class="kw">Cloud platforms (AWS, Azure)</td><td><span class="badge green">FOUND</span></td><td class="found">10+x</td><td>AWS throughout, Azure in Skills</td></tr>
+    <tr><td class="kw">Containerization (Docker)</td><td><span class="badge green">FOUND</span></td><td class="found">10+x</td><td>Everywhere</td></tr>
+    <tr><td class="kw">Orchestration (Kubernetes)</td><td><span class="badge green">FOUND</span></td><td class="found">5x</td><td>Skills, ML Researcher, Aspire, Project 3</td></tr>
+    <tr><td class="kw">AI/ML technologies</td><td><span class="badge green">FOUND</span></td><td class="found">8+x</td><td>All sections</td></tr>
+    <tr><td class="kw">Enterprise IT infrastructure</td><td><span class="badge yellow">WEAK</span></td><td class="weak">~1x</td><td>"162 networks", "795+ devices" implies it but not explicit</td></tr>
+    <tr><td class="kw">Servers</td><td><span class="badge yellow">WEAK</span></td><td class="weak">implied</td><td>EC2, EKS imply servers but word not explicit</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Lab automation systems</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>Industry-specific — could frame IoT as lab automation</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Medical device regulations</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>Have "regulated environment" but not medical-specific</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Design control processes</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>FDA/ISO 13485 concept — not mentioned</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Cybersecurity</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>Have JWT/RBAC/auth but "cybersecurity" not explicit</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Digital pathology</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>Domain-specific — not expected on resume</td></tr>
+    <tr><td class="kw" style="color:#fbbf24;">Healthcare / diagnostics</td><td><span class="badge red">MISSING</span></td><td class="missing">0x</td><td>No healthcare experience to claim</td></tr>
+  </table>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section-title">Actionable Recommendations (Quick Wins)</div>
+
+  <div class="rec-card critical">
+    <h4>1. Add "Windows" to Skills or a bullet</h4>
+    <p>The JD explicitly says <code>Linux/Windows environment</code>. Adding "Windows" to the Cloud & Infrastructure skills line costs zero space and catches an ATS filter. Example: <code>Linux (Ubuntu/CentOS), Windows, Networking</code></p>
+  </div>
+
+  <div class="rec-card critical">
+    <h4>2. Add "Deep Learning" explicitly</h4>
+    <p>You have TensorFlow and PyTorch but the JD mentions collaborating with <code>Deep Learning scientists</code>. Add "Deep Learning" to your AI/ML skills line: <code>Deep Learning, TensorFlow, PyTorch, LangChain...</code> — and consider adding it to the ML Researcher role bullets.</p>
+  </div>
+
+  <div class="rec-card critical">
+    <h4>3. Add "bug fixing" language</h4>
+    <p>The JD explicitly lists <code>bug fixing</code> as a core responsibility. Weave it into FSU or Aspire: e.g., <em>"...code development, <strong>bug fixing</strong>, unit and system testing..."</em> — mirrors their exact JD language.</p>
+  </div>
+
+  <div class="rec-card moderate">
+    <h4>4. Add "cybersecurity" to skills</h4>
+    <p>You already have JWT, RBAC, and auth experience. Adding <code>cybersecurity best practices</code> to the Testing & Quality or a bullet would hit this preferred keyword. The JD specifically mentions <code>cybersecurity standards and best practices</code>.</p>
+  </div>
+
+  <div class="rec-card moderate">
+    <h4>5. Strengthen "regulated environment" framing</h4>
+    <p>Consider adding <code>design control</code> or <code>compliance documentation</code> language to mirror medical device vocabulary. Even without direct medical device experience, framing your "regulated university environment" with more compliance-adjacent language helps.</p>
+  </div>
+
+  <div class="rec-card moderate">
+    <h4>6. Frame IoT work as "lab automation" adjacent</h4>
+    <p>Your FSU work with <code>795+ IoT devices</code> and <code>162 networks</code> maps well to their "enterprise IT infrastructure" and "lab automation" preferred qualifications. Consider rephrasing to: <em>"...serving 795+ IoT sensors and lab automation devices..."</em></p>
+  </div>
+
+  <!-- HR PERSPECTIVE -->
+  <div class="hr-box">
+    <h3>How an HR Recruiter Would Read This Resume</h3>
+    <div class="hr-timeline">
+      <div class="hr-step">
+        <div class="dot">1</div>
+        <div class="text"><strong>7-Second Scan (Title + Summary):</strong> Recruiter sees "Software Engineer, 5+ years, Go, Python, JS/TS, AI-driven, Docker, Linux, regulated environments." Immediate match signal — keeps reading. The summary front-loads every essential keyword.</div>
+      </div>
+      <div class="hr-step">
+        <div class="dot">2</div>
+        <div class="text"><strong>Skills Section Check (~10 sec):</strong> Go is listed first in Languages — perfect since it's the primary language requirement. Docker, Kubernetes, AWS all present. GitHub, Bitbucket, SVN, Perforce all listed — matches their source control requirement exactly. AI/ML line is strong. Testing line shows TDD, BDD, unit/integration/system testing — mirrors JD language.</div>
+      </div>
+      <div class="hr-step">
+        <div class="dot">3</div>
+        <div class="text"><strong>Experience Validation (~20 sec):</strong> Current role at FSU shows Go + JS/TS + Docker + Linux + SQL + AWS — all in one bullet. Code review + source control emphasized. Agile sprints mentioned. 4+ years of continuous development experience confirmed (2020-present). Cross-functional collaboration with hardware engineers maps to their DL scientists collaboration model.</div>
+      </div>
+      <div class="hr-step">
+        <div class="dot">4</div>
+        <div class="text"><strong>AI/ML Depth Check (~10 sec):</strong> ML Researcher role validates real AI/ML pipeline experience with TensorFlow, scikit-learn, and RAG. This matters because the role involves AI-driven digital pathology. The recruiter sees this isn't just "AI" buzzword stuffing — there's genuine ML research experience.</div>
+      </div>
+      <div class="hr-step">
+        <div class="dot">5</div>
+        <div class="text"><strong>Potential Concerns:</strong> (a) No Go in actual production work history — only in a project. An observant HR might flag this. (b) No medical device / healthcare experience — expected for external candidates. (c) Location: Tallahassee, FL → Vista, CA requires relocation. (d) "Windows" missing could trigger an ATS auto-filter since JD says "Linux/Windows."</div>
+      </div>
+      <div class="hr-step">
+        <div class="dot">6</div>
+        <div class="text"><strong>Verdict:</strong> Resume would likely pass ATS with 87% keyword match. A human recruiter would forward to the hiring manager based on strong technical overlap, AI/ML depth, and testing discipline. The main interview question would be around Go production experience and willingness to relocate.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

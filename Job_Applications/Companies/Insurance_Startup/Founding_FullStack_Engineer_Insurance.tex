@@ -1,0 +1,144 @@
+\documentclass[letterpaper,9pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,fontawesome5,multicol}
+\usepackage[top=0.2in,bottom=0.15in,left=0.25in,right=0.25in]{geometry}
+\usepackage{charter}
+\urlstyle{same}
+
+% LISTS - Tight spacing for density
+\setlist[itemize]{topsep=1pt, parsep=0pt, itemsep=1pt, leftmargin=0.12in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-6pt}\scshape\raggedright\normalsize\bfseries}{}{0em}{}[\color{darkgray}\titlerule\vspace{2pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{4pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-2pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{1pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-3pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{3pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 (448) 500-6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Full-stack engineer with \textbf{5+ years} building production applications using \textbf{TypeScript}, \textbf{React/Next.js}, and \textbf{Node.js}. Expert in \textbf{zero-to-one development}, architecting \textbf{AWS serverless systems} (Lambda, DynamoDB, Step Functions), and integrating \textbf{5+ third-party APIs} at scale. Led \textbf{monolith-to-microservices migration} achieving \textbf{99.5\% availability}. Established engineering standards, \textbf{CI/CD pipelines}, and \textbf{comprehensive testing practices} in fast-paced startup environments.
+
+\vspace{-8pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-6pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Frontend:} React 18/19, Next.js 14-15 (App Router), TypeScript, Tailwind CSS, shadcn/ui, Radix UI, Zustand, TanStack Query}
+\resumeItem{\textbf{Backend:} Node.js, FastAPI, Express, REST/GraphQL APIs, WebSocket, Supabase, PostgreSQL, MongoDB, Redis}
+\resumeItem{\textbf{Cloud (AWS):} Lambda, API Gateway, DynamoDB, S3, SQS/SNS, Step Functions, EKS, RDS, CloudWatch, Terraform}
+\resumeItem{\textbf{DevOps:} Docker, Kubernetes, GitHub Actions, CI/CD Pipelines, Feature Flags, Infrastructure-as-Code}
+\resumeItem{\textbf{Testing:} Jest, Vitest, Playwright, Unit/Integration/E2E Testing, TDD, Test Coverage Metrics}
+\resumeItem{\textbf{Integrations:} Third-party APIs (CRM, Voice AI, OAuth2/JWT), Webhooks, Event-driven Architecture}
+\end{itemize}
+\vspace{-10pt}
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-8pt}
+
+\resumeSubheading
+{Software Developer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{full-stack TypeScript applications} with Node.js backend and React frontend; built \textbf{3 production integration servers} for \textbf{Oracle DBMS}, \textbf{BACnet protocols}, and external APIs serving \textbf{15+ engineering teams}.}
+\resumeItem{Developed \textbf{async microservices} processing \textbf{35k+ records} across \textbf{172+ networks} with \textbf{99.2\% accuracy}; implemented comprehensive \textbf{test suites with 85\% coverage}.}
+\resumeItem{Designed \textbf{CI/CD pipelines} (GitHub Actions) for automated testing, code reviews, and multi-environment deployments; \textbf{reduced deployment time by 70\%}.}
+\resumeItem{Established \textbf{engineering standards}: code review processes, API documentation, testing requirements for cross-functional teams.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+\resumeSubheading
+{Software Engineer}{Jan 2023 -- Aug 2024}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built production \textbf{AWS data pipelines} (S3, EMR, Lambda) processing \textbf{1TB+ datasets} with automated ETL scheduling, error handling, and retry logic.}
+\resumeItem{Deployed containerized services on \textbf{Kubernetes} with \textbf{99\% uptime}; optimized throughput by \textbf{40\%} through horizontal scaling and resource tuning.}
+\resumeItem{Implemented \textbf{monitoring dashboards} (Grafana, Prometheus) with automated alerting; \textbf{reduced incident response time by 60\%}.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{monolith-to-microservices migration on AWS EKS}; architected event-driven services with API gateways achieving \textbf{99.5\% availability} and \textbf{20\% cost reduction}.}
+\resumeItem{Designed \textbf{RESTful APIs} serving \textbf{10k+ requests/day} with OAuth2/JWT authentication, rate limiting, and comprehensive documentation.}
+\resumeItem{Increased \textbf{deployment frequency 5x} through CI/CD automation; implemented \textbf{unit and integration testing pipelines}.}
+\resumeItemsEnd
+\vspace{-6pt}
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-6pt}
+\begin{itemize}
+\resumeItem{\textbf{BookedFlow - AI Voice Agent Platform} \href{https://github.com/adityasugandhi}{[GitHub]} --- Built production \textbf{full-stack SaaS} with \textbf{Next.js 15}, TypeScript, React 18, Supabase. Features: 9-step config wizard with persistent state, real-time WebSocket call monitoring, \textbf{1,700+ line API client} with interceptors and error handling. Integrated \textbf{3 third-party systems}: VAPI voice AI, GoHighLevel CRM, OpenAI Realtime API. Architecture: \textbf{60+ components}, 22 custom hooks, 4 Zustand stores, multi-tenant with ownership verification.}
+
+\resumeItem{\textbf{Serverless Data Pipeline} \href{https://github.com/adityasugandhi}{[GitHub]} --- \textbf{Event-driven ETL} system using \textbf{AWS Lambda, S3, SQS, DynamoDB, Step Functions}. Processes \textbf{1000+ documents} with auto-scaling and retry logic. Infrastructure-as-code (Terraform); CloudWatch monitoring with custom metrics and alerting.}
+
+\resumeItem{\textbf{Enterprise Integration Server} \href{https://github.com/adityasugandhi}{[GitHub]} --- \textbf{Zero-to-one TypeScript/Node.js} integration platform connecting enterprise databases and external APIs. Function-calling interfaces, connection pooling, query optimization, comprehensive logging. Enables autonomous database operations for development teams.}
+\end{itemize}
+\vspace{-6pt}
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-6pt}
+\resumeSubheading
+{Florida State University}{Aug 2022 -- May 2024}
+{M.S. in Computer Science}{Tallahassee, FL}
+\vspace{-6pt}
+\small Coursework: Distributed Systems, Advanced Databases, Cloud Computing, Software Engineering
+\vspace{-8pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{Aug 2016 -- May 2020}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-6pt}
+
+%---------- CERTIFICATIONS ----------
+\section{\textcolor{metablue}{CERTIFICATIONS}}
+\vspace{-6pt}
+\begin{itemize}
+\resumeItem{\textbf{AWS Solutions Architect} (2024) \textbar\ \textbf{IJAST Publication}: Review Classification \& False Feedback Detection}
+\end{itemize}
+
+\end{document}

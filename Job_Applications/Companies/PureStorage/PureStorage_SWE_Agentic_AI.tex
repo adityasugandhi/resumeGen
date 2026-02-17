@@ -1,0 +1,152 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{production-grade AI and automation solutions} on enterprise platforms. Expert in \textbf{Python} and \textbf{Java} with hands-on experience designing \textbf{agentic AI systems}, \textbf{RAG pipelines}, \textbf{multi-agent orchestration}, and \textbf{vector database integrations}. Proven track record delivering \textbf{robust enterprise integrations and APIs} that drive \textbf{end-to-end automation and process efficiency} at scale.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, Java, Go, JavaScript/TypeScript, Scala, SQL, Bash, C++}
+\resumeItem{\textbf{Agentic AI \& LLMs:} AI Agents, Multi-Agent Systems, Agentic Frameworks (LangChain, CrewAI), RAG Pipelines, LLMs (GPT, Llama, Groq), Prompt Engineering, Tool/Agent Integrations, Vector Databases (Pinecone, ChromaDB)}
+\resumeItem{\textbf{Enterprise Platforms:} ServiceNow (familiar), Snowflake, Salesforce (familiar), REST/GraphQL APIs, Webhook Orchestration, Enterprise System Integration, Boomi (familiar)}
+\resumeItem{\textbf{Data \& Infrastructure:} PostgreSQL, Redis, MongoDB, Apache Kafka, Spark, AWS (EKS, Lambda, S3), Kubernetes, Docker}
+\resumeItem{\textbf{DevOps \& Observability:} CI/CD (GitHub Actions, Jenkins), Grafana, Prometheus, CloudWatch, Distributed Tracing, Testing Frameworks}
+\resumeItem{\textbf{Practices:} Agile/Scrum, Cross-Functional Collaboration, Code Review, TDD, Technical Documentation, Ownership-Driven Development}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — AI \& Automation}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Designed and developed \textbf{agentic AI solutions} integrating \textbf{LLMs} with \textbf{enterprise systems}; built \textbf{AI agents} and \textbf{orchestration services} that automate device discovery across \textbf{172+ networks}, reducing manual investigation by \textbf{85\%} and processing \textbf{35K+ devices} with \textbf{99.2\% accuracy}.}
+\resumeItem{Built \textbf{RAG pipelines} and \textbf{vector database integrations} for context-aware AI experiences; implemented \textbf{agentic workflows} that retrieve, reason over, and act on enterprise data, cutting debugging time by \textbf{40\%} for \textbf{15+ engineering teams}.}
+\resumeItem{Developed \textbf{robust integrations and APIs} (\textbf{37 REST endpoints}) connecting internal platforms and third-party services; implemented \textbf{real-time WebSocket streaming} and \textbf{Redis caching} to enable \textbf{end-to-end automation} of operational workflows.}
+\resumeItem{Established \textbf{observability and CI/CD practices} using \textbf{GitHub Actions}, \textbf{Grafana/CloudWatch} monitoring, and automated testing; reduced \textbf{MTTR by 60\%} through proactive alerting and \textbf{ownership-driven incident response}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — Data \& AI Platform}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{multi-agent data processing pipelines} using \textbf{Python} and \textbf{Spark} on \textbf{Kubernetes} clusters; orchestrated parallel task execution across distributed workers, achieving \textbf{+40\% throughput} over \textbf{1TB+ datasets} with \textbf{99\% job success rate}.}
+\resumeItem{Implemented \textbf{vector embedding pipelines} and \textbf{semantic search} using Transformers for \textbf{RAG-based retrieval}; deployed \textbf{context-aware query engine} processing \textbf{1,000+ documents} with \textbf{95\% accuracy} and \textbf{sub-200ms latency}, monitored via \textbf{Grafana/MLflow}.}
+\resumeItem{Collaborated with \textbf{cross-functional teams} (data scientists, researchers, platform engineers) to define \textbf{standards and patterns for AI pipelines}; reduced \textbf{pipeline runtime by 50\%} through automation and process optimization.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — Enterprise Integrations}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led development of \textbf{production-grade enterprise platform} using \textbf{Java/Spring Boot}; built \textbf{event-driven orchestration services} with \textbf{Kafka} processing \textbf{500K+ events/day}, integrating with \textbf{enterprise APIs} and third-party systems with \textbf{99.5\% availability}.}
+\resumeItem{Designed \textbf{robust integrations and APIs} extending platform capabilities across business units; implemented \textbf{fault-tolerant async workflows} with dead-letter queues and \textbf{exactly-once semantics} handling \textbf{10x traffic spikes} during peak operations.}
+\resumeItem{Built \textbf{monitoring, testing, and observability infrastructure} using \textbf{Prometheus}, \textbf{Grafana}, and \textbf{distributed tracing}; \textbf{troubleshot production systems} with proactive alerting, reducing \textbf{MTTR by 60\%} and maintaining \textbf{SLA compliance}.}
+\resumeItem{Collaborated with \textbf{platform, data, and application teams} to deliver automation solutions; mentored \textbf{5 engineers} on \textbf{software engineering best practices}, \textbf{code review standards}, and \textbf{TDD}; achieved \textbf{90\% test coverage}.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{AI-Powered Resume Optimization Platform (Agentic AI)} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{production-grade agentic AI application} with \textbf{multi-agent orchestration}: job scanning agent, semantic matching agent, and resume optimization agent. Implemented \textbf{RAG pipelines} with \textbf{vector database integration}, \textbf{LLM-based tool calling}, and \textbf{agentic workflows} for intelligent document analysis. Tech: \textbf{Python, TypeScript, LLMs (Llama 3.3), Vector Embeddings, Groq API, Next.js}.}
+\resumeItem{\textbf{Enterprise Slack Bot — AI Agent Integration} \href{https://github.com/adityasugandhi}{GitHub} --- Deployed \textbf{agentic AI chatbot} on enterprise Slack via \textbf{Socket Mode API}; built \textbf{tool/agent integrations} with internal APIs for \textbf{automated workflow management}. Achieved \textbf{24/7 availability} with \textbf{sub-40s response times}. Tech: \textbf{Python, Node.js, AWS EC2, PM2, OAuth 2.0, WebSockets}.}
+\resumeItem{\textbf{Distributed Data Pipeline (Kafka/Spark/Kubernetes)} \href{https://github.com/adityasugandhi}{GitHub} --- Architected \textbf{real-time data ingestion pipeline} with \textbf{Kafka} and \textbf{Spark Streaming} on \textbf{Kubernetes}; built \textbf{orchestration layer} for multi-source data integration processing \textbf{10K+ events/sec}. Tech: \textbf{Java, Scala, Kafka, Spark, Kubernetes, Docker, Helm}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Machine Learning, Data Communications, Algorithms}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & AWARDS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST)}
+\resumeItem{2nd Place, SRM University Hackathon (2019)}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

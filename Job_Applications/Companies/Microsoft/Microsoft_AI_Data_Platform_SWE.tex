@@ -1,0 +1,156 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.18in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE — blue rule to match template format
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{0pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{AI data platforms} and \textbf{large-scale data infrastructure}. Expert in \textbf{Python, Java}, and \textbf{distributed systems} with production experience in \textbf{data pipeline automation}, \textbf{dataset lifecycle management}, and \textbf{AI/ML workflow orchestration}. Delivered platforms processing \textbf{50M+ events/day} with \textbf{99.99\% availability}.
+
+\vspace{-9pt}
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-10pt}
+
+\resumeSubheading
+{Software Engineer II}{Nov 2024 -- Present}
+{Florida State University — Utility Digital Twin Platform}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{high-throughput data ingestion pipeline} using \textbf{Java} and \textbf{Apache Kafka}, processing \textbf{real-time telemetry from 500K+ IoT sensors} (meters, HVAC, cooling coils) with \textbf{5M+ daily events} for digital twin modeling and predictive maintenance.}
+\resumeItem{Designed \textbf{event-driven microservices} using \textbf{Spring Boot} and \textbf{Kubernetes}, handling \textbf{time-series data ingestion} with \textbf{99.99\% availability}, supporting \textbf{asset health monitoring} and real-time compliance reporting across \textbf{172+ networks}.}
+\resumeItem{Built \textbf{compliance monitoring service} using \textbf{OPA (Open Policy Agent)} scanning \textbf{10K+ asset configurations} daily against \textbf{IEEE standards} and \textbf{ISO 55000}, generating automated compliance violation reports with \textbf{98.5\% compliance rate}.}
+\resumeItem{Implemented \textbf{data governance tooling} for \textbf{PII detection and handling}, \textbf{data lineage tracking}, and \textbf{audit logging}; created APIs enabling \textbf{dataset discovery} and \textbf{secure sharing} across \textbf{10K+ utility engineers} globally.}
+\resumeItem{Deployed \textbf{Redis caching} for distributed asset state and optimized \textbf{PostgreSQL horizontal sharding} for \textbf{500M+ telemetry records}, reducing query latency by \textbf{45\%} for time-series analytics dashboards.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Engineer}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built \textbf{AI data pipelines} processing \textbf{1TB+ datasets} using \textbf{Python} and \textbf{Spark} for ML model training; implemented \textbf{data validation} and \textbf{quality monitoring} with \textbf{observability dashboards} (Grafana, MLflow).}
+\resumeItem{Developed \textbf{automated data lifecycle workflows} on \textbf{Kubernetes} for \textbf{dataset ingestion, transformation, and versioning}; optimized \textbf{retry patterns} and \textbf{idempotent processing} achieving \textbf{50\% pipeline runtime reduction}.}
+\resumeItem{Created \textbf{Python SDKs} for \textbf{training data preparation} and \textbf{synthetic data generation}; built \textbf{evaluation harnesses} for model quality assessment with \textbf{vector embeddings} and \textbf{semantic search} capabilities.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer I}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{full-stack development} using \textbf{Java/Spring} backend; architected \textbf{data pipelines} processing \textbf{500K+ events/day} with \textbf{Kafka} streaming and \textbf{PostgreSQL}, achieving \textbf{99.5\% availability} for enterprise clients.}
+\resumeItem{Implemented \textbf{data governance layer} with \textbf{entitlement management}, \textbf{access controls}, and \textbf{audit logging}; built \textbf{RESTful APIs} for \textbf{dataset registration} and \textbf{metadata discovery} across distributed systems.}
+\resumeItem{Built \textbf{observability infrastructure} with \textbf{Prometheus/Grafana} for pipeline monitoring; implemented \textbf{distributed tracing} reducing \textbf{MTTR by 60\%} through automated alerting and debugging interfaces.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Associate Software Engineer}{Jun 2019 -- Sep 2020}
+{IMPETUS Technologies}{Noida, India}
+\resumeItemsStart
+\resumeItem{Developed \textbf{Python} backend services for \textbf{data ingestion pipelines}; built \textbf{RESTful APIs} handling \textbf{100K+ daily requests} with \textbf{Redis caching} and \textbf{data validation} for enterprise data platforms.}
+\resumeItem{Implemented \textbf{ETL workflows} using \textbf{Python} and \textbf{SQL}; created internal tools for \textbf{data quality monitoring} and \textbf{schema validation} supporting data engineering team productivity.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-6pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt,before skip=0pt,after skip=0pt]
+\begin{itemize}[topsep=0pt,partopsep=0pt]
+\resumeItem{\textbf{AI Data Pipeline Platform} --- Built \textbf{end-to-end data lifecycle system} for AI training data using \textbf{Python/FastAPI}. Implemented \textbf{automated ingestion, validation, PII detection}, and \textbf{lineage tracking}. Integrated \textbf{LLMs (Llama 3.3)} for \textbf{synthetic data generation} and \textbf{RAG pipelines} with vector stores. Tech: \textbf{Python, Kafka, PostgreSQL, ChromaDB}.}
+\resumeItem{\textbf{Multi-Agent Orchestration System} --- Architected \textbf{21-node AI workflow} using \textbf{LangGraph} for automated research pipelines. Built \textbf{tool connectors} for 5+ external APIs with \textbf{conditional routing}, \textbf{state management}, and \textbf{observability monitoring}. Tech: \textbf{Python, LangGraph, FastAPI}.}
+\resumeItem{\textbf{Real-Time Telemetry Analytics} --- Designed \textbf{time-series data pipeline} using \textbf{InfluxDB} and \textbf{Kafka Streams} processing \textbf{50M+ events/day}. Implemented \textbf{anomaly detection} for asset health with \textbf{P99 latency <100ms}. Tech: \textbf{Java, Kafka, InfluxDB, Grafana}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, Java, TypeScript/JavaScript, SQL, C\#, Go (familiar)}
+\resumeItem{\textbf{Data Infrastructure:} Apache Kafka, Spark, InfluxDB (time-series), PostgreSQL, Redis, MongoDB, Vector Stores}
+\resumeItem{\textbf{Cloud \& Distributed Systems:} AWS (EKS, Lambda, S3), Azure (familiar), Kubernetes, Docker, Microservices}
+\resumeItem{\textbf{Data Lifecycle:} ETL Pipelines, Data Ingestion/Validation, PII Handling, Data Lineage, Governance \& Compliance}
+\resumeItem{\textbf{AI/ML:} LLMs (OpenAI, Anthropic), RAG Pipelines, Training Data Preparation, Embedding Models, MLflow}
+\resumeItem{\textbf{Practices:} Event-Driven Architecture, gRPC/REST APIs, CI/CD, Observability (Prometheus/Grafana), Agile/Scrum}
+\end{itemize}
+\vspace{-10pt}
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Machine Learning, Data Communications}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

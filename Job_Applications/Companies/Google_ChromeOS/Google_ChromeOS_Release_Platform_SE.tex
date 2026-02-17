@@ -1,0 +1,151 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- 1. HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- 2. SUMMARY (2 lines max) ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{large-scale release infrastructure} and \textbf{distributed systems} in \textbf{Java} and \textbf{Python}. Expert in \textbf{CI/CD pipelines}, \textbf{release workflows}, \textbf{build automation}, and \textbf{feature flag gating} with production experience shipping OS-level updates to \textbf{millions of devices}.
+
+\vspace{-9pt}
+
+%---------- 3. WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Designed and developed} enterprise-scale \textbf{infrastructure management platform} in \textbf{Java} and \textbf{TypeScript}; built \textbf{37 REST API endpoints} serving \textbf{35K+ networked devices} across \textbf{172+ networks} with \textbf{real-time WebSocket} telemetry streaming.}
+\resumeItem{\textbf{Led design reviews} with cross-functional stakeholders to evaluate \textbf{technology choices and system architecture}; architected \textbf{event-driven microservices} with \textbf{PostgreSQL}, \textbf{Redis} caching, and \textbf{S3} storage achieving \textbf{99.2\% system accuracy}.}
+\resumeItem{\textbf{Built automated CI/CD pipelines} with \textbf{GitHub Actions} for \textbf{build, test, and release workflows}; implemented \textbf{feature flag gating}, automated \textbf{security checks}, and \textbf{release artifact generation} across multiple deployment environments.}
+\resumeItem{\textbf{Reviewed code} from 4 team members enforcing \textbf{style guidelines, testability, and efficiency}; maintained \textbf{360+ unit/integration tests} at \textbf{85\%+ coverage} with \textbf{Grafana/CloudWatch} monitoring for \textbf{issue diagnosis and resolution}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer, Research}{Jan 2023 -- Aug 2024}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Developed and maintained} \textbf{distributed data processing infrastructure} using \textbf{Java} and \textbf{Spark (Scala)} on \textbf{Kubernetes} clusters; processed \textbf{1TB+ datasets} with \textbf{+40\% throughput improvement} through \textbf{algorithm optimization} and efficient \textbf{data structures}.}
+\resumeItem{\textbf{Designed parallel processing pipelines} with windowed aggregations and \textbf{compute-optimized scheduling}; reduced \textbf{pipeline runtime by 50\%} through \textbf{data structure optimization} and memory-efficient batch processing.}
+\resumeItem{\textbf{Contributed to technical documentation} for system architecture and operational procedures; deployed \textbf{Prometheus/Grafana} monitoring with \textbf{automated alerting} for \textbf{performance issue triaging and resolution}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{\textbf{Led architecture design} for \textbf{monolith-to-microservices migration} on \textbf{AWS}; developed \textbf{Java}-based event-driven services processing \textbf{500K+ transactions/day} across \textbf{distributed infrastructure} with \textbf{99.5\% availability} and \textbf{20\% cost reduction}.}
+\resumeItem{\textbf{Designed and implemented} \textbf{build and deployment automation} using \textbf{Jenkins, Docker, and Kubernetes}; established \textbf{release workflows} with \textbf{security scanning}, \textbf{artifact versioning}, and \textbf{automated rollback} reducing \textbf{release time by 65\%}.}
+\resumeItem{\textbf{Participated in design reviews} evaluating \textbf{distributed system patterns} and \textbf{infrastructure decisions}; authored \textbf{technical documentation} for microservices architecture, API contracts, and operational runbooks.}
+\resumeItem{\textbf{Triaged and debugged} production issues across \textbf{hardware, network, and service layers} using \textbf{Prometheus}, \textbf{Grafana}, and \textbf{CloudWatch}; reduced \textbf{MTTR by 60\%} through systematic \textbf{root cause analysis} and automated remediation.}
+\resumeItem{Mentored \textbf{5 developers} on \textbf{Java best practices}, \textbf{code review standards}, and \textbf{testing methodologies}; achieved \textbf{90\% test coverage} with comprehensive \textbf{TDD/BDD} implementation.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- 4. PROJECTS (tcolorbox) ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{Release Build Orchestration System} --- Designed and developed \textbf{automated release pipeline} using \textbf{Java} and \textbf{Python} for multi-branch \textbf{build artifact generation}. Implemented \textbf{release gating} with security checks, \textbf{feature flag guards}, and \textbf{signing key management} for secure artifact distribution. Tech: \textbf{Java, Python, Jenkins, Docker, Kubernetes, Terraform}.}
+\resumeItem{\textbf{Infrastructure Monitoring \& Diagnostics Dashboard} --- Built \textbf{React/TypeScript} frontend with \textbf{Node.js} backend for \textbf{real-time system health monitoring}. Implemented \textbf{13 API endpoints} with \textbf{OAuth2} authentication, \textbf{time-series metrics}, and configurable \textbf{alerting for build failures}. Tech: \textbf{TypeScript, React, Node.js, PostgreSQL, Redis}.}
+\resumeItem{\textbf{Distributed API Gateway with Rate Limiting} --- Architected \textbf{scalable API gateway} with \textbf{rate limiting}, \textbf{circuit breakers}, and \textbf{distributed tracing} for \textbf{large-scale service infrastructure}. Handled \textbf{1000+ req/sec} with \textbf{sub-100ms latency}. Tech: \textbf{Java, Python, Kafka, Kubernetes, Terraform}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- 5. TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Java, Python, TypeScript, JavaScript, SQL, Scala, C++ (familiar), Go (familiar), Bash/Shell}
+\resumeItem{\textbf{Build \& Release:} CI/CD (Jenkins, GitHub Actions), Docker, Kubernetes, Terraform, Feature Flags, Release Gating, Build Automation}
+\resumeItem{\textbf{Infrastructure:} AWS (EKS, Lambda, S3, EC2), GCP (GKE, Cloud Build), Linux (Ubuntu/Debian), Systemd, Nginx}
+\resumeItem{\textbf{Data \& Storage:} PostgreSQL, MySQL, Redis, DynamoDB, MongoDB, BigQuery, Apache Kafka, Apache Spark}
+\resumeItem{\textbf{Backend \& APIs:} Spring Boot, Node.js, FastAPI, REST/gRPC, API Gateway, OAuth2/JWT, WebSocket, Protobuf}
+\resumeItem{\textbf{Practices:} Data Structures \& Algorithms, System Design, Code Review, TDD/BDD, Agile/Scrum, On-Call/Incident Response, Documentation}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- 6. EDUCATION (NO graduation dates) ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Data Structures \& Algorithms, Distributed Systems, Advanced Database Systems, Computer Networks, Operating Systems}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- 7. PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

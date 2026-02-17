@@ -1,0 +1,153 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Backend Software Engineer with 5+ years building \textbf{scalable data platforms} and \textbf{cloud-native systems}. Expert in \textbf{Java}, \textbf{Python}, and \textbf{distributed architectures} with production experience in \textbf{Kafka}, \textbf{Kubernetes}, and \textbf{AI/ML integration}. Proven track record designing high-throughput data pipelines processing \textbf{millions of events daily}.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Java, Python, SQL, TypeScript, JavaScript, Scala, Go (familiar)}
+\resumeItem{\textbf{Backend \& APIs:} Spring Boot, FastAPI, Node.js, RESTful Services, gRPC, GraphQL, Microservices Architecture}
+\resumeItem{\textbf{Data Platform:} Apache Kafka, Apache Flink, RabbitMQ, ETL/ELT Pipelines, Data Modeling, Database Design}
+\resumeItem{\textbf{Databases:} PostgreSQL, Oracle Database, MongoDB, Redis, OpenSearch, Pinecone, Vector Databases}
+\resumeItem{\textbf{Cloud \& Infrastructure:} AWS (EKS, Lambda, S3), OCI, Kubernetes, Docker, Terraform, CI/CD (Jenkins, GitHub Actions)}
+\resumeItem{\textbf{AI/ML \& NLP:} LLMs (GPT, Llama), RAG Pipelines, Semantic Search, Embedding Models, NLP, Prompt Engineering}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Full-Stack Software Engineer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{high-throughput data platform} with \textbf{Python/FastAPI} backend processing \textbf{real-time telemetry from 35K+ IoT devices}; designed \textbf{37 RESTful API endpoints} with \textbf{WebSocket streaming} for low-latency data ingestion.}
+\resumeItem{Built \textbf{scalable backend infrastructure} with \textbf{data modeling} for complex asset relationships; implemented \textbf{semantic search} using \textbf{NLP} and \textbf{embedding models} enabling conversational data retrieval across \textbf{172+ networks}.}
+\resumeItem{Integrated \textbf{GenAI capabilities} with \textbf{LLMs} and \textbf{RAG pipelines} for intelligent data summarization; reduced manual analysis time by \textbf{40\%} through AI-powered insights on structured and unstructured data.}
+\resumeItem{Implemented \textbf{distributed tracing} and \textbf{monitoring dashboards} using \textbf{Grafana/CloudWatch}; ensured \textbf{99.2\% system accuracy} through robust error handling and automated alerting pipelines.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer - Data Platform}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Designed \textbf{distributed data processing system} using \textbf{Python} and \textbf{Apache Spark} on \textbf{Kubernetes} clusters; built \textbf{ETL pipelines} ingesting and transforming \textbf{1TB+ datasets} with \textbf{fault-tolerant architecture}.}
+\resumeItem{Implemented \textbf{data pipeline orchestration} with automated scheduling; optimized \textbf{SQL queries} and \textbf{database design} reducing pipeline runtime by \textbf{50\%} while maintaining data integrity.}
+\resumeItem{Built \textbf{real-time monitoring infrastructure} with \textbf{Prometheus/Grafana}; created \textbf{data access controls} and compliance reporting ensuring \textbf{secure data governance} across distributed teams.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{backend development} of enterprise platform using \textbf{Java/Spring Boot} with \textbf{microservices architecture}; designed \textbf{RESTful APIs} processing \textbf{500K+ events/day} with \textbf{99.5\% availability}.}
+\resumeItem{Architected \textbf{event-driven data pipelines} with \textbf{Apache Kafka}; implemented \textbf{real-time data ingestion} and \textbf{async processing} handling \textbf{10x traffic spikes} during peak operational hours.}
+\resumeItem{Built \textbf{data modeling layer} for complex entity relationships; designed \textbf{PostgreSQL schema} with horizontal sharding supporting \textbf{analytics queries} across \textbf{50M+ records}.}
+\resumeItem{Mentored \textbf{5 junior engineers} on \textbf{system design} and \textbf{distributed systems} best practices; established code review standards improving team velocity by \textbf{25\%}.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{AI-Powered Clinical Data Platform} --- Built \textbf{cloud-native GenAI application} with \textbf{semantic search} and \textbf{NLP capabilities}. Implemented \textbf{RAG pipelines} for intelligent document summarization and conversational search. Integrated \textbf{vector databases (Pinecone)} for high-performance similarity matching. Tech: \textbf{Python, TypeScript, Groq API, OpenSearch, Kubernetes}.}
+
+\resumeItem{\textbf{Real-Time Data Ingestion Platform} --- Designed \textbf{event-driven architecture} with \textbf{Kafka} handling \textbf{1M+ events/day}. Built \textbf{ETL pipelines} with \textbf{data modeling} for complex relationships. Implemented \textbf{data access controls} and \textbf{compliance monitoring}. Tech: \textbf{Java, Spring Boot, Kafka, PostgreSQL, Docker}.}
+
+\resumeItem{\textbf{Distributed Asset Management System} --- Architected \textbf{microservices platform} processing \textbf{real-time telemetry} from IoT sensors. Built \textbf{search technologies} with \textbf{OpenSearch} for fast data retrieval. Designed \textbf{database schema} supporting \textbf{time-series analytics}. Tech: \textbf{Python, FastAPI, Redis, Kubernetes, Grafana}.}
+
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Data Communications, Machine Learning}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

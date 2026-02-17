@@ -1,0 +1,114 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,fontawesome5,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE — blue rule to match test.pdf format
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+%%% SUMMARY CONTENT HERE %%%
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+%%% SKILLS CONTENT HERE %%%
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+%%% WORK EXPERIENCE CONTENT HERE %%%
+%%% Use \resumeSubheading{Title}{Dates}{Company}{Location} %%%
+%%% followed by \resumeItemsStart / \resumeItem{...} / \resumeItemsEnd %%%
+
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+%%% PROJECTS CONTENT HERE %%%
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+
+%%% EDUCATION CONTENT HERE %%%
+%%% Use \resumeSubheading{Degree}{Dates}{Institution}{Location} %%%
+%%% Optionally add \resumeItemsStart / \resumeItem{...} / \resumeItemsEnd for coursework %%%
+
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & AWARDS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST)}
+\resumeItem{2nd Place, SRM University Hackathon (2019)}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

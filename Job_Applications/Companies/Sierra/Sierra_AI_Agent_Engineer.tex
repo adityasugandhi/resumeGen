@@ -1,0 +1,147 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,fontawesome5,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{darkgray}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 4485006857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{production-grade multi-agent AI systems} for enterprise deployment. Expert in \textbf{Python}, \textbf{TypeScript}, \textbf{LangGraph/LangChain}, and \textbf{RAG pipelines}. Architected autonomous agent ecosystems processing \textbf{35k+ devices} with \textbf{99.2\% accuracy}. Proven customer-facing impact: \textbf{60\% productivity gains} across 15+ engineering teams. Experience with \textbf{PyTorch}, \textbf{NLP/NER pipelines}, and \textbf{AWS cloud infrastructure}.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{AI/Agent Systems:} LangGraph, LangChain, RAG Pipelines, Multi-Agent Orchestration, PyTorch, MCP Protocol, Claude API, OpenAI API, Prompt Engineering, Function Calling}
+\resumeItem{\textbf{ML/NLP:} NER/NLP (spaCy, Transformers), Vector Databases (ChromaDB, Qdrant), Embeddings, Semantic Search, MLflow, LLM Integration}
+\resumeItem{\textbf{Languages:} Python, TypeScript, Go, JavaScript, Java, Scala, SQL, Bash}
+\resumeItem{\textbf{Cloud/Infrastructure:} AWS (EKS, EMR, ECS Fargate, MSK, S3, CloudWatch), Docker, Kubernetes, Terraform, Kafka}
+\resumeItem{\textbf{Backend \& APIs:} FastAPI, gRPC, PostgreSQL, MongoDB, Redis, REST/GraphQL, Async Programming (asyncio)}
+\resumeItem{\textbf{Observability:} Prometheus, Grafana, CloudWatch, Distributed Tracing, MLflow Monitoring}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{BAS Software Developer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Delivered \textbf{AI agent solutions to 15+ customer engineering teams}, architecting \textbf{10+ MCP servers} for production deployment. Built \textbf{3 autonomous agents} for Oracle DBMS and BACnet device management, achieving \textbf{60\% productivity improvement} in enterprise workflows.}
+\resumeItem{Developed \textbf{production-grade asynchronous network scanning microservices} using Python asyncio to scan \textbf{172+ networks simultaneously}; processed \textbf{35k+ panels}, discovered \textbf{3,500+ new devices}, reducing manual discovery by \textbf{85\%} with \textbf{99.2\% accuracy}.}
+\resumeItem{Designed \textbf{claudecode.yml CI/CD integration} for GitHub workflows; automated \textbf{AI-assisted code reviews} and deployment pipelines across dev/stage/prod, reducing deployment time by \textbf{70\%}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{production ML pipelines over 1TB+ datasets} with LLMs/GenAI/NLP; implemented \textbf{vector embeddings and semantic search} using PyTorch and Transformers, monitored via Grafana/MLflow with automated drift detection.}
+\resumeItem{Built optimized \textbf{Spark (Scala/PySpark) jobs} on Kubernetes/EMR for windowed aggregations; achieved \textbf{+40\% throughput} and \textbf{99\% job success rate} through shuffle and partitioning optimization.}
+\resumeItem{Implemented \textbf{async processing patterns} and batch optimization, reducing \textbf{ML pipeline runtime by 50\%} while maintaining model accuracy.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{monolith-to-microservices migration on AWS EKS}, architecting event-driven services with API gateways; improved availability to \textbf{99.5\%}, reduced costs by \textbf{20\%}, enhanced deployment frequency \textbf{5x}.}
+\resumeItem{Developed \textbf{customer-facing ETL pipelines with parallel processing}; boosted throughput by \textbf{35\%}, reduced data quality issues by \textbf{80\%}.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{\textbf{Production Multi-Agent Sales System (LangGraph)} \href{https://github.com/adityasugandhi}{GitHub} --- Architected \textbf{21-node production AI agent workflow} using \textbf{LangGraph} for automated B2B lead research. Implemented \textbf{RAG with ChromaDB}, integrated 5+ APIs (LinkedIn, Serper, YouTube), built \textbf{conditional routing logic} with CRM sync. Tech: \textbf{Python, LangGraph, LangChain, ChromaDB, FastAPI}.}
+
+\resumeItem{\textbf{Executive Intelligence Dashboard (Multi-Agent)} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{3-agent production AI system} (Market Intelligence, Strategic Reasoning, Executive Synthesis) using \textbf{NVIDIA Nemotron models}. Implemented \textbf{13 function-calling tools}, dual-collection \textbf{RAG pipeline}, FastAPI backend with health monitoring. Tech: \textbf{Python, FastAPI, ChromaDB, NVIDIA NIM API}.}
+
+\resumeItem{\textbf{AI-Enhanced Developer CLI \& MCP Server} \href{https://github.com/adityasugandhi}{GitHub} --- Developed \textbf{TypeScript-based MCP servers} for Claude Code integration, enabling autonomous database operations and device management. Built \textbf{function-calling interfaces} for enterprise tooling. Tech: \textbf{TypeScript, Node.js, MCP Protocol, Claude API}.}
+
+\end{itemize}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{Aug 2022 -- May 2024}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Data Communications, Advanced Database Systems, Cryptography, Data Mining}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{Aug 2016 -- May 2020}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,146 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,fontawesome5,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{darkgray}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 4485006857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with expertise in \textbf{systems programming}, \textbf{parallel/asynchronous computing}, and \textbf{Linux-based development}. Built high-throughput async systems scanning \textbf{35k+ devices across 172+ networks} with \textbf{99.2\% accuracy}. Experience with \textbf{distributed compute frameworks} (Spark, Kubernetes, EMR), \textbf{performance optimization} (+40\% throughput gains), and \textbf{large-scale data pipelines} on Linux. Proficient in \textbf{C++, Python, Go, Bash}, with background in \textbf{HPC/ML workloads} and \textbf{cloud infrastructure} (AWS, Docker).
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} C++, C, Python, Go, Bash, Scala, JavaScript/TypeScript, Java, SQL}
+\resumeItem{\textbf{Systems \& Parallel Computing:} Linux System Programming, Async/Parallel Programming (asyncio, multithreading), Network Protocols (TCP/IP, BACnet/IP), IPC, Performance Tuning, gRPC}
+\resumeItem{\textbf{HPC/AI/ML:} Apache Spark (PySpark/Scala), Distributed Computing (Kubernetes, EMR), GPU Concepts, NLP/NER Pipelines, Transformers, MLflow}
+\resumeItem{\textbf{Cloud \& Infrastructure:} AWS (EKS, EMR, ECS Fargate, MSK, S3), Docker, Kubernetes, Terraform, Kafka, CI/CD Pipelines}
+\resumeItem{\textbf{Data \& Observability:} PostgreSQL, MongoDB, Redis, Prometheus, Grafana, Distributed Tracing, CloudWatch}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{BAS Software Developer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Engineered \textbf{asynchronous parallel network scanning system} using Python asyncio to scan \textbf{172+ networks simultaneously}; processed \textbf{35k+ devices}, discovered \textbf{3,500+ new endpoints}, reducing manual discovery by \textbf{85\%} with \textbf{99.2\% accuracy}.}
+\resumeItem{Developed \textbf{Linux-based system services} for building automation device management; built custom tooling for \textbf{Oracle DBMS operations} and \textbf{BACnet/IP protocol} integration across \textbf{15+ engineering teams}.}
+\resumeItem{Designed \textbf{CI/CD automation pipelines} for GitHub workflows; automated code validation and deployment across dev/stage/prod environments, reducing deployment time by \textbf{70\%}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built optimized \textbf{Spark (Scala/PySpark) distributed compute jobs} on Kubernetes/EMR clusters; implemented shuffle and partitioning optimization achieving \textbf{+40\% throughput} and \textbf{99\% job success rate} over \textbf{1TB+ datasets}.}
+\resumeItem{Architected \textbf{parallel data processing pipelines} with windowed aggregations on distributed infrastructure; reduced \textbf{pipeline runtime by 50\%} through async batch optimization and compute resource tuning.}
+\resumeItem{Implemented \textbf{NLP/ML pipelines} with Transformers and vector embeddings for semantic analysis; deployed monitoring via Grafana/MLflow with automated performance drift detection.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{monolith-to-microservices migration on AWS EKS}, architecting event-driven services with Linux containers; improved system availability to \textbf{99.5\%}, reduced costs by \textbf{20\%}, enhanced deployment frequency \textbf{5x}.}
+\resumeItem{Developed \textbf{ETL pipelines with parallel processing} on Linux environments; boosted data throughput by \textbf{35\%} and reduced data quality issues by \textbf{80\%} through automated validation frameworks.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{\textbf{Streaming Data Platform (Kafka/Spark)} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{real-time distributed data pipeline} using Apache Kafka and Spark Streaming on AWS (MSK, EMR). Implemented \textbf{parallel consumer groups} with windowed aggregations, processing \textbf{10k+ events/sec} with sub-second latency. Deployed on \textbf{Kubernetes} with auto-scaling. Tech: \textbf{Scala, Python, Kafka, Spark, AWS, Docker}.}
+
+\resumeItem{\textbf{Network Discovery Platform} \href{https://github.com/adityasugandhi}{GitHub} --- Developed \textbf{async network scanning system} for automated device discovery across enterprise networks. Implemented \textbf{concurrent TCP/IP scanning}, BACnet/IP protocol handling, and \textbf{multithreaded device interrogation}. Built REST API with \textbf{WebSocket real-time updates}. Tech: \textbf{Python, asyncio, FastAPI, PostgreSQL, Linux}.}
+
+\resumeItem{\textbf{Financial Data Pipeline (NLP/Systems)} \href{https://huggingface.co/spaces/stranzersweb/youtube-financial-digest}{HuggingFace} --- High-throughput data extraction platform using \textbf{NLP pipelines} and vector indexing for semantic search. Processes \textbf{1000+ documents with 95\% accuracy}; optimized for \textbf{batch parallel processing}. Tech: \textbf{Python, spaCy/Transformers, Qdrant, FastAPI}.}
+
+\end{itemize}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{Aug 2022 -- May 2024}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Data Communications, Advanced Database Systems, Cryptography, Data Mining}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{Aug 2016 -- May 2020}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

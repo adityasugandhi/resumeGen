@@ -1,0 +1,152 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE — blue rule
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- 1. HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- 2. SUMMARY (2 lines max) ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{AI-driven software systems} in \textbf{Go}, \textbf{Python}, and \textbf{JavaScript/TypeScript} on \textbf{Linux/Windows}. Expert in \textbf{Docker}, \textbf{SQL}, \textbf{AWS}, and \textbf{deep learning} with rigorous \textbf{code review}, \textbf{bug fixing}, and \textbf{Agile/TDD} discipline in \textbf{regulated environments}.
+
+\vspace{-9pt}
+
+%---------- 3. WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{BAS Software Developer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Developed and released \textbf{AI-based building automation software} using \textbf{Go}, \textbf{JavaScript/TypeScript}, and \textbf{Python} on \textbf{Linux/Windows}; built \textbf{REST APIs} with \textbf{SQL} databases and \textbf{Docker} containers serving \textbf{795+ IoT sensors and lab automation devices} across \textbf{162 networks} in a \textbf{regulated environment} with \textbf{design control} and \textbf{compliance documentation}.}
+\resumeItem{Implemented rigorous \textbf{code review} workflow with \textbf{GitHub} pull requests, branch protection rules, and \textbf{source control} best practices; maintained \textbf{360+ unit tests} and \textbf{integration tests} with systematic \textbf{bug fixing} and \textbf{regression testing}, achieving \textbf{85\%+ code coverage} using \textbf{TDD/BDD} methodology.}
+\resumeItem{Built \textbf{CI/CD pipelines} with \textbf{GitHub Actions} and \textbf{Jenkins} for automated \textbf{build, test, and release} cycles on \textbf{Linux}; containerized services using \textbf{Docker} with \textbf{AWS} deployment, reducing release time by \textbf{40\%} while enforcing quality gates.}
+\resumeItem{Designed \textbf{real-time telemetry ingestion system} with \textbf{WebSocket} and \textbf{REST API} endpoints, \textbf{PostgreSQL} for persistent storage, and \textbf{Redis} caching; integrated \textbf{CloudWatch} and \textbf{Grafana} monitoring for \textbf{24/7 system reliability}.}
+\resumeItem{Collaborated with cross-functional teams including \textbf{hardware engineers}, \textbf{facility managers}, and \textbf{product stakeholders} to define \textbf{software requirements} and deliver features in \textbf{Agile sprints} with bi-weekly releases and retrospectives.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero --- FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{deep learning} and \textbf{AI/ML pipelines} using \textbf{Python}, \textbf{Docker}, and \textbf{AWS} (Lambda, S3, EC2) on \textbf{Linux}; processed \textbf{1TB+ oceanographic datasets} with \textbf{TensorFlow} and \textbf{scikit-learn} models, implementing \textbf{RAG} with vector embeddings for semantic search.}
+\resumeItem{Built \textbf{data processing services} with \textbf{SQL} (PostgreSQL) and \textbf{Python scripting}; optimized \textbf{Spark/PySpark} jobs on \textbf{Kubernetes} clusters achieving \textbf{+40\% throughput} and \textbf{99\% job success rate} through batch scheduling and partitioning.}
+\resumeItem{Implemented \textbf{automated testing} and \textbf{model validation frameworks} with \textbf{pytest} and \textbf{CI/CD}; reduced \textbf{ML pipeline runtime by 50\%} and \textbf{infrastructure costs by 30\%} while maintaining model accuracy above target thresholds.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{monolith-to-microservices migration} using \textbf{Java} and \textbf{JavaScript/TypeScript} on \textbf{Linux/Docker}; deployed to \textbf{AWS EKS (Kubernetes)} with \textbf{Terraform IaC}; improved system availability to \textbf{99.5\%} and reduced infrastructure costs by \textbf{20\%}.}
+\resumeItem{Built \textbf{real-time event streaming} using \textbf{AWS MSK (Kafka)} and \textbf{SQL} databases, processing \textbf{500k+ events/day} with \textbf{SQS} dead-letter queues for fault-tolerant message delivery; maintained \textbf{100\% data integrity} across distributed services.}
+\resumeItem{Developed \textbf{customer-facing chatbot backend} using \textbf{Java} and \textbf{Python} with \textbf{conversation flows} and \textbf{decision tree logic}, processing \textbf{10k+ daily interactions} with \textbf{95\% automated resolution rate}, supporting product and AI development teams.}
+\resumeItem{Deployed \textbf{auto-scaling Kubernetes clusters} with \textbf{Docker} containers on \textbf{Linux}; configured autoscaling for \textbf{10x traffic spikes}; established \textbf{monitoring} with \textbf{Prometheus}, \textbf{Grafana}, and \textbf{CloudWatch} for production \textbf{troubleshooting}.}
+\resumeItem{Enforced \textbf{code review} discipline with \textbf{GitHub/Bitbucket} pull requests and \textbf{CI/CD pipelines} (Jenkins); achieved \textbf{90\% unit test coverage} with \textbf{TDD/BDD}; mentored \textbf{5 developers} on \textbf{Agile/Scrum} and \textbf{source control} best practices.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- 4. PROJECTS (tcolorbox) ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{AI-Powered Digital Asset Scanner (Go/Docker)} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{Go} microservice for \textbf{AI-based image analysis} with \textbf{REST API}, \textbf{Docker} containerization, and \textbf{PostgreSQL} storage on \textbf{Linux/AWS}. Implemented \textbf{concurrent processing} with goroutines/channels, \textbf{unit tests} with Go testing framework, and \textbf{CI/CD} with GitHub Actions. Processes \textbf{1000+ assets/hour}.}
+\resumeItem{\textbf{Multi-Agent AI Platform (Python/LangChain)} \href{https://github.com/adityasugandhi}{GitHub} --- Architected \textbf{multi-agent AI system} with \textbf{LangChain/LangGraph} orchestrating \textbf{5+ provider integrations}. Implemented \textbf{RAG pipeline} with vector embeddings, \textbf{20+ REST API endpoints}, \textbf{Docker} deployment. Tech: \textbf{Python, FastAPI, SQL, AWS, HTML/CSS}.}
+\resumeItem{\textbf{Real-Time Data Pipeline (TypeScript/AWS)} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{event-driven ETL} using \textbf{TypeScript}, \textbf{AWS Lambda}, \textbf{S3}, \textbf{SQS}, \textbf{Docker}. Implemented \textbf{Terraform IaC}, \textbf{Kubernetes} deployment, \textbf{SQL} data warehouse, and \textbf{CloudWatch} monitoring on \textbf{Linux}. Processes \textbf{1000+ documents/day}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- 5. TECHNICAL SKILLS (6 categories) ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Go, Python, JavaScript/TypeScript, Java, SQL, Bash, PowerShell, HTML/CSS, R}
+\resumeItem{\textbf{Cloud \& Infrastructure:} AWS (EC2, Lambda, S3, SQS/SNS, RDS, EKS, ECR, CloudWatch), Azure, Linux (Ubuntu/CentOS), Windows, Networking}
+\resumeItem{\textbf{Containers \& DevOps:} Docker, Kubernetes, Terraform, Jenkins, GitHub Actions, CI/CD Pipelines, Bitbucket, SVN, Perforce}
+\resumeItem{\textbf{AI/ML \& Data:} Deep Learning, TensorFlow, PyTorch, LangChain, RAG Pipelines, Scikit-learn, OpenCV, NumPy, Pandas, Vector Embeddings}
+\resumeItem{\textbf{Backend \& APIs:} Go (net/http, Gin), FastAPI, Express.js, Spring Boot, gRPC, PostgreSQL, MongoDB, Redis, REST APIs, GraphQL}
+\resumeItem{\textbf{Testing \& Quality:} TDD, BDD, Unit Testing (Go testing, pytest, Jest), Integration Testing, System Testing, Bug Fixing, Code Review, Cybersecurity Best Practices, Agile/Scrum}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- 6. EDUCATION (NO graduation dates) ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{M.S. in Computer Science}{Florida State University}{}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Data Communications, Data Mining, Machine Learning}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{B.Tech. in Computer Science}{SRM Institute of Science \& Technology}{}{Chennai, India}
+\vspace{-10pt}
+
+%---------- 7. PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST)}
+\resumeItem{2nd Place, SRM University Hackathon (2019)}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

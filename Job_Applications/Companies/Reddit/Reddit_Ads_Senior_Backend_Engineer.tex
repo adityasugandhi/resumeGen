@@ -1,0 +1,153 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,fontawesome5,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 4485006857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Backend Engineer with 5+ years building \textbf{distributed systems} and \textbf{high-throughput microservices} at scale. Proficient in \textbf{Python}, \textbf{Scala}, and \textbf{Java} with production experience in \textbf{real-time data pipelines} (Kafka, Spark), \textbf{API design} (37+ endpoints, gRPC/REST), and \textbf{container orchestration} (Kubernetes, Docker, Argo). Owned end-to-end systems processing \textbf{500k+ events/day} with \textbf{99.5\% availability}. Strong foundation in \textbf{concurrency patterns} and \textbf{systems programming} transferable to \textbf{Go}. Proven \textbf{on-call ownership} with monitoring, incident response, and \textbf{Agile/TDD} practices.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, Scala, Java, SQL, Bash, JavaScript/TypeScript, Go (ramping)}
+\resumeItem{\textbf{Data \& Streaming:} Apache Kafka, Apache Spark (PySpark/Scala), BigQuery, Druid, PostgreSQL, Redis, DynamoDB, MongoDB, S3}
+\resumeItem{\textbf{Backend \& APIs:} FastAPI, gRPC, Thrift, REST/GraphQL, API Gateway, OAuth2/JWT, RBAC}
+\resumeItem{\textbf{Infrastructure \& DevOps:} Kubernetes, Docker, Argo, AWS (EKS, EMR, MSK, Fargate, Lambda), Terraform, CI/CD (Jenkins, GitHub Actions)}
+\resumeItem{\textbf{Observability \& Practices:} Prometheus, Grafana, CloudWatch, Distributed Tracing, TDD/BDD, 24/7 On-Call, Agile/Scrum}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{BAS Software Developer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Owned end-to-end} design, development, deployment, and monitoring of enterprise network scanning platform; built \textbf{37 REST API endpoints} serving \textbf{35k+ devices} across \textbf{172+ networks} with \textbf{real-time WebSocket} streaming and \textbf{99.2\% accuracy}.}
+\resumeItem{Designed \textbf{async event-driven architecture} with message queues for task processing; implemented \textbf{PostgreSQL} for persistent storage, \textbf{Redis} caching layer, and \textbf{S3} file storage with \textbf{API Gateway} rate limiting and auth.}
+\resumeItem{Built \textbf{CI/CD pipelines} with GitHub Actions and Jenkins; containerized services with \textbf{Docker} and \textbf{Kubernetes}-ready architecture; established \textbf{Grafana/CloudWatch} monitoring dashboards for \textbf{24/7 on-call} incident response.}
+\resumeItem{Implemented \textbf{3-tier RBAC system} with \textbf{JWT} authentication; integrated \textbf{360+ unit/integration tests} achieving \textbf{85\%+ coverage} with \textbf{TDD/BDD} methodology across all services.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built optimized \textbf{Spark (Scala/PySpark) distributed jobs} on \textbf{Kubernetes/EMR} clusters processing \textbf{1TB+ datasets}; implemented shuffle and partitioning optimization achieving \textbf{+40\% throughput} and \textbf{99\% job success rate}.}
+\resumeItem{Architected \textbf{parallel data processing pipelines} with windowed aggregations and \textbf{BigQuery}-style analytics; reduced \textbf{pipeline runtime by 50\%} through async batch optimization and compute resource tuning.}
+\resumeItem{Deployed end-to-end \textbf{monitoring with Prometheus/Grafana}; implemented automated performance drift detection and alerting across distributed infrastructure.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{monolith-to-microservices migration} on \textbf{AWS EKS}; \textbf{owned architecture, implementation, and operations} of event-driven microservices on \textbf{Java} and \textbf{Python}; improved availability to \textbf{99.5\%}, reduced costs by \textbf{20\%}.}
+\resumeItem{Architected \textbf{real-time event streaming} using \textbf{Kafka (AWS MSK)} with consumer groups and \textbf{DynamoDB Streams}; processed \textbf{500k+ events/day} with dead-letter queues for fault-tolerant async delivery and \textbf{10x spike handling}.}
+\resumeItem{Built \textbf{operational dashboards} with \textbf{Prometheus}, \textbf{Grafana}, and \textbf{CloudWatch} alarms; established \textbf{24/7 on-call support} with PagerDuty, reducing \textbf{MTTR by 60\%} through automated runbooks and incident workflows.}
+\resumeItem{Deployed \textbf{auto-scaling Kubernetes clusters} with \textbf{Docker} containers and \textbf{Argo} workflows; implemented \textbf{Terraform IaC} across dev/staging/prod environments with \textbf{CI/CD pipelines}.}
+\resumeItem{Mentored \textbf{5 developers} on \textbf{Agile/Scrum} practices, \textbf{microservices patterns}, and distributed systems; achieved \textbf{90\% unit test coverage} with \textbf{TDD/BDD} across all services.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{Streaming Data Platform (Kafka/Spark)} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{real-time distributed data pipeline} using Apache Kafka and Spark Streaming on AWS (MSK, EMR). Implemented \textbf{parallel consumer groups} with windowed aggregations, processing \textbf{10k+ events/sec} with sub-second latency. Deployed on \textbf{Kubernetes} with auto-scaling. Tech: \textbf{Scala, Python, Kafka, Spark, AWS, Docker}.}
+
+\resumeItem{\textbf{Real-Time Metrics Dashboard} \href{https://github.com/adityasugandhi}{GitHub} --- Architected \textbf{campaign-measurement-style analytics platform} with multi-source data aggregation, \textbf{13 function-calling APIs}, and real-time visualization. Implemented \textbf{time-series analytics} with configurable drill-down and alerting. Tech: \textbf{Python, FastAPI, PostgreSQL, Redis, Grafana}.}
+
+\resumeItem{\textbf{API Gateway \& Microservices Platform} \href{https://github.com/adityasugandhi}{GitHub} --- Designed \textbf{event-driven microservices} with centralized API gateway, \textbf{Kafka event streaming}, and \textbf{DynamoDB} storage. Implemented \textbf{rate limiting, auth, circuit breakers}, and \textbf{distributed tracing}. Processes \textbf{1000+ req/sec}. Tech: \textbf{Python, Java, Kafka, Kubernetes, Docker, Terraform}.}
+
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{Aug 2022 -- May 2024}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Data Communications, Advanced Database Systems, Distributed Systems, Data Mining}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{Aug 2016 -- May 2020}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

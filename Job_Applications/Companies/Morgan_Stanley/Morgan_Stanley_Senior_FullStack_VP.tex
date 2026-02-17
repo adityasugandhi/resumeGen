@@ -1,0 +1,157 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.18in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE — blue rule to match template format
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{0pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{enterprise-grade reporting and analytics platforms}. Expert in \textbf{Java}, \textbf{Angular/React}, and \textbf{Python} with production experience in \textbf{GenAI integration}, \textbf{event-driven microservices}, and \textbf{real-time data pipelines}. Proven track record leading engineering teams and delivering \textbf{scalable financial analytics solutions} with \textbf{99.99\% availability}.
+
+\vspace{-9pt}
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-10pt}
+
+\resumeSubheading
+{Software Engineer II}{Nov 2024 -- Present}
+{Florida State University — Finance Technology Division}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Led design and development of \textbf{enterprise-grade reporting and analytics platform} using \textbf{Java} and \textbf{Angular}; architected \textbf{37 RESTful API endpoints} with \textbf{real-time WebSocket streaming} serving \textbf{35K+ IoT sensors} for P\&L calculations and compliance monitoring.}
+\resumeItem{Drove adoption of \textbf{GenAI and Copilot tools} for automated reporting; built \textbf{AI-powered analysis modules} using \textbf{OpenAI/Anthropic APIs} that reduced manual investigation time by \textbf{40\%} and enhanced developer productivity across engineering teams.}
+\resumeItem{Architected \textbf{event-driven microservices} using \textbf{Spring Boot} and \textbf{Apache Kafka} processing \textbf{5M+ daily telemetry events}; implemented \textbf{distributed caching with Redis} reducing \textbf{synchronization latency by 45\%} for real-time dashboards.}
+\resumeItem{Mentored \textbf{team of 6 engineers} on \textbf{SDLC best practices}, code quality standards, and \textbf{modern engineering patterns}; established \textbf{CI/CD pipelines} and automated testing achieving \textbf{99.5\% deployment success rate}.}
+\resumeItem{Built \textbf{compliance monitoring service} scanning \textbf{10K+ asset configurations} daily against \textbf{regulatory policies}; implemented \textbf{horizontal PostgreSQL sharding} for \textbf{500M+ records} improving query performance by \textbf{2x} for compliance audits.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Engineer}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built \textbf{scalable analytics pipelines} processing \textbf{1TB+ datasets} using \textbf{Python} and \textbf{Apache Spark}; implemented \textbf{vector embeddings} and \textbf{semantic search} with \textbf{observability dashboards} (Grafana, MLflow) for quality and latency monitoring.}
+\resumeItem{Developed \textbf{workflow orchestration systems} on \textbf{Kubernetes} handling \textbf{ML inference} at scale; optimized \textbf{batch processing} and \textbf{retry patterns} achieving \textbf{50\% pipeline runtime reduction} with \textbf{99\% job success rate}.}
+\resumeItem{Collaborated with cross-functional teams to iterate from experimentation to production; delivered \textbf{data-driven insights} supporting strategic business decisions and compliance reporting.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer I}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{full-stack development} using \textbf{Java/Spring Boot} backend and \textbf{Angular/React} frontend; architected \textbf{microservices} processing \textbf{500K+ events/day} with \textbf{Kafka event streaming} and \textbf{99.5\% availability}.}
+\resumeItem{Built \textbf{financial reporting modules} with \textbf{general ledger integration} and \textbf{P\&L calculations}; designed \textbf{RESTful APIs} supporting \textbf{regulatory compliance} and \textbf{audit trail} requirements for enterprise clients.}
+\resumeItem{Implemented \textbf{observability pipelines} with \textbf{Prometheus/Grafana} for real-time monitoring; established \textbf{distributed tracing} reducing \textbf{MTTR by 60\%} through automated alerting and debugging interfaces.}
+\resumeItem{Mentored \textbf{5 junior engineers} on \textbf{event-driven architecture} and \textbf{security-first} coding practices; promoted \textbf{agile methodologies} and \textbf{automated testing} improving team velocity by \textbf{25\%}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Associate Software Engineer}{Jun 2019 -- Sep 2020}
+{IMPETUS Technologies}{Noida, India}
+\resumeItemsStart
+\resumeItem{Developed \textbf{Java and Python} backend services for \textbf{real-time data processing}; built \textbf{RESTful APIs} handling \textbf{100K+ daily requests} with \textbf{Redis caching} for low-latency responses supporting analytics dashboards.}
+\resumeItem{Implemented \textbf{workflow automation tools} using \textbf{Node.js} and \textbf{Python}; created internal \textbf{data pipeline orchestration} systems supporting engineering team productivity and reporting accuracy.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-6pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt,before skip=0pt,after skip=0pt]
+\begin{itemize}[topsep=0pt,partopsep=0pt]
+\resumeItem{\textbf{GenAI-Powered Analytics Platform} --- Architected \textbf{full-stack reporting application} with \textbf{Java/Spring Boot} backend and \textbf{Angular} frontend. Integrated \textbf{GenAI (Llama 3.3, Copilot)} for automated report generation and \textbf{semantic analysis}. Built \textbf{real-time dashboards} with \textbf{Power BI integration}. Tech: \textbf{Java, Angular, Python, Kafka, PostgreSQL}.}
+\resumeItem{\textbf{Enterprise Data Pipeline Orchestration} --- Designed \textbf{Apache Airflow} workflow system processing \textbf{50M+ daily events} from financial data sources. Implemented \textbf{OLAP analytics} with \textbf{compliance monitoring} and \textbf{automated alerting}. Achieved \textbf{99.9\% data accuracy} with \textbf{sub-second query latency}. Tech: \textbf{Python, Airflow, Spark, AWS}.}
+\resumeItem{\textbf{AI Developer Productivity Tools} --- Developed \textbf{TypeScript-based SDK} enabling \textbf{Copilot integration} for automated code generation and \textbf{development automation}. Built \textbf{evaluation harnesses} measuring \textbf{AI-assisted productivity gains}. Tech: \textbf{TypeScript, Node.js, Claude API, OpenAI}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Java, TypeScript, Python, JavaScript, SQL, Scala, HTML/CSS}
+\resumeItem{\textbf{Frontend:} Angular, React, Next.js, TypeScript, Component Libraries, Responsive Design}
+\resumeItem{\textbf{Backend:} Spring Boot, Node.js, FastAPI, gRPC, RESTful APIs, Event-Driven Architecture, Microservices}
+\resumeItem{\textbf{AI/ML \& Analytics:} GenAI (OpenAI, Anthropic Copilot), Power BI, Apache Airflow, OLAP, Data Pipelines, Evaluation Harnesses}
+\resumeItem{\textbf{Data \& Cloud:} PostgreSQL, Redis, MongoDB, Apache Kafka, AWS (EKS, Lambda, S3), Kubernetes, Docker, CI/CD Pipelines}
+\resumeItem{\textbf{Practices:} Agile/Scrum, SDLC Best Practices, Automated Testing, Code Quality, Technical Leadership, Cross-functional Collaboration}
+\end{itemize}
+\vspace{-10pt}
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Machine Learning, Data Communications}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

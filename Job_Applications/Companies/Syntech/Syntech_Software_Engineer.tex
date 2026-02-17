@@ -1,0 +1,154 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:aditysugandhi.work@outlook.com}{aditysugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years developing and maintaining web applications using \textbf{Python}, \textbf{TypeScript}, and modern \textbf{web frameworks} (React, Angular, Next.js). Experienced adding features to existing products, \textbf{debugging} and \textbf{troubleshooting} application issues, and integrating \textbf{AI/ML capabilities} into production workflows. Strong collaborator in \textbf{Agile/Scrum} teams with a focus on \textbf{technical documentation}, \textbf{testing}, and \textbf{system architecture}.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, JavaScript/TypeScript, Java, SQL, Bash}
+\resumeItem{\textbf{Backend:} FastAPI, Node.js, Spring Boot, Hibernate/JPA, gRPC, RESTful APIs}
+\resumeItem{\textbf{Frontend \& Web:} React, Angular, TypeScript, Next.js, HTML/CSS, Component Libraries}
+\resumeItem{\textbf{AI/ML \& Data:} LLMs (GPT, Llama), RAG Pipelines, Machine Learning, PostgreSQL, Redis, MongoDB, Kafka}
+\resumeItem{\textbf{Infrastructure:} Kubernetes, Docker, AWS (EKS, Lambda, S3), CI/CD (GitHub Actions, Jenkins), Grafana, Prometheus}
+\resumeItem{\textbf{Practices:} Agile/Scrum, OOP Design Patterns, TDD/BDD, Code Review, Technical Documentation, System Architecture}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Developed and maintained} full-stack platform with \textbf{Angular} and \textbf{React} frontends and \textbf{Python/TypeScript} backend; built \textbf{37 REST API endpoints} serving multiple internal teams with \textbf{real-time WebSocket} updates.}
+\resumeItem{\textbf{Integrated AI/ML features} into existing product workflows, building \textbf{LLM-powered automation} and \textbf{predictive analytics} modules that reduced manual operational tasks by \textbf{40\%}.}
+\resumeItem{\textbf{Participated in Agile sprint planning} and \textbf{design reviews} with cross-functional stakeholders; authored \textbf{technical documentation} for system architecture, API contracts, and onboarding guides.}
+\resumeItem{Built comprehensive \textbf{test suite} with \textbf{360+ unit/integration tests} achieving \textbf{85\%+ coverage}; used \textbf{Grafana/CloudWatch} for \textbf{debugging}, \textbf{troubleshooting}, and \textbf{incident resolution}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Developed and maintained} distributed data processing system using \textbf{Python} and \textbf{Spark} on \textbf{Kubernetes} clusters; processed \textbf{1TB+ datasets} with \textbf{+40\% throughput improvement} through \textbf{algorithm optimization} and clean code practices.}
+\resumeItem{\textbf{Collaborated in Agile team} to design parallel processing pipelines with windowed aggregations; reduced \textbf{pipeline runtime by 50\%} through \textbf{data structure optimization} and systematic \textbf{debugging} of performance bottlenecks.}
+\resumeItem{\textbf{Authored technical documentation} for system architecture and operational procedures; deployed \textbf{Prometheus/Grafana} monitoring with automated alerting for \textbf{proactive issue detection} and resolution.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{\textbf{Added features} to existing product line and \textbf{maintained software artifacts} during monolith-to-microservices migration on \textbf{AWS}; improved system reliability and reduced infrastructure costs by \textbf{20\%}.}
+\resumeItem{\textbf{Built Angular-based admin dashboard} for internal tooling; developed reusable \textbf{UI components} and integrated with \textbf{REST APIs} for real-time data visualization and configuration management.}
+\resumeItem{\textbf{Applied OOP design patterns} (Factory, Strategy, Observer) following team \textbf{development methodology}; participated in \textbf{design reviews} and authored \textbf{technical documentation} for API contracts and runbooks.}
+\resumeItem{\textbf{Debugged and troubleshot} production application issues using \textbf{Prometheus}, \textbf{Grafana}, and \textbf{CloudWatch}; reduced mean time to resolution by \textbf{60\%} through systematic \textbf{root cause analysis}.}
+\resumeItem{Supported \textbf{build, deployment, and production support} efforts; achieved \textbf{90\% test coverage} with \textbf{TDD/BDD} practices and mentored \textbf{5 junior developers} on testing methodologies.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{Event-Driven Notification Service} --- Developed backend service with \textbf{Kafka} event streaming and \textbf{OOP design patterns}. Implemented reliable message delivery with retry logic and \textbf{dead-letter queues}. Built \textbf{test suite} with 90\% coverage using \textbf{TDD/BDD}. Tech: \textbf{Python, TypeScript, Kafka, PostgreSQL, Docker}.}
+
+\resumeItem{\textbf{AI-Powered Resume Platform} --- Built \textbf{React/TypeScript} frontend with \textbf{Python} backend integrating \textbf{LLMs} and \textbf{RAG pipelines} for intelligent document analysis. Implemented \textbf{vector-based semantic matching}, \textbf{REST APIs}, and browser-side \textbf{ML inference}. Followed \textbf{Agile} workflow with iterative releases. Tech: \textbf{TypeScript, React, Next.js, Python, LLMs, IndexedDB}.}
+
+\resumeItem{\textbf{Developer Productivity Dashboard} --- Built \textbf{Angular/TypeScript} frontend with \textbf{Node.js} backend for team metrics and monitoring. Developed \textbf{13 REST API endpoints} with \textbf{OAuth2} authentication and configurable alerting. Wrote \textbf{technical documentation} and conducted \textbf{code reviews} for team contributions. Tech: \textbf{Angular, TypeScript, Node.js, PostgreSQL, Redis}.}
+
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Data Structures \& Algorithms, Distributed Systems, Machine Learning, Advanced Database Systems}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & AWARDS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ 2nd Place, SRM University Hackathon (2019) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,152 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{end-to-end data applications} in \textbf{Python} and \textbf{TypeScript} that deliver \textbf{measurable business outcomes}. Production experience with \textbf{Palantir Foundry \& AIP}, deploying \textbf{ML/LLM-based solutions}, \textbf{React frontends}, and \textbf{operationalized workflows} on large structured and unstructured datasets. Proven track record working \textbf{embedded with stakeholders} to ship solutions at \textbf{uncommon speed}.
+
+\vspace{-9pt}
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — Enterprise Applications \& AI}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Worked \textbf{embedded with stakeholders} (facility managers, engineers, operations teams) to identify highest-impact problems; conceived, architected, and built \textbf{end-to-end data application} from scratch that \textbf{operationalized workflows} across \textbf{172+ networks} and \textbf{35K+ devices}, reducing manual processes by \textbf{85\%}.}
+\resumeItem{Built \textbf{production React/TypeScript frontend} and \textbf{Python backend} with \textbf{37 REST API endpoints}; delivered \textbf{operator-centered dashboards} that end users actually use daily, with \textbf{real-time WebSocket streaming} and \textbf{99.2\% system accuracy}.}
+\resumeItem{Deployed \textbf{LLM-based solutions} on \textbf{Palantir Foundry \& AIP}-style ontology patterns, integrating AI with \textbf{large structured and unstructured datasets}; built \textbf{RAG pipelines} and \textbf{AI agents} that automate analysis, cutting investigation time by \textbf{40\%} and delivering \textbf{tangible operational outcomes}.}
+\resumeItem{Owned \textbf{full delivery lifecycle} autonomously — from problem discovery to production deployment; established \textbf{CI/CD pipelines}, \textbf{monitoring} (Grafana/CloudWatch), and \textbf{observability}, reducing \textbf{MTTR by 60\%} through proactive incident response.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — Data Platform}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built \textbf{production data applications} on \textbf{large structured and unstructured datasets} (\textbf{1TB+}) using \textbf{Python}, \textbf{Spark}, and \textbf{distributed compute} on \textbf{Kubernetes}; modeled data using \textbf{ontology-based patterns} (similar to \textbf{Foundry pipelines}), delivering \textbf{+40\% throughput} through custom partitioning and query optimization.}
+\resumeItem{Developed \textbf{ML/LLM-based solutions} including \textbf{vector embedding pipelines} and \textbf{semantic search} for RAG-based retrieval; deployed \textbf{context-aware query engine} processing \textbf{1,000+ documents} with \textbf{95\% accuracy} and \textbf{sub-200ms latency}.}
+\resumeItem{Collaborated \textbf{cross-functionally} with researchers, data scientists, and domain experts to translate \textbf{complex analytical problems} into \textbf{operationalized workflows}; reduced \textbf{pipeline runtime by 50\%} through iterative optimization and rapid prototyping.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — Enterprise Data Integration}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Delivered \textbf{end-to-end enterprise data solutions} using \textbf{Java/Spring Boot} and \textbf{React}; built \textbf{event-driven microservices} with \textbf{Kafka} processing \textbf{500K+ events/day} from disparate data sources, driving \textbf{real-world operational outcomes} with \textbf{99.5\% availability}.}
+\resumeItem{Worked \textbf{closely with business stakeholders} across departments to identify high-value problems; designed \textbf{data integration workflows} connecting enterprise systems and \textbf{third-party APIs}, enabling automated decision-making across business units.}
+\resumeItem{Built \textbf{production monitoring infrastructure} with \textbf{Prometheus}, \textbf{Grafana}, and \textbf{distributed tracing}; took \textbf{full ownership} of incident response and \textbf{troubleshooting}, reducing \textbf{MTTR by 60\%} and maintaining \textbf{SLA compliance}.}
+\resumeItem{Collaborated with \textbf{cross-functional teams of varying technical proficiency}; mentored \textbf{5 engineers} on engineering best practices and \textbf{shipped iteratively} with rapid feedback cycles; achieved \textbf{90\% test coverage}.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{AI-Powered Resume Optimization Platform} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{full-stack production application} in \textbf{React/TypeScript} and \textbf{Next.js} from scratch. Integrated \textbf{LLMs (Llama 3.3)}, \textbf{RAG pipelines}, and \textbf{AI agents} to operationalize document analysis workflows on unstructured data. Delivered end-to-end: \textbf{semantic search}, vector embeddings, and user-facing UI. Tech: \textbf{TypeScript, React, Python, Groq API, Vector DBs}.}
+\resumeItem{\textbf{Enterprise Slack Bot — AI Workflow Automation} \href{https://github.com/adityasugandhi}{GitHub} --- Deployed \textbf{production LLM-based solution} as enterprise Slack integration; built \textbf{AI agent} with tool integrations for automated information retrieval. Achieved \textbf{24/7 availability}, \textbf{sub-40s response times}, shipped on \textbf{AWS EC2}. Tech: \textbf{Python, Node.js, OAuth 2.0, WebSockets, PM2}.}
+\resumeItem{\textbf{Distributed Data Pipeline (Spark/Kafka/Kubernetes)} \href{https://github.com/adityasugandhi}{GitHub} --- Architected \textbf{real-time data ingestion platform} with \textbf{Spark} and \textbf{Kafka} on \textbf{Kubernetes}; built orchestration layer for multi-source enterprise data integration processing \textbf{10K+ events/sec}. Tech: \textbf{Java, Scala, Spark, Kafka, Kubernetes, Docker}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, TypeScript, JavaScript, Java, Scala, SQL, Go, Bash, C++}
+\resumeItem{\textbf{Frontend:} React, Next.js, TypeScript, HTML/CSS, Responsive UI, Component Libraries, Production Frontend Applications}
+\resumeItem{\textbf{ML \& LLMs:} LLMs (GPT, Llama), RAG Pipelines, AI Agents, Vector Databases, Embedding Models, Prompt Engineering, MLflow}
+\resumeItem{\textbf{Data \& Platforms:} Palantir Foundry \& AIP, Apache Spark (PySpark/Scala), Kafka, PostgreSQL, Redis, MongoDB, Snowflake (familiar), Data Pipelines}
+\resumeItem{\textbf{Infrastructure:} Kubernetes (EKS/AKS), Docker, AWS (EKS, EMR, Lambda, S3), CI/CD (GitHub Actions, Jenkins), Grafana, Prometheus}
+\resumeItem{\textbf{Practices:} Stakeholder Collaboration, Agile/Scrum, Rapid Prototyping, End-to-End Ownership, TDD, Code Review, Technical Documentation}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Machine Learning, Data Communications, Algorithms}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & AWARDS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{\textbf{2nd Place, SRM University Hackathon (2019)} --- Built end-to-end data-driven application in 24 hours; designed ML-based review classification system from problem discovery to working demo, judged on business impact and technical execution.}
+\resumeItem{Review Classification \& False Feedback Detection --- Published in IJAST; built production ML pipeline for large-scale unstructured text analysis.}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024) \textbar\ Active participant in AI/ML hackathons and rapid prototyping challenges.}
+\end{itemize}
+
+\end{document}

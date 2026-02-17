@@ -1,0 +1,162 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE — blue rule to match template format
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Full-Stack Software Engineer with 5+ years building \textbf{AI-powered platforms} and \textbf{scalable workflow systems}. Expert in \textbf{TypeScript (React, Next.js)} and \textbf{Python} with production experience integrating \textbf{LLMs}, \textbf{RAG pipelines}, and \textbf{workflow orchestration}. Delivered AI infrastructure serving \textbf{35K+ devices} with \textbf{99.2\% accuracy}.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Frontend:} React, TypeScript, Next.js, JavaScript, HTML/CSS, Cloudflare Workers, Component Libraries}
+\resumeItem{\textbf{Backend:} Python, FastAPI, Node.js, Java, gRPC, RESTful APIs, GraphQL, Event-Driven Architecture}
+\resumeItem{\textbf{AI/ML:} LLMs (OpenAI, Anthropic, Llama), RAG Pipelines, AI Agents, Embedding Models, Prompt Engineering, Evaluation Harnesses}
+\resumeItem{\textbf{Data \& Infrastructure:} PostgreSQL, Redis, MongoDB, Apache Kafka, AWS (EKS, Lambda, S3), Databricks, Vector Stores, Kubernetes}
+\resumeItem{\textbf{Workflow \& Orchestration:} Event Schemas, State Management, Retries/Idempotency, SDK Development, CI/CD Pipelines}
+\resumeItem{\textbf{Practices:} HIPAA Compliance Awareness, Security-by-Design, Agile/Scrum, Build-Measure-Learn, Cross-functional Collaboration}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer II}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{AI workflow orchestration system} using \textbf{TypeScript} and \textbf{Python}; built \textbf{37 RESTful API endpoints} with \textbf{real-time WebSocket} streaming serving \textbf{35K+ IoT devices} for intelligent automation and monitoring.}
+\resumeItem{Designed \textbf{LLM integration layer} (OpenAI, Anthropic APIs) with \textbf{RAG pipelines} and \textbf{evaluation harnesses}; implemented \textbf{AI-powered analysis tools} reducing manual investigation time by \textbf{40\%} across engineering teams.}
+\resumeItem{Built \textbf{tool connectors and SDKs} enabling cross-system workflows between internal domains (device management, database operations); standardized \textbf{event schemas} and \textbf{tool contracts} for consistent developer experience.}
+\resumeItem{Implemented \textbf{state management} with \textbf{Redis caching} and \textbf{idempotent retry logic} for fault-tolerant AI workflows; achieved \textbf{99.2\% accuracy} across \textbf{172+ networks} with automated compliance monitoring.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built \textbf{AI evaluation pipelines} processing \textbf{1TB+ datasets} using \textbf{Python} and \textbf{Spark}; implemented \textbf{vector embeddings} and \textbf{semantic search} with \textbf{observability dashboards} (Grafana, MLflow) for quality and latency monitoring.}
+\resumeItem{Developed \textbf{workflow orchestration systems} on \textbf{Kubernetes} handling \textbf{ML inference} at scale; optimized \textbf{state management} and \textbf{retry patterns} achieving \textbf{50\% pipeline runtime reduction} with \textbf{99\% job success rate}.}
+\resumeItem{Created \textbf{Python SDKs} for data processing and \textbf{evaluation harnesses}; collaborated with cross-functional teams to iterate from experimentation to production deployment.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer I}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{full-stack development} using \textbf{Java/Spring} backend and \textbf{React/TypeScript} frontend; architected \textbf{microservices} processing \textbf{500K+ events/day} with \textbf{Kafka} event streaming and \textbf{99.5\% availability}.}
+\resumeItem{Built \textbf{observability pipelines} with \textbf{Prometheus/Grafana} for real-time monitoring; implemented \textbf{distributed tracing} reducing \textbf{MTTR by 60\%} through automated alerting and debugging interfaces.}
+\resumeItem{Designed \textbf{tool APIs} enabling cross-system integrations (EHR-style data flows, order management); mentored \textbf{5 engineers} on \textbf{event-driven architecture} and \textbf{security-first} coding practices.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Associate Software Engineer}{Jun 2019 -- Sep 2020}
+{IMPETUS Technologies}{Noida, India}
+\resumeItemsStart
+\resumeItem{Developed \textbf{Python and TypeScript} backend services for real-time data processing; built \textbf{RESTful APIs} handling \textbf{100K+ daily requests} with \textbf{Redis caching} for low-latency responses.}
+\resumeItem{Implemented \textbf{workflow automation tools} using \textbf{Node.js} and \textbf{Python}; created internal SDKs for data pipeline orchestration supporting engineering team productivity.}
+\resumeItem{Contributed to \textbf{evaluation systems} for data quality monitoring; worked with \textbf{PostgreSQL} and \textbf{MongoDB} for data storage with focus on \textbf{idempotent operations} and \textbf{retry logic}.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-8pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt,before skip=0pt]
+\begin{itemize}
+\resumeItem{\textbf{AI-Powered Resume Optimization Platform} --- Built \textbf{full-stack AI application} with \textbf{TypeScript/Next.js} frontend and \textbf{Python} backend. Integrated \textbf{LLMs (Llama 3.3 via Groq)}, \textbf{RAG pipelines}, and \textbf{embedding models} for semantic matching. Implemented \textbf{AI evaluation} with quality scoring and \textbf{real-time workflow orchestration}. Tech: \textbf{TypeScript, React, Next.js, Python, Vector Stores}.}
+
+\resumeItem{\textbf{Multi-Agent Orchestration System} --- Architected \textbf{21-node AI workflow} using \textbf{LangGraph} for automated research pipelines. Built \textbf{tool connectors} for 5+ external APIs, implemented \textbf{conditional routing} and \textbf{state management} with \textbf{observability monitoring}. Tech: \textbf{Python, LangGraph, FastAPI, ChromaDB}.}
+
+\resumeItem{\textbf{AI Developer CLI \& SDK} --- Developed \textbf{TypeScript-based SDK} for Claude API integration enabling autonomous operations. Built \textbf{function-calling interfaces} with \textbf{retry logic} and \textbf{idempotency} for enterprise tooling. Tech: \textbf{TypeScript, Node.js, Claude API, MCP Protocol}.}
+
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Machine Learning, Data Communications}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

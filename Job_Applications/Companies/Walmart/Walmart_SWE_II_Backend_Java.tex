@@ -1,0 +1,152 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Backend Software Engineer with 5+ years building \textbf{scalable distributed systems} and \textbf{event-driven microservices} in \textbf{Java and Spring Boot}. Production experience designing \textbf{low-latency REST APIs}, \textbf{async messaging pipelines}, and \textbf{SQL/NoSQL storage layers} serving \textbf{500K+ daily transactions}. Proven track record in \textbf{Kubernetes orchestration}, \textbf{CI/CD automation}, and \textbf{cross-functional collaboration} within agile teams.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Java, Python, C++, Scala, SQL, JavaScript/TypeScript, Go, Bash}
+\resumeItem{\textbf{Backend Frameworks:} Spring Boot, Spring Framework, Spring MVC, Spring Data, Hibernate/JPA, Node.js, FastAPI}
+\resumeItem{\textbf{Databases \& Storage:} PostgreSQL, Cassandra, Redis, MongoDB, Azure SQL Server, InfluxDB, Columnar Storage}
+\resumeItem{\textbf{Messaging \& Streaming:} Apache Kafka, Event-Driven Microservices, Async Messaging, REST APIs, gRPC, WebSockets}
+\resumeItem{\textbf{Cloud \& Infrastructure:} Kubernetes (EKS/AKS), Docker, Helm, AWS (EKS, EMR, MSK, S3, Lambda), CI/CD (GitHub Actions, Jenkins), Terraform}
+\resumeItem{\textbf{Practices:} Agile/Scrum, Code Review, TDD, Distributed Tracing, Monitoring (Prometheus, Grafana), SDLC, Technical Documentation}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Developer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Designed and developed \textbf{backend software services} using \textbf{Java} and \textbf{Python} with \textbf{37 REST API endpoints} integrating with \textbf{3rd-party systems} and internal platforms; serves \textbf{35K+ devices} across \textbf{172+ networks} with \textbf{99.2\% system accuracy}.}
+\resumeItem{Architected \textbf{event-driven microservices} with \textbf{async messaging} and \textbf{WebSocket streaming} for real-time device state management; implemented \textbf{PostgreSQL} storage with \textbf{Redis caching layer}, reducing query latency by \textbf{45\%} for \textbf{15+ engineering teams}.}
+\resumeItem{Built \textbf{CI/CD deployment pipelines} on \textbf{GitHub Actions} for automated testing, code validation, and multi-environment rollouts (dev/stage/prod); established \textbf{code review standards} and \textbf{SDLC documentation} adopted across the organization.}
+\resumeItem{Collaborated with \textbf{cross-functional teams} (Product, QE, Program Management) to prioritize requirements; built \textbf{Grafana/CloudWatch monitoring dashboards} reducing \textbf{mean time to resolution by 60\%} through systematic \textbf{troubleshooting and root cause analysis}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer - Data Platform}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built \textbf{distributed backend data services} using \textbf{Java/Scala} and \textbf{Apache Spark} on \textbf{Kubernetes} clusters; implemented custom \textbf{shuffle partitioning} and \textbf{query optimization} achieving \textbf{+40\% throughput} over \textbf{1TB+ datasets} with \textbf{99\% job success rate}.}
+\resumeItem{Developed \textbf{RESTful APIs} and \textbf{async data pipelines} with windowed aggregations and batch processing; reduced \textbf{pipeline runtime by 50\%} through \textbf{concurrent optimization} and efficient \textbf{data structure selection} for large-scale compute.}
+\resumeItem{Wrote \textbf{clean, well-documented code} with comprehensive test coverage; participated in \textbf{code reviews} and collaborated with \textbf{distributed teams across time zones} to drive project delivery on schedule and within quality standards.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led development of \textbf{enterprise backend platform} using \textbf{Java/Spring Boot} with \textbf{RESTful APIs} and \textbf{event-driven microservices}; built \textbf{async messaging} with \textbf{Kafka} processing \textbf{500K+ events/day} with \textbf{99.5\% availability} and \textbf{exactly-once semantics}.}
+\resumeItem{Designed \textbf{low-latency REST APIs} with \textbf{Spring Framework} backed by \textbf{SQL/NoSQL storage systems} (PostgreSQL, Cassandra); implemented \textbf{fault-tolerant async delivery} with dead-letter queues handling \textbf{10x traffic spikes} during peak loads.}
+\resumeItem{Built \textbf{monitoring and alerting infrastructure} using \textbf{Prometheus} and \textbf{Grafana}; \textbf{troubleshot critical defects} in production through \textbf{distributed tracing} and structured logging, reducing \textbf{MTTR by 60\%} and maintaining \textbf{SLA compliance}.}
+\resumeItem{Collaborated within \textbf{scrum teams} alongside QE, Product, and Program Management; mentored \textbf{5 engineers} on \textbf{coding best practices}, \textbf{code review standards}, and \textbf{test-driven development}; achieved \textbf{90\% test coverage}.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{Event-Driven Inventory Pipeline (Kafka/Spring Boot)} \href{https://github.com/adityasugandhi}{GitHub} --- Built \textbf{distributed real-time data ingestion pipeline} using \textbf{Java/Spring Boot}, \textbf{Kafka}, and \textbf{Spark Streaming} on \textbf{Kubernetes} with \textbf{Helm} charts. Implemented \textbf{async event processing} with \textbf{Cassandra} and \textbf{PostgreSQL} storage, processing \textbf{10K+ events/sec} with sub-second latency. Tech: \textbf{Java, Spring Boot, Kafka, Spark, Kubernetes, Docker}.}
+\resumeItem{\textbf{Scalable REST API Platform} \href{https://github.com/adityasugandhi}{GitHub} --- Developed \textbf{microservices-based backend} with \textbf{Spring Framework} and \textbf{low-latency REST APIs}; integrated with \textbf{3rd-party systems} via \textbf{async messaging} and \textbf{webhook handlers}. Built \textbf{containerized deployments} with \textbf{Docker/Kubernetes} and \textbf{CI/CD automation}. Tech: \textbf{Java, Spring Boot, PostgreSQL, Redis, Docker, GitHub Actions}.}
+\resumeItem{\textbf{Distributed Graph Algorithm Engine (C++)} \href{https://github.com/adityasugandhi/Improved-Algorithms-in-finding-maximal-and-maximum-clique-in-uncertain-networks}{GitHub} --- Implemented \textbf{graph algorithm engine in C++} for maximal clique discovery in probabilistic networks. Built custom \textbf{pruning strategies} and \textbf{indexing optimizations} with concurrent processing. Tech: \textbf{C++, Python, Makefile}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Data Communications, Algorithms}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & AWARDS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST)}
+\resumeItem{2nd Place, SRM University Hackathon (2019)}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

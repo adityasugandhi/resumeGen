@@ -1,0 +1,156 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,fontawesome5,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage[breakable]{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.dev.ai@gmail.com}{adityasugandhi.dev.ai@gmail.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with 5+ years building \textbf{distributed systems} and \textbf{microservices} in \textbf{Python}, \textbf{Scala}, \textbf{Java}, and \textbf{Go}. Production experience with \textbf{Kafka}, \textbf{Spark}, \textbf{Kubernetes}, \textbf{PostgreSQL}, and \textbf{Redis} --- owned end-to-end platforms processing \textbf{500k+ events/day} at \textbf{99.5\% availability}. Proven track record improving \textbf{operational stability}, \textbf{code quality}, and \textbf{cross-functional delivery} with product and data teams.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, Scala, Java, SQL, Bash, JavaScript/TypeScript, Go (ramping)}
+\resumeItem{\textbf{Data \& Streaming:} Apache Kafka (Connect, Streams, Schema Registry), Apache Spark (PySpark/Scala), BigQuery, Druid, PostgreSQL, Redis, DynamoDB, S3}
+\resumeItem{\textbf{Backend \& APIs:} FastAPI, gRPC, Thrift, REST/GraphQL, Baseplate, API Gateway, Microservices Architecture, OAuth2/JWT}
+\resumeItem{\textbf{Infrastructure \& DevOps:} Kubernetes, Docker, Argo, AWS (EKS, EMR, MSK, Fargate, Lambda), Terraform, CI/CD (Jenkins, GitHub Actions)}
+\resumeItem{\textbf{Observability \& Practices:} Prometheus, Grafana, CloudWatch, Distributed Tracing, TDD/BDD, 24/7 On-Call, Agile/Scrum}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{BAS Software Developer}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Owned end-to-end} design, development, deployment, and monitoring of distributed platform serving \textbf{35k+ devices} across \textbf{172+ networks}; built \textbf{37 REST/gRPC API endpoints} with \textbf{real-time WebSocket} streaming, \textbf{PostgreSQL} persistence, and \textbf{Redis} caching achieving \textbf{99.2\% accuracy}.}
+\resumeItem{Designed \textbf{async event-driven microservices} with message queues for task processing; implemented \textbf{API Gateway} with rate limiting, \textbf{S3} file storage, and \textbf{JWT-based RBAC} auth --- directly analogous to \textbf{advertiser-facing API infrastructure}.}
+\resumeItem{Built \textbf{CI/CD pipelines} (GitHub Actions, Jenkins) with \textbf{Docker} containerization and \textbf{Kubernetes}-ready architecture; established \textbf{Grafana/CloudWatch} dashboards and alerting for \textbf{24/7 on-call} operational stability.}
+\resumeItem{Drove \textbf{code quality} with \textbf{360+ unit/integration tests} achieving \textbf{85\%+ coverage} via \textbf{TDD/BDD}; partnered with cross-functional teams on feature prioritization, timeline management, and release execution.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built optimized \textbf{Spark (Scala/PySpark) distributed jobs} on \textbf{Kubernetes/EMR} clusters processing \textbf{1TB+ datasets}; implemented shuffle optimization, partitioning strategies, and \textbf{Parquet} file layout tuning achieving \textbf{+40\% throughput} and \textbf{99\% job success rate}.}
+\resumeItem{Architected \textbf{parallel data processing pipelines} with windowed aggregations and \textbf{BigQuery}-style analytics for performance measurement; reduced \textbf{pipeline runtime by 50\%} through async batch optimization and compute resource tuning.}
+\resumeItem{Deployed end-to-end \textbf{monitoring with Prometheus/Grafana}; implemented automated drift detection and SLA alerting across distributed infrastructure supporting \textbf{operational stability} improvements.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Analyst}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{monolith-to-microservices migration} on \textbf{AWS EKS}; owned architecture, implementation, and operations of \textbf{event-driven services} in \textbf{Java} and \textbf{Python}; improved availability to \textbf{99.5\%} and reduced infrastructure costs by \textbf{20\%}.}
+\resumeItem{Architected \textbf{real-time event streaming} using \textbf{Kafka (AWS MSK)} with consumer groups and \textbf{DynamoDB Streams}; processed \textbf{500k+ events/day} with dead-letter queues for fault-tolerant async delivery and \textbf{10x spike handling}.}
+\resumeItem{Built \textbf{operational dashboards} with \textbf{Prometheus}, \textbf{Grafana}, and \textbf{CloudWatch}; established \textbf{24/7 on-call} with PagerDuty, reducing \textbf{MTTR by 60\%} through automated runbooks --- directly applicable to \textbf{ads delivery reliability}.}
+\resumeItem{Deployed \textbf{auto-scaling Kubernetes clusters} with \textbf{Docker} and \textbf{Argo} workflows; implemented \textbf{Terraform IaC} across dev/staging/prod with \textbf{CI/CD pipelines} for rapid, safe deployments.}
+\resumeItem{Mentored \textbf{5 developers} on \textbf{Agile/Scrum} practices and \textbf{microservices patterns}; achieved \textbf{90\% unit test coverage} with \textbf{TDD/BDD} across all services.}
+\resumeItemsEnd
+\vspace{-6pt}
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-3pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt,breakable]
+\begin{itemize}
+\resumeItem{\textbf{Self-Hosted Cloud Server (server-east)} --- Provisioned \textbf{Linux home server} with \textbf{Docker}-containerized services (Plex, qBittorrent), \textbf{SSH} via ed25519 keys and \textbf{ngrok tunneling} for remote access, and \textbf{fail2ban} for security. Hosts multiple production apps including Go microservices, Next.js frontends, and Python backends. Tech: \textbf{Linux, Docker, SSH, ngrok, fail2ban, systemd}.}
+
+\resumeItem{\textbf{Go Authentication Microservice} --- Built \textbf{HTTP server in Go} with JSON-based login endpoints, request routing, and method validation. Deployed on \textbf{server-east} with health checks and structured error responses. Tech: \textbf{Go, net/http, JSON}.}
+
+\resumeItem{\textbf{Worker-AI} --- Built \textbf{distributed multi-agent task orchestration platform} with \textbf{FastAPI} backend, \textbf{PostgreSQL} (SQLAlchemy 2.0), \textbf{Redis} caching, and \textbf{Firebase Auth}. Designed \textbf{async API layer} with React Query-powered \textbf{Next.js 14} frontend. Containerized with \textbf{Docker Compose}. Tech: \textbf{Python, FastAPI, PostgreSQL, Redis, Next.js, Docker}.}
+
+\resumeItem{\textbf{BookedFlow} --- Architected \textbf{full-stack CRM/booking platform} with \textbf{Next.js 14}, \textbf{Supabase}, and \textbf{OpenAI agents} integration. Built team collaboration, form workflows, and \textbf{real-time data sync}. Deployed on self-hosted infrastructure. Tech: \textbf{TypeScript, Next.js, Supabase, Tailwind CSS}.}
+
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{Aug 2022 -- May 2024}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Data Communications, Advanced Database Systems, Distributed Systems, Data Mining}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{Aug 2016 -- May 2020}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & AWARDS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST)}
+\resumeItem{2nd Place, SRM University Hackathon (2019)}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

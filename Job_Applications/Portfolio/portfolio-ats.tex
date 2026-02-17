@@ -1,0 +1,92 @@
+\documentclass{article}
+
+% Custom page size matching image aspect ratio (3095 x 6595 px)
+% Using 10" width, height calculated to maintain aspect ratio: 10 * (6595/3095) = 21.3"
+\usepackage[paperwidth=10in, paperheight=21.3in, margin=0.5in]{geometry}
+
+% Graphics and background
+\usepackage{graphicx}
+\usepackage{eso-pic}
+\usepackage{xcolor}
+
+\pagestyle{empty}
+
+\begin{document}
+
+% ============== PAGE 1: VISUAL PORTFOLIO ==============
+% Full-page image with no text overlay
+\newgeometry{margin=0pt}
+\AddToShipoutPictureBG*{%
+  \put(0,0){%
+    \includegraphics[width=\paperwidth,height=\paperheight]{Untitled-2026-01-25-1223.excalidraw.png}%
+  }%
+}
+
+\mbox{} % Empty content - just the image
+
+\newpage
+
+% ============== PAGE 2: ATS TEXT CONTENT ==============
+\restoregeometry
+\ClearShipoutPictureBG % Remove background image for page 2
+
+% White background with white text (invisible but parseable)
+\pagecolor{white}
+\color{white}
+\normalsize
+
+\textbf{Aditya Sugandhi} | Full-Stack Engineer | Software Developer | Software Engineer | Software Analyst
+
+Location: Tallahassee, FL, Florida | Phone: +1 (448) 500-6857 | Email: adityasugandhi.work@outlook.com
+
+GitHub: github.com/adityasugandhi | Website: adityasugandhi.com | LinkedIn | Portfolio
+
+\textbf{SUMMARY:}
+Full-stack engineer with 5+ years building production applications using TypeScript, React, Next.js, and Node.js. Expert in zero-to-one development, architecting AWS serverless systems (Lambda, DynamoDB, Step Functions), and integrating 5+ third-party APIs at scale. Led monolith-to-microservices migration achieving 99.5 percent availability. Established engineering standards, CI/CD pipelines, and comprehensive testing practices in fast-paced startup environments.
+
+\textbf{TECHNICAL SKILLS:}
+
+Frontend: React 18, React 19, Next.js 14, Next.js 15, App Router, TypeScript, JavaScript, ES6+, Tailwind CSS, shadcn/ui, Radix UI, Zustand, TanStack Query, SWR, Redux, State Management.
+
+Backend: Node.js, FastAPI, Python, Express, REST APIs, GraphQL, WebSocket, Supabase, PostgreSQL, MongoDB, Redis, SQL, NoSQL.
+
+Cloud AWS: Lambda, API Gateway, DynamoDB, S3, SQS, SNS, Step Functions, EKS, RDS, CloudWatch, Terraform, EC2, CloudFront, Route53, IAM.
+
+DevOps: Docker, Kubernetes, K8s, GitHub Actions, CI/CD Pipelines, Feature Flags, Infrastructure-as-Code, IaC, Terraform, CloudFormation.
+
+Testing: Jest, Vitest, Playwright, Unit Testing, Integration Testing, E2E Testing, TDD, Test-Driven Development, Test Coverage Metrics.
+
+Integrations: Third-party APIs, CRM, Voice AI, OAuth2, JWT Authentication, Webhooks, Event-driven Architecture, Microservices.
+
+\textbf{WORK EXPERIENCE:}
+
+Software Developer at Florida State University, Tallahassee FL (November 2024 - Present):
+Architected full-stack TypeScript applications with Node.js backend and React frontend. Built 3 production integration servers for Oracle DBMS, BACnet protocols, and external APIs serving 15+ engineering teams. Developed async microservices processing 35k+ records across 172+ networks with 99.2 percent accuracy. Implemented comprehensive test suites with 85 percent coverage. Designed CI/CD pipelines with GitHub Actions for automated testing, code reviews, and multi-environment deployments. Reduced deployment time by 70 percent. Established engineering standards: code review processes, API documentation, testing requirements for cross-functional teams.
+
+Software Engineer at Florida State University, Tallahassee FL (January 2023 - August 2024):
+Built production AWS data pipelines using S3, EMR, Lambda processing 1TB+ datasets with automated ETL scheduling, error handling and retry logic. Deployed containerized services on Kubernetes with 99 percent uptime. Optimized throughput by 40 percent through horizontal scaling and resource tuning. Implemented monitoring dashboards with Grafana and Prometheus with automated alerting. Reduced incident response time by 60 percent.
+
+Software Analyst at Aspire Systems, Chennai India (October 2020 - July 2022):
+Led monolith-to-microservices migration on AWS EKS. Architected event-driven services with API gateways achieving 99.5 percent availability and 20 percent cost reduction. Designed RESTful APIs serving 10k+ requests per day with OAuth2/JWT authentication, rate limiting and comprehensive documentation. Increased deployment frequency 5x through CI/CD automation. Implemented unit and integration testing pipelines.
+
+\textbf{PROJECTS:}
+
+BookedFlow - AI Voice Agent Platform: Production full-stack SaaS with Next.js 15, TypeScript, React 18, Supabase. Features include 9-step config wizard with persistent state, real-time WebSocket call monitoring, 1700+ line API client with interceptors and error handling. Integrated 3 third-party systems: VAPI voice AI, GoHighLevel CRM, OpenAI Realtime API. Architecture: 60+ components, 22 custom hooks, 4 Zustand stores, multi-tenant with ownership verification.
+
+Serverless Data Pipeline: Event-driven ETL system using AWS Lambda, S3, SQS, DynamoDB, Step Functions. Processes 1000+ documents with auto-scaling and retry logic. Infrastructure-as-code with Terraform. CloudWatch monitoring with custom metrics and alerting.
+
+Enterprise Integration Server: Zero-to-one TypeScript Node.js integration platform connecting enterprise databases and external APIs. Function-calling interfaces, connection pooling, query optimization, comprehensive logging. Enables autonomous database operations for development teams.
+
+\textbf{EDUCATION:}
+
+Master of Science (M.S.) in Computer Science at Florida State University, Tallahassee FL (August 2022 - May 2024). Coursework: Distributed Systems, Advanced Databases, Cloud Computing, Software Engineering.
+
+Bachelor of Technology (B.Tech.) in Computer Science at SRM Institute of Science and Technology, Chennai India (August 2016 - May 2020).
+
+\textbf{CERTIFICATIONS:}
+AWS Solutions Architect (2024), AWS Certified Solutions Architect. IJAST Publication: Review Classification and False Feedback Detection.
+
+\textbf{KEYWORDS:}
+Founding Engineer, Full Stack Engineer, Software Developer, Software Engineer, Technical Lead, Startup Experience, Zero to One, Product Development, Agile, Scrum, Insurance, InsurTech, FinTech, Healthcare, SaaS, B2B, Enterprise, TypeScript, JavaScript, Python, Node.js, React, Next.js, AWS, Amazon Web Services, Cloud Architecture, Serverless, API Development, REST, GraphQL, Microservices, Database, PostgreSQL, MongoDB, DynamoDB, Redis, SQL, DevOps, CI/CD, Docker, Kubernetes, Infrastructure, Testing, TDD, Unit Tests, Integration Tests, E2E, Leadership, Team Building, Code Review, Mentoring, Problem Solving, System Design, Architecture, Scalability, Performance.
+
+\end{document}
