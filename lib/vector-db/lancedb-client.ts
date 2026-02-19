@@ -15,22 +15,38 @@ import {
   SearchFilters,
   PROJECTS_TABLE_NAME,
 } from './schemas';
+import { connectRemote, type RemoteLanceConnection } from './lancedb-http-client';
 
 // Database path in user's home directory
-const DB_PATH = path.join(os.homedir(), '.lancedb', 'resume-projects');
+// Configurable via LANCEDB_PROJECTS_PATH env var (supports local paths or S3 URIs)
+const DB_PATH = process.env.LANCEDB_PROJECTS_PATH
+  || path.join(os.homedir(), '.lancedb', 'resume-projects');
 
-let db: lancedb.Connection | null = null;
-let table: lancedb.Table | null = null;
+// Remote server URL (when set, uses HTTP client instead of embedded LanceDB)
+const LANCEDB_SERVER_URL = process.env.LANCEDB_SERVER_URL;
+
+// Unified connection type: embedded or remote
+type LanceConnection = lancedb.Connection | RemoteLanceConnection;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LanceTable = any; // Both lancedb.Table and RemoteLanceTable share the same chainable API
+
+let db: LanceConnection | null = null;
+let table: LanceTable | null = null;
 
 /**
  * Initialize LanceDB connection
  */
-export async function initDatabase(): Promise<lancedb.Connection> {
+export async function initDatabase(): Promise<LanceConnection> {
   if (db) return db;
 
   try {
-    db = await lancedb.connect(DB_PATH);
-    console.log(`LanceDB connected at: ${DB_PATH}`);
+    if (LANCEDB_SERVER_URL) {
+      db = await connectRemote(LANCEDB_SERVER_URL);
+      console.log(`LanceDB connected to remote server: ${LANCEDB_SERVER_URL}`);
+    } else {
+      db = await lancedb.connect(DB_PATH);
+      console.log(`LanceDB connected at: ${DB_PATH}`);
+    }
     return db;
   } catch (error) {
     console.error('Failed to connect to LanceDB:', error);

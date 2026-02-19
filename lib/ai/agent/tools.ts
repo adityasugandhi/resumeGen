@@ -10,6 +10,7 @@ import { scrapeJobPage } from '@/lib/browser-scraper';
 import { JobParser } from '@/lib/ai/job-parser';
 import { calculateJobResumeMatchFromText } from '@/lib/ai/semantic-matcher';
 import { ResumeOptimizer } from '@/lib/ai/resume-optimizer';
+import { selectBestBaseResume } from './resume-loader';
 import { generateQueryEmbedding } from '@/lib/indexer/index-manager';
 import {
   searchPastSearches,
@@ -46,6 +47,7 @@ export interface AgentTool {
 export function createAgentTools(
   masterResumeLatex: string,
   masterResumeData: { experiences: string[]; skills: string[]; projects: string[] },
+  deepContext: string,
   onSelfHeal?: (input: CodeAgentInput) => Promise<void>,
   onEvent?: (event: AgentStepEvent) => void
 ): AgentTool[] {
@@ -88,7 +90,7 @@ export function createAgentTools(
       properties: {},
     },
     handler: async () => {
-      const companies = getAllCompanies();
+      const companies = await getAllCompanies();
       return JSON.stringify(
         companies.map((c) => ({
           name: c.name,
@@ -251,13 +253,32 @@ export function createAgentTools(
     },
     handler: async (input) => {
       try {
+        // Select the best existing tailored resume as the base (not the empty skeleton)
+        const { latex: baseResumeLatex, sourceCompany: baseSource } = await selectBestBaseResume(
+          input.requirements as string[],
+          input.jobTitle as string,
+          input.company as string
+        );
+        console.log(`[tools] Using ${baseSource} resume as base for ${input.company} optimization`);
+        onEvent?.({
+          type: 'optimizing',
+          jobTitle: input.jobTitle as string,
+          company: input.company as string,
+        });
+
+        // Collect top bullets from recall_best_bullets if available via closure
+        // (the agent calls recall_best_bullets before optimize_resume — results are in the Claude context)
+        // We still pass deepContext and empty topBullets; the Groq prompt has the deep context for grounding.
         const optimizer = new ResumeOptimizer();
         const result = await optimizer.optimizeResume(
-          masterResumeLatex,
+          baseResumeLatex,
           input.jobTitle as string,
           input.company as string,
           input.requirements as string[],
-          input.gaps as string[]
+          input.gaps as string[],
+          undefined, // h1bContext
+          deepContext,
+          [] // topBullets — agent passes best bullets via its own context to Claude, which calls this tool
         );
 
         // --- Save .tex to disk ---
@@ -523,10 +544,102 @@ export function createAgentTools(
     },
   };
 
+  const exploreEngineeringRoles: AgentTool = {
+    name: 'explore_engineering_roles',
+    description:
+      'Fetch ALL open jobs from a company and return only engineering / software engineering roles grouped by department. Use this to get a complete picture of a company\'s engineering hiring before selecting specific roles to match against.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        company: { type: 'string', description: 'Company name to explore, e.g. "GlossGenius"' },
+      },
+      required: ['company'],
+    },
+    handler: async (input) => {
+      try {
+        // Fetch ALL jobs (no query filter) so we get the full board
+        const result = await searchJobs({ company: input.company as string });
+
+        if (result.jobs.length === 0) {
+          return JSON.stringify({
+            company: input.company,
+            totalJobs: 0,
+            engineeringRoles: [],
+            departments: {},
+            message: 'No jobs found for this company',
+          });
+        }
+
+        // Engineering-related keywords for filtering
+        const engineeringKeywords = [
+          'software', 'engineer', 'engineering', 'developer', 'frontend',
+          'backend', 'full stack', 'fullstack', 'full-stack', 'devops',
+          'sre', 'infrastructure', 'platform', 'data engineer', 'ml engineer',
+          'machine learning', 'ai engineer', 'systems engineer', 'cloud',
+          'security engineer', 'mobile engineer', 'ios engineer', 'android',
+          'qa engineer', 'test engineer', 'reliability',
+        ];
+
+        const engineeringJobs = result.jobs.filter((job) => {
+          const title = job.title.toLowerCase();
+          const team = job.team.toLowerCase();
+          return engineeringKeywords.some(
+            (kw) => title.includes(kw) || team.includes(kw)
+          );
+        });
+
+        // Group by department/team
+        const departments: Record<string, { count: number; roles: { title: string; location: string; url: string }[] }> = {};
+        for (const job of engineeringJobs) {
+          const dept = job.team || 'Unspecified';
+          if (!departments[dept]) {
+            departments[dept] = { count: 0, roles: [] };
+          }
+          departments[dept].count++;
+          departments[dept].roles.push({
+            title: job.title,
+            location: job.location,
+            url: job.url,
+          });
+        }
+
+        onEvent?.({
+          type: 'engineering_roles',
+          company: input.company as string,
+          totalJobs: result.totalCount,
+          engineeringCount: engineeringJobs.length,
+          departments: Object.keys(departments),
+        });
+
+        return JSON.stringify({
+          company: input.company,
+          platform: result.platform,
+          totalJobs: result.totalCount,
+          engineeringRoleCount: engineeringJobs.length,
+          departments,
+          engineeringRoles: engineeringJobs.map((j) => ({
+            id: j.id,
+            title: j.title,
+            location: j.location,
+            team: j.team,
+            url: j.url,
+          })),
+        });
+      } catch (error) {
+        const err = error as Error;
+        if (onSelfHeal) {
+          await onSelfHeal({ toolName: 'explore_engineering_roles', error: err.message, args: input });
+        }
+        return JSON.stringify({ error: err.message, engineeringRoles: [] });
+      }
+    },
+  };
+
   return [
     scanH1bSponsors,
     listAvailableCompanies,
     searchCompanyJobs,
+    exploreEngineeringRoles,
     fetchJobDetails,
     matchResume,
     optimizeResume,

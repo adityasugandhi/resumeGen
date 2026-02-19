@@ -21,17 +21,19 @@ Follow this exact workflow:
 
 2. CROSS-REFERENCE: Call list_available_companies to see which companies we can search. Find the intersection — H1B sponsors that are also in our searchable registry.
 
-3. SEARCH: For each matched company (up to the limit specified), call search_company_jobs with the job title. Collect all job listings.
+3. EXPLORE ENGINEERING: For each target company (or if a specific company is requested), call explore_engineering_roles to get ALL engineering and software engineering roles at that company. This gives you a complete picture of the engineering hiring landscape — departments, team sizes, and role levels. Use this to identify the best-fit roles rather than relying on keyword search alone.
 
-4. SELECT: From all collected listings, pick the most relevant jobs based on title match and team relevance.
+4. SEARCH: For each matched company (up to the limit specified), call search_company_jobs with the job title. Collect all job listings. If you already explored engineering roles, use those results to select the most relevant positions.
 
-5. FETCH: For each selected job, call fetch_job_details to get the full description and requirements.
+5. SELECT: From all collected listings plus the engineering exploration, pick the most relevant jobs based on title match, team relevance, and seniority level.
 
-6. MATCH: For each fetched job, call match_resume with the requirements array. Include jobTitle, company, and url for career memory storage. Note the score, gaps, and strengths.
+6. FETCH: For each selected job, call fetch_job_details to get the full description and requirements.
 
-7. OPTIMIZE: For jobs scoring above the threshold, optionally call recall_best_bullets with the requirements to find the best-performing bullets from past resumes. Then call optimize_resume with the job details and gaps.
+7. MATCH: For each fetched job, call match_resume with the requirements array. Include jobTitle, company, and url for career memory storage. Note the score, gaps, and strengths.
 
-8. SUMMARIZE: Return your final results as a JSON object (no markdown fencing) with this structure:
+8. OPTIMIZE: For jobs scoring above the threshold, optionally call recall_best_bullets with the requirements to find the best-performing bullets from past resumes. Then call optimize_resume with the job details and gaps.
+
+9. SUMMARIZE: Return your final results as a JSON object (no markdown fencing) with this structure:
 {
   "results": [
     {
@@ -52,10 +54,11 @@ Follow this exact workflow:
   ]
 }
 
-9. STORE LEARNINGS: Call store_learning 1-3 times with insights about strengths, gaps, and patterns discovered during this search. Categories: "strength", "gap", "pattern", "recommendation".
+10. STORE LEARNINGS: Call store_learning 1-3 times with insights about strengths, gaps, and patterns discovered during this search. Categories: "strength", "gap", "pattern", "recommendation".
 
 Rules:
 - Always start with memory check, then H1B scan — never skip these steps
+- When a target company is specified, focus primarily on that company — explore ALL its engineering roles first
 - If a company isn't in the registry, skip it and note why
 - If job fetching fails, skip that job and continue with others
 - Include H1B salary data in your final summary for context
@@ -98,6 +101,7 @@ type TextBlock = { type: 'text'; text: string };
 export interface JobSearchAgentOptions {
   maxJobs?: number;
   matchThreshold?: number;
+  targetCompany?: string;
   onEvent?: (event: AgentStepEvent) => void;
 }
 
@@ -112,6 +116,7 @@ export async function runJobSearchAgent(
 ): Promise<AgentSearchResponse> {
   const maxJobs = options?.maxJobs ?? 5;
   const matchThreshold = options?.matchThreshold ?? 60;
+  const targetCompany = options?.targetCompany;
   const onEvent = options?.onEvent;
 
   // Validate credentials exist
@@ -120,7 +125,7 @@ export async function runJobSearchAgent(
   }
 
   // Auto-load resume data from disk
-  const { latex: masterResumeLatex, resumeData: masterResumeData } = await loadResumeForAgent();
+  const { latex: masterResumeLatex, resumeData: masterResumeData, deepContext } = await loadResumeForAgent();
 
   onEvent?.({
     type: 'resume_loaded',
@@ -160,7 +165,7 @@ export async function runJobSearchAgent(
     }
   };
 
-  const tools = createAgentTools(masterResumeLatex, masterResumeData, onSelfHeal, onEvent);
+  const tools = createAgentTools(masterResumeLatex, masterResumeData, deepContext, onSelfHeal, onEvent);
   const toolHandlers = new Map<string, AgentTool['handler']>(tools.map((t) => [t.name, t.handler]));
 
   // Build Anthropic tool definitions
@@ -172,9 +177,12 @@ export async function runJobSearchAgent(
 
   const { client, model } = createClient();
 
+  const companyClause = targetCompany
+    ? ` Focus specifically on ${targetCompany} — explore ALL their engineering roles first, then select the best matches.`
+    : '';
   const userMessage = `Find the top ${maxJobs} H1B-sponsoring job matches for "${jobTitle}"${
     location ? ` in ${location}` : ''
-  }. Match threshold: ${matchThreshold}%. Generate optimized resumes for qualifying matches.`;
+  }.${companyClause} Match threshold: ${matchThreshold}%. Generate optimized resumes for qualifying matches.`;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const messages: any[] = [{ role: 'user', content: userMessage }];
@@ -301,6 +309,15 @@ function emitToolStartEvent(toolUse: ToolUseBlock, onEvent?: (e: AgentStepEvent)
         type: 'optimizing',
         jobTitle: (input.jobTitle as string) || '',
         company: (input.company as string) || '',
+      });
+      break;
+    case 'explore_engineering_roles':
+      onEvent({
+        type: 'engineering_roles',
+        company: (input.company as string) || '',
+        totalJobs: 0,
+        engineeringCount: 0,
+        departments: [],
       });
       break;
     case 'recall_past_searches':

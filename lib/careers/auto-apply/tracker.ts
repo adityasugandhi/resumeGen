@@ -1,4 +1,13 @@
 import { ApplicationResult } from './types';
+import {
+  trackApplicationInDb,
+  hasApplied as dbHasApplied,
+  getApplicationHistory as dbGetHistory,
+  getApplicationsByCompany as dbGetByCompany,
+  getApplicationStats as dbGetStats,
+  getApplicationsByDate,
+  getAllApplications,
+} from '@/lib/db/queries/application-tracker';
 
 export interface TrackedApplication {
   id: string;
@@ -13,55 +22,48 @@ export interface TrackedApplication {
   submittedAt: number;
 }
 
-// In-memory store for server-side tracking
-// For client-side, use IndexedDB (see lib/indexeddb.ts)
-const applicationLog: TrackedApplication[] = [];
-
-export function trackApplication(result: ApplicationResult, role?: string, url?: string): TrackedApplication {
-  const tracked: TrackedApplication = {
-    id: `app_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-    jobId: result.jobId,
-    company: result.company,
-    role,
-    url,
-    platform: result.platform,
-    status: result.success ? 'submitted' : 'failed',
-    confirmationId: result.confirmationId,
-    error: result.error,
-    submittedAt: result.submittedAt,
-  };
-
-  applicationLog.push(tracked);
-
-  // Log to console for server-side visibility
-  const logLine = `[AUTO-APPLY] ${new Date(tracked.submittedAt).toISOString()} | ${tracked.status.toUpperCase()} | ${tracked.company} | ${tracked.role || 'N/A'} | ${tracked.platform}`;
-  if (tracked.status === 'failed') {
-    console.error(logLine, tracked.error);
-  } else {
-    console.log(logLine);
-  }
-
-  return tracked;
+export async function trackApplication(
+  result: ApplicationResult,
+  role?: string,
+  url?: string
+): Promise<TrackedApplication> {
+  return trackApplicationInDb(result, role, url);
 }
 
-export function getApplicationHistory(limit = 50): TrackedApplication[] {
-  return applicationLog.slice(-limit);
+export async function getApplicationHistory(limit = 50): Promise<TrackedApplication[]> {
+  return dbGetHistory(limit);
 }
 
-export function getApplicationsByCompany(company: string): TrackedApplication[] {
-  return applicationLog.filter(
-    (a) => a.company.toLowerCase() === company.toLowerCase()
-  );
+export async function getApplicationsByCompany(company: string): Promise<TrackedApplication[]> {
+  return dbGetByCompany(company);
 }
 
-export function getApplicationStats(): {
+export async function getApplicationStats(): Promise<{
   total: number;
   submitted: number;
   failed: number;
-} {
-  return {
-    total: applicationLog.length,
-    submitted: applicationLog.filter((a) => a.status === 'submitted').length,
-    failed: applicationLog.filter((a) => a.status === 'failed').length,
-  };
+}> {
+  return dbGetStats();
+}
+
+export class PersistentTracker {
+  async hasApplied(url: string): Promise<boolean> {
+    return dbHasApplied(url);
+  }
+
+  async track(result: ApplicationResult, role?: string, url?: string): Promise<TrackedApplication> {
+    return trackApplicationInDb(result, role, url);
+  }
+
+  async getStats(): Promise<{ total: number; submitted: number; failed: number }> {
+    return dbGetStats();
+  }
+
+  async getByDate(date: string): Promise<TrackedApplication[]> {
+    return getApplicationsByDate(date);
+  }
+
+  async getAll(): Promise<TrackedApplication[]> {
+    return getAllApplications();
+  }
 }

@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
         const results = await runJobSearchAgent(body.jobTitle, body.location, {
           maxJobs: body.maxJobs ?? 5,
           matchThreshold: body.matchThreshold ?? 60,
+          targetCompany: body.targetCompany,
           onEvent,
         });
 

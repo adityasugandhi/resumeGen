@@ -6,8 +6,8 @@ import { MapPin, DollarSign, Briefcase, ChevronRight, Wand2 } from 'lucide-react
 import { getCompanyLogoUrl, extractDomain } from '@/store/companyStore';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import CountUp from '@/components/CountUp';
-import SpotlightCard from '@/components/SpotlightCard';
+import CountUp from '@/components/animations/CountUp';
+import SpotlightCard from '@/components/animations/SpotlightCard';
 import { StatusBadge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 

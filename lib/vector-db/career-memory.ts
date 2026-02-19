@@ -20,20 +20,36 @@ import {
   type CareerSearchResult,
   type MemoryStats,
 } from './career-schemas';
+import { connectRemote, type RemoteLanceConnection } from './lancedb-http-client';
 
 // Separate DB path from the project knowledge base
-const CAREER_DB_PATH = path.join(os.homedir(), '.lancedb', 'career-memory');
+// Configurable via LANCEDB_CAREER_PATH env var (supports local paths or S3 URIs)
+const CAREER_DB_PATH = process.env.LANCEDB_CAREER_PATH
+  || path.join(os.homedir(), '.lancedb', 'career-memory');
 
-let db: lancedb.Connection | null = null;
-const tableCache = new Map<string, lancedb.Table>();
+// Remote server URL (when set, uses HTTP client instead of embedded LanceDB)
+const LANCEDB_SERVER_URL = process.env.LANCEDB_SERVER_URL;
+
+// Unified connection type: embedded or remote
+type LanceConnection = lancedb.Connection | RemoteLanceConnection;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LanceTable = any; // Both lancedb.Table and RemoteLanceTable share the same chainable API
+
+let db: LanceConnection | null = null;
+const tableCache = new Map<string, LanceTable>();
 
 // ---- Connection ----
 
-export async function initCareerMemory(): Promise<lancedb.Connection> {
+export async function initCareerMemory(): Promise<LanceConnection> {
   if (db) return db;
   try {
-    db = await lancedb.connect(CAREER_DB_PATH);
-    console.log(`Career memory connected at: ${CAREER_DB_PATH}`);
+    if (LANCEDB_SERVER_URL) {
+      db = await connectRemote(LANCEDB_SERVER_URL);
+      console.log(`Career memory connected to remote server: ${LANCEDB_SERVER_URL}`);
+    } else {
+      db = await lancedb.connect(CAREER_DB_PATH);
+      console.log(`Career memory connected at: ${CAREER_DB_PATH}`);
+    }
     return db;
   } catch (error) {
     console.error('Failed to connect to career memory DB:', error);

@@ -5,7 +5,7 @@ import { Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ResumeChange } from '@/lib/indexeddb';
 import { cn } from '@/lib/utils';
-import GlareHover from '@/components/GlareHover';
+import GlareHover from '@/components/animations/GlareHover';
 
 interface ChangeCardProps {
   change: ResumeChange;

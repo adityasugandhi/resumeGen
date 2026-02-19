@@ -5,7 +5,7 @@ import type { CodeAgentInput } from './types';
 const PROJECT_ROOT = process.cwd();
 
 // Allowed directories for code agent modifications
-const ALLOWED_WRITE_DIRS = ['lib/careers/providers/', 'lib/ai/', 'lib/careers/company-registry.ts', 'lib/vector-db/'];
+const ALLOWED_WRITE_DIRS = ['lib/careers/providers/', 'lib/careers/auto-apply/providers/', 'lib/ai/', 'lib/careers/company-registry.ts', 'lib/vector-db/'];
 
 function isPathAllowed(filePath: string): boolean {
   const rel = relative(PROJECT_ROOT, filePath);

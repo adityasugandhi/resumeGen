@@ -3,7 +3,7 @@
 import React from 'react';
 import { Sparkles, CheckCircle2, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
-import CountUp from '@/components/CountUp';
+import CountUp from '@/components/animations/CountUp';
 
 interface SuggestionHeaderProps {
   summary: string;

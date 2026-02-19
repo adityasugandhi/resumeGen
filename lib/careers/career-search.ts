@@ -7,7 +7,7 @@ import { listStripeNativeJobs } from './providers/stripe';
 import { listCloudflareJobs } from './providers/cloudflare';
 
 export async function searchJobs(params: CareerSearchParams): Promise<CareerSearchResult> {
-  const config = getCompanyConfig(params.company);
+  const config = await getCompanyConfig(params.company);
 
   if (!config) {
     return {

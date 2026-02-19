@@ -3,6 +3,7 @@
 export interface AgentSearchRequest {
   jobTitle: string;
   location?: string;
+  targetCompany?: string;
   maxJobs?: number;
   matchThreshold?: number;
   /** @deprecated Resume data is now auto-loaded from disk */
@@ -33,7 +34,8 @@ export type AgentStepEvent =
   | { type: 'resume_loaded'; message: string; experiences: number; skills: number; projects: number }
   | { type: 'memory_health'; message: string; fixed: boolean; filesModified: string[] }
   | { type: 'file_saved'; filePath: string; company: string }
-  | { type: 'pdf_compiled'; pdfPath: string; compilationMethod: string };
+  | { type: 'pdf_compiled'; pdfPath: string; compilationMethod: string }
+  | { type: 'engineering_roles'; company: string; totalJobs: number; engineeringCount: number; departments: string[] };
 
 export interface AgentJobResult {
   title: string;

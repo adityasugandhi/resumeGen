@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { X, Check, AlertCircle, FileText, ZapIcon, Eye, List } from 'lucide-react';
-import ElectricBorder from '@/components/ElectricBorder';
-import FadeContent from '@/components/FadeContent';
-import GlareHover from '@/components/GlareHover';
+import ElectricBorder from '@/components/animations/ElectricBorder';
+import FadeContent from '@/components/animations/FadeContent';
+import GlareHover from '@/components/animations/GlareHover';
 import { ResumeVersion, ResumeChange } from '@/lib/indexeddb';
 import { cn } from '@/lib/utils';
 import { useResumeStore } from '@/store/resumeStore';

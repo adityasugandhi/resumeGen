@@ -32,7 +32,7 @@ export class JobApplicationEngine {
     company: string,
     options?: ApplyOptions
   ): Promise<ApplicationResult> {
-    const config = getCompanyConfig(company);
+    const config = await getCompanyConfig(company);
     if (!config) {
       return {
         success: false,
@@ -83,7 +83,7 @@ export class JobApplicationEngine {
     };
 
     const result = await provider.apply(jobId, config.boardToken, payload);
-    trackApplication(result, undefined, undefined);
+    await trackApplication(result, undefined, undefined);
     return result;
   }
 
@@ -104,7 +104,7 @@ export class JobApplicationEngine {
   }
 
   async getFormSchema(jobId: string, company: string) {
-    const config = getCompanyConfig(company);
+    const config = await getCompanyConfig(company);
     if (!config) throw new Error(`Company "${company}" not found in registry`);
 
     const provider = this.providers.get(config.platform);

@@ -1,3 +1,9 @@
+// Shared types imported from the canonical definitions in types/index.ts
+import type { KeywordCategory, ExtractedKeyword, ATSScore } from './index';
+
+// Re-export so existing consumers of types/diff.ts don't break
+export type { KeywordCategory, ExtractedKeyword, ATSScore };
+
 // Change categorization for resume optimization
 export type ChangeCategory =
   | 'grammar'
@@ -8,23 +14,6 @@ export type ChangeCategory =
   | 'latex_formatting'
   | 'quantification'
   | 'action_verb';
-
-// Keyword classification for ATS optimization
-export type KeywordCategory =
-  | 'hard_skill'
-  | 'soft_skill'
-  | 'action_verb'
-  | 'industry_term'
-  | 'metric'
-  | 'technology';
-
-// Extracted keyword with metadata
-export interface ExtractedKeyword {
-  word: string;
-  category: KeywordCategory;
-  isNew: boolean;
-  frequency: number;
-}
 
 // Enhanced resume change with rich metadata
 export interface EnhancedResumeChange {
@@ -102,14 +91,3 @@ export interface CompiledPDF {
   compiledAt: number;
 }
 
-// ATS score calculation
-export interface ATSScore {
-  score: number; // 0-100
-  breakdown: {
-    keywordDensity: number;
-    formatCompliance: number;
-    sectionCompleteness: number;
-    quantificationLevel: number;
-  };
-  recommendations: string[];
-}

@@ -1,4 +1,5 @@
-import Groq from 'groq-sdk';
+import Anthropic from '@anthropic-ai/sdk';
+import AnthropicBedrock from '@anthropic-ai/bedrock-sdk';
 import { v4 as uuidv4 } from 'uuid';
 import { ResumeChange } from '@/lib/indexeddb';
 
@@ -9,13 +10,40 @@ export interface OptimizationResult {
   confidenceScore: number;
 }
 
-export class ResumeOptimizer {
-  private client: Groq;
+function createOptimizerClient(): { client: Anthropic | AnthropicBedrock; model: string } {
+  const bedrockToken = process.env.AWS_BEARER_TOKEN_BEDROCK;
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
-  constructor(apiKey?: string) {
-    this.client = new Groq({
-      apiKey: apiKey || process.env.GROQ_API_KEY,
-    });
+  if (bedrockToken) {
+    const region = process.env.BEDROCK_AWS_REGION ?? 'us-east-1';
+    return {
+      client: new AnthropicBedrock({
+        awsRegion: region,
+        skipAuth: true,
+        defaultHeaders: { Authorization: `Bearer ${bedrockToken}` },
+      }),
+      model: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
+    };
+  }
+
+  if (anthropicKey) {
+    return {
+      client: new Anthropic({ apiKey: anthropicKey }),
+      model: 'claude-sonnet-4-5-20250929',
+    };
+  }
+
+  throw new Error('No AI API key configured. Set ANTHROPIC_API_KEY or AWS_BEARER_TOKEN_BEDROCK.');
+}
+
+export class ResumeOptimizer {
+  private client: Anthropic | AnthropicBedrock;
+  private model: string;
+
+  constructor() {
+    const { client, model } = createOptimizerClient();
+    this.client = client;
+    this.model = model;
   }
 
   /**
@@ -113,20 +141,38 @@ export class ResumeOptimizer {
     jobCompany: string,
     jobRequirements: string[],
     gapAnalysis: string[],
-    h1bContext?: string
+    h1bContext?: string,
+    deepContext?: string,
+    topBullets?: string[]
   ): Promise<OptimizationResult> {
     const marketContextBlock = h1bContext
       ? `\nMarket Context (H1B Data):\n${h1bContext}\nUse this salary data to emphasize skills and experience that command higher H1B wages in this market.\n`
       : '';
 
+    const deepContextBlock = deepContext
+      ? `\nAdditional Context (real project details for this candidate — use these for accurate bullet points):\n${deepContext}\n`
+      : '';
+
+    const topBulletsBlock = topBullets && topBullets.length > 0
+      ? `\nHigh-performing bullets from past tailored resumes (use these as inspiration for rephrasing):\n${topBullets.map((b, i) => `  ${i + 1}. ${b}`).join('\n')}\n`
+      : '';
+
     const prompt = `You are an expert resume optimization assistant. Your task is to tailor a resume for a specific job posting while maintaining honesty and accuracy.
+
+CRITICAL RULES:
+- The original resume below contains REAL experiences at REAL companies. DO NOT replace them with fabricated content.
+- Keep the same companies: Florida State University (Prof. Olmo Zavala Romero — FSU), Aspire Systems, and any others present.
+- Keep the same dates and locations — do not invent new employment dates.
+- Keep the same education: M.S. Computer Science from Florida State University, B.Tech from SRM Institute.
+- You may REORDER bullets, REPHRASE for emphasis, or ADD relevant keywords — but NEVER invent new roles, companies, or degrees.
+- If the resume has placeholder markers like "%%% CONTENT HERE %%%" — this is a SKELETON. Use the Additional Context section below to fill it with REAL content.
 
 Job Information:
 - Title: ${jobTitle}
 - Company: ${jobCompany}
 - Key Requirements:
 ${jobRequirements.map((req, idx) => `  ${idx + 1}. ${req}`).join('\n')}
-${marketContextBlock}
+${marketContextBlock}${deepContextBlock}${topBulletsBlock}
 Identified Gaps:
 ${gapAnalysis.length > 0 ? gapAnalysis.map((gap, idx) => `  ${idx + 1}. ${gap}`).join('\n') : 'None'}
 
@@ -162,8 +208,8 @@ Return your response in this EXACT JSON format:
 
 Be strategic but honest. Focus on presenting existing qualifications in the most relevant way.`;
 
-    const response = await this.client.chat.completions.create({
-      model: process.env.GROQ_OPTIMIZER_MODEL || 'llama-3.3-70b-versatile',
+    const response = await this.client.messages.create({
+      model: this.model,
       max_tokens: 8192,
       messages: [
         {
@@ -171,12 +217,13 @@ Be strategic but honest. Focus on presenting existing qualifications in the most
           content: prompt,
         },
       ],
-      temperature: 0.2, // Low temperature for structured, accurate optimization
+      temperature: 0.2,
     });
 
-    const content = response.choices[0]?.message?.content;
+    const firstBlock = response.content[0];
+    const content = firstBlock && firstBlock.type === 'text' ? firstBlock.text : null;
     if (!content) {
-      throw new Error('No text response from Groq');
+      throw new Error('No text response from Claude');
     }
 
     // Extract JSON from response
@@ -257,8 +304,8 @@ Tone: Professional, confident, but not arrogant. Show genuine interest.
 
 Return ONLY the cover letter text, no JSON or markdown.`;
 
-    const response = await this.client.chat.completions.create({
-      model: process.env.GROQ_OPTIMIZER_MODEL || 'llama-3.3-70b-versatile',
+    const response = await this.client.messages.create({
+      model: this.model,
       max_tokens: 1024,
       messages: [
         {
@@ -266,12 +313,13 @@ Return ONLY the cover letter text, no JSON or markdown.`;
           content: prompt,
         },
       ],
-      temperature: 0.4, // Moderate temperature for creative but professional cover letter
+      temperature: 0.4,
     });
 
-    const content = response.choices[0]?.message?.content;
+    const firstBlock = response.content[0];
+    const content = firstBlock && firstBlock.type === 'text' ? firstBlock.text : null;
     if (!content) {
-      throw new Error('No text response from Groq');
+      throw new Error('No text response from Claude');
     }
 
     return content.trim();

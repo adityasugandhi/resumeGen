@@ -1,0 +1,14 @@
+services:
+  lancedb:
+    build:
+      context: .
+      dockerfile: lancedb-server.Dockerfile
+    container_name: RealLanceDB
+    ports:
+      - "8002:8002"
+    volumes:
+      - lancedb_data:/data/lancedb
+    restart: unless-stopped
+
+volumes:
+  lancedb_data:

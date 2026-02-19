@@ -404,6 +404,83 @@ async function isCacheValid(mtimes: Map<string, number>): Promise<boolean> {
 }
 
 /**
+ * Select the best existing tailored resume as a base for optimization.
+ * Scores each resume against job requirements using keyword overlap.
+ * Falls back to the most generic resume (Google) if no good match.
+ */
+export async function selectBestBaseResume(
+  jobRequirements: string[],
+  jobTitle: string,
+  excludeCompany?: string
+): Promise<{ latex: string; sourceCompany: string }> {
+  const resumes: { sourceCompany: string; latex: string; score: number }[] = [];
+
+  // Build a set of lowercase requirement keywords for matching
+  const requirementKeywords = new Set<string>();
+  for (const req of jobRequirements) {
+    for (const word of req.toLowerCase().split(/\W+/)) {
+      if (word.length > 2) requirementKeywords.add(word);
+    }
+  }
+  // Also add words from job title
+  for (const word of jobTitle.toLowerCase().split(/\W+/)) {
+    if (word.length > 2) requirementKeywords.add(word);
+  }
+
+  try {
+    const companyDirs = await fs.readdir(COMPANIES_DIR, { withFileTypes: true });
+
+    for (const dir of companyDirs) {
+      if (!dir.isDirectory()) continue;
+      // Skip the target company's directory to avoid self-reinforcing hallucination loops
+      if (excludeCompany && dir.name.toLowerCase() === excludeCompany.toLowerCase()) continue;
+
+      const companyPath = path.join(COMPANIES_DIR, dir.name);
+      const files = await fs.readdir(companyPath);
+
+      for (const file of files) {
+        if (!file.endsWith('.tex') || file.includes('Cover_Letter')) continue;
+
+        const filePath = path.join(companyPath, file);
+        try {
+          const latex = await fs.readFile(filePath, 'utf-8');
+          // Skip empty/skeleton templates
+          if (latex.includes('%%% CONTENT HERE %%%') || latex.length < 500) continue;
+
+          // Score: count how many requirement keywords appear in the resume
+          const lowerLatex = latex.toLowerCase();
+          let score = 0;
+          for (const keyword of requirementKeywords) {
+            if (lowerLatex.includes(keyword)) score++;
+          }
+
+          resumes.push({ sourceCompany: dir.name, latex, score });
+        } catch {
+          // skip unreadable files
+        }
+      }
+    }
+  } catch {
+    console.warn('[resume-loader] Companies directory not found for base resume selection');
+  }
+
+  if (resumes.length === 0) {
+    // Absolute fallback: return the master template
+    const masterLatex = await parseMasterTemplate();
+    return { latex: masterLatex, sourceCompany: 'master' };
+  }
+
+  // Sort by score descending, pick the best
+  resumes.sort((a, b) => b.score - a.score);
+
+  console.log(
+    `[resume-loader] Best base resume: ${resumes[0].sourceCompany} (score: ${resumes[0].score}/${requirementKeywords.size} keywords)`
+  );
+
+  return { latex: resumes[0].latex, sourceCompany: resumes[0].sourceCompany };
+}
+
+/**
  * List all tailored resume file paths for indexing
  */
 export async function listTailoredResumePaths(): Promise<string[]> {
