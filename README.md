@@ -28,7 +28,7 @@ Before you begin, ensure you have the following installed:
 
 ### LaTeX Package Requirements
 
-The default resume template uses custom fonts and packages. See [LATEX_PACKAGES.md](./LATEX_PACKAGES.md) for detailed package requirements and installation instructions.
+The default resume template uses custom fonts and packages. See [LATEX_PACKAGES.md](./docs/LATEX_PACKAGES.md) for detailed package requirements and installation instructions.
 
 **Quick install for required fonts:**
 ```bash
