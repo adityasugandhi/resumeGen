@@ -54,7 +54,7 @@ npm run queue:submit:dry   # Dry run submission
 
 ## Prerequisites
 
-- **Required**: Node.js 20+, Groq API Key (`GROQ_API_KEY` in `.env.local`)
+- **Required**: Node.js 20+, OpenRouter API Key (`OPENROUTER_API_KEY`) OR Groq API Key (`GROQ_API_KEY`) in `.env.local`
 - **Recommended**: Docker Desktop + `texlive/texlive:latest` for local LaTeX compilation
 - **For career automation**: PostgreSQL + `DATABASE_URL`, Anthropic API Key or AWS Bedrock token
 - **Optional**: SuperMemory API Key, Perplexity API Key, Logo.dev token
@@ -65,7 +65,9 @@ Without Docker, falls back to online LaTeX compilation with limited package supp
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `GROQ_API_KEY` | Yes | Groq API for job parsing |
+| `OPENROUTER_API_KEY` | Recommended | OpenRouter API for job parsing + career explorer (~4x cheaper than Groq) |
+| `OPENROUTER_MODEL` | No | Default: `meta-llama/llama-3.3-70b-instruct` |
+| `GROQ_API_KEY` | Fallback | Groq API — used when `OPENROUTER_API_KEY` is not set |
 | `GROQ_JOB_PARSER_MODEL` | No | Default: `llama3-groq-70b-8192-tool-use-preview` |
 | `GROQ_OPTIMIZER_MODEL` | No | Default: `llama-3.3-70b-versatile` |
 | `DATABASE_URL` | For automation | PostgreSQL connection string |

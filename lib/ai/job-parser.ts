@@ -5,6 +5,7 @@
 
 
 import Groq from 'groq-sdk';
+import OpenAI from 'openai';
 import { z } from 'zod';
 
 // Zod schema for structured job extraction
@@ -22,20 +23,40 @@ export const JobDataSchema = z.object({
 
 export type JobData = z.infer<typeof JobDataSchema>;
 
-const GROQ_SDK_MAX_RETRIES = 3;
+const MAX_RETRIES = 3;
+
+// OpenRouter model ID for Llama 3.3 70B
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct';
 
 export class JobParser {
-  private client: Groq;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private client: any; // Groq or OpenAI — both are OpenAI-compatible
+  private provider: 'openrouter' | 'groq';
+  private modelName: string;
 
   constructor(apiKey?: string) {
-    this.client = new Groq({
-      apiKey: apiKey || process.env.GROQ_API_KEY,
-    });
+    const openRouterKey = process.env.OPENROUTER_API_KEY;
+    if (openRouterKey) {
+      this.client = new OpenAI({
+        apiKey: openRouterKey,
+        baseURL: 'https://openrouter.ai/api/v1',
+      });
+      this.provider = 'openrouter';
+      this.modelName = OPENROUTER_MODEL;
+      console.log(`[JobParser] Using OpenRouter (${this.modelName})`);
+    } else {
+      this.client = new Groq({
+        apiKey: apiKey || process.env.GROQ_API_KEY,
+      });
+      this.provider = 'groq';
+      this.modelName = process.env.GROQ_JOB_PARSER_MODEL || 'llama-3.3-70b-versatile';
+      console.log(`[JobParser] Using Groq (${this.modelName})`);
+    }
   }
 
   /**
-   * Call Groq SDK with retry logic for rate limits (429) and service errors (503).
-   * Uses exponential backoff with jitter.
+   * Call LLM API with retry logic for rate limits (429) and service errors (503).
+   * Uses exponential backoff with jitter. Works with both Groq and OpenRouter (OpenAI-compat).
    */
   private async callWithRetry(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,7 +64,7 @@ export class JobParser {
   ): Promise<any> {
     let lastError: unknown = null;
 
-    for (let attempt = 0; attempt < GROQ_SDK_MAX_RETRIES; attempt++) {
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return await this.client.chat.completions.create(params as any);
@@ -54,10 +75,10 @@ export class JobParser {
           (error as { status?: number }).status ||
           0;
 
-        if ((status === 429 || status === 503) && attempt < GROQ_SDK_MAX_RETRIES - 1) {
+        if ((status === 429 || status === 503) && attempt < MAX_RETRIES - 1) {
           const waitMs = Math.min(1000 * Math.pow(2, attempt) + Math.random() * 500, 10000);
           console.warn(
-            `[JobParser] Groq rate limited (${status}), retrying in ${Math.round(waitMs)}ms (attempt ${attempt + 1}/${GROQ_SDK_MAX_RETRIES})`
+            `[JobParser] ${this.provider} rate limited (${status}), retrying in ${Math.round(waitMs)}ms (attempt ${attempt + 1}/${MAX_RETRIES})`
           );
           await new Promise(resolve => setTimeout(resolve, waitMs));
           continue;
@@ -67,7 +88,7 @@ export class JobParser {
       }
     }
 
-    throw lastError || new Error('Groq SDK call failed after retries');
+    throw lastError || new Error(`${this.provider} API call failed after retries`);
   }
 
   /**
@@ -190,7 +211,7 @@ IMPORTANT: Respond with ONLY a valid JSON object. No explanatory text before or 
 }`;
 
     const response = await this.callWithRetry({
-      model: process.env.GROQ_JOB_PARSER_MODEL || 'llama-3.3-70b-versatile',
+      model: this.modelName,
       max_tokens: 4096,
       messages: [
         {
@@ -205,9 +226,21 @@ IMPORTANT: Respond with ONLY a valid JSON object. No explanatory text before or 
       temperature: 0.1, // Low temperature for structured extraction
     });
 
+    // Track token usage
+    if (response.usage) {
+      const { TokenTracker } = await import('@/lib/ai/token-tracker');
+      TokenTracker.getInstance().record(
+        this.modelName,
+        response.usage.prompt_tokens || 0,
+        response.usage.completion_tokens || 0,
+        'job_parser',
+        'current'
+      );
+    }
+
     const responseContent = response.choices[0]?.message?.content;
     if (!responseContent) {
-      throw new Error('No text response from Groq');
+      throw new Error(`No text response from ${this.provider}`);
     }
 
     // Extract JSON from response using multiple strategies
@@ -238,7 +271,7 @@ ${jobData.requirements.slice(0, 5).join('\n')}
 Focus on what makes this role unique and what the ideal candidate should have.`;
 
     const response = await this.callWithRetry({
-      model: process.env.GROQ_JOB_PARSER_MODEL || 'llama-3.3-70b-versatile',
+      model: this.modelName,
       max_tokens: 256,
       messages: [
         {
@@ -249,9 +282,21 @@ Focus on what makes this role unique and what the ideal candidate should have.`;
       temperature: 0.3, // Slightly higher for creative summary
     });
 
+    // Track token usage
+    if (response.usage) {
+      const { TokenTracker } = await import('@/lib/ai/token-tracker');
+      TokenTracker.getInstance().record(
+        this.modelName,
+        response.usage.prompt_tokens || 0,
+        response.usage.completion_tokens || 0,
+        'job_parser',
+        'current'
+      );
+    }
+
     const summaryContent = response.choices[0]?.message?.content;
     if (!summaryContent) {
-      throw new Error('No text response from Groq');
+      throw new Error(`No text response from ${this.provider}`);
     }
 
     return summaryContent.trim();

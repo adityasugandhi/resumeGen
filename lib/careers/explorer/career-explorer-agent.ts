@@ -327,9 +327,9 @@ export class CareerExplorerAgent {
 
             // Strategy 4: FlareSolverr fallback
             try {
-              extractedJobs = await this.extractJobsViaGroq(currentPageUrl, companyName);
-            } catch (groqErr) {
-              console.warn(`[explorer] All extraction failed on page ${pageNum + 1}:`, (groqErr as Error).message);
+              extractedJobs = await this.extractJobsViaLlm(currentPageUrl, companyName);
+            } catch (llmErr) {
+              console.warn(`[explorer] All extraction failed on page ${pageNum + 1}:`, (llmErr as Error).message);
               break;
             }
           }
@@ -612,15 +612,41 @@ export class CareerExplorerAgent {
   }
 
   /**
-   * Extract jobs from HTML content using Groq JSON mode.
+   * Get the best available LLM provider config for HTML extraction.
+   * Prefers OpenRouter (cheaper, no rate limits) over Groq.
+   */
+  private getLlmConfig(): { apiUrl: string; apiKey: string; model: string; provider: string } | null {
+    const openRouterKey = process.env.OPENROUTER_API_KEY;
+    if (openRouterKey) {
+      return {
+        apiUrl: 'https://openrouter.ai/api/v1/chat/completions',
+        apiKey: openRouterKey,
+        model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.3-70b-instruct',
+        provider: 'openrouter',
+      };
+    }
+    const groqKey = process.env.GROQ_API_KEY;
+    if (groqKey) {
+      return {
+        apiUrl: 'https://api.groq.com/openai/v1/chat/completions',
+        apiKey: groqKey,
+        model: process.env.GROQ_JOB_PARSER_MODEL || 'llama-3.3-70b-versatile',
+        provider: 'groq',
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Extract jobs from HTML content using LLM JSON mode (OpenRouter preferred, Groq fallback).
    */
   private async extractJobsFromHtml(
     html: string,
     pageUrl: string,
     companyName: string
   ): Promise<{ title: string; location?: string | null; team?: string | null; url: string }[]> {
-    const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) return [];
+    const llm = this.getLlmConfig();
+    if (!llm) return [];
 
     // Strip script/style tags and truncate to reduce tokens
     const cleaned = html
@@ -630,14 +656,14 @@ export class CareerExplorerAgent {
       .replace(/<footer[\s\S]*?<\/footer>/gi, '');
     const truncated = cleaned.length > 20000 ? cleaned.slice(0, 20000) : cleaned;
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const response = await fetch(llm.apiUrl, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${groqKey}`,
+        Authorization: `Bearer ${llm.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: process.env.GROQ_JOB_PARSER_MODEL || 'llama-3.3-70b-versatile',
+        model: llm.model,
         messages: [
           {
             role: 'system',
@@ -654,7 +680,7 @@ export class CareerExplorerAgent {
       }),
     });
 
-    if (!response.ok) throw new Error(`Groq API error: ${response.status}`);
+    if (!response.ok) throw new Error(`${llm.provider} API error: ${response.status}`);
 
     const data = await response.json() as { choices: { message: { content: string } }[] };
     const content = data.choices?.[0]?.message?.content;
@@ -670,31 +696,31 @@ export class CareerExplorerAgent {
 
   /**
    * Fallback extraction: use FlareSolverr to get the rendered HTML,
-   * then call Groq directly with JSON mode for structured extraction.
+   * then call LLM directly with JSON mode for structured extraction.
    */
-  private async extractJobsViaGroq(
+  private async extractJobsViaLlm(
     pageUrl: string,
     companyName: string
   ): Promise<{ title: string; location?: string | null; team?: string | null; url: string }[]> {
     const flareAvailable = await isFlareSolverrAvailable();
     if (!flareAvailable) return [];
 
+    const llm = this.getLlmConfig();
+    if (!llm) return [];
+
     const result = await flareSolve(pageUrl, 30000);
     const html = result.html;
 
     const truncated = html.length > 15000 ? html.slice(0, 15000) : html;
 
-    const groqKey = process.env.GROQ_API_KEY;
-    if (!groqKey) return [];
-
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const response = await fetch(llm.apiUrl, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${groqKey}`,
+        Authorization: `Bearer ${llm.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: process.env.GROQ_JOB_PARSER_MODEL || 'llama-3.3-70b-versatile',
+        model: llm.model,
         messages: [
           {
             role: 'system',
@@ -712,7 +738,7 @@ export class CareerExplorerAgent {
     });
 
     if (!response.ok) {
-      throw new Error(`Groq API error: ${response.status}`);
+      throw new Error(`${llm.provider} API error: ${response.status}`);
     }
 
     const data = await response.json() as {
