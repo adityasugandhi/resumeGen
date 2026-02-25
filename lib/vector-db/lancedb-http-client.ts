@@ -26,6 +26,8 @@ const DEFAULT_OPTIONS: HttpOptions = {
   retryDelay: 1000,
 };
 
+const DEFAULT_TIMEOUT_MS = 30_000; // 30 seconds
+
 async function fetchWithRetry(
   url: string,
   options: RequestInit = {},
@@ -37,25 +39,37 @@ async function fetchWithRetry(
     ...options.headers,
   };
 
-  const fetchOptions: RequestInit = { ...options, headers };
   let lastError: Error | null = null;
   const maxAttempts = (httpOptions.retries ?? 0) + 1;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
+
     try {
-      const response = await fetch(url, fetchOptions);
+      const response = await fetch(url, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
       return response;
     } catch (error) {
-      lastError = error as Error;
-      if (attempt < maxAttempts && isNetworkError(error)) {
+      clearTimeout(timer);
+      if ((error as Error).name === 'AbortError') {
+        lastError = new Error(`Request timed out after ${DEFAULT_TIMEOUT_MS}ms: ${url}`);
+      } else {
+        lastError = error as Error;
+      }
+      if (attempt < maxAttempts && (isNetworkError(error) || (error as Error).name === 'AbortError')) {
         await sleep(httpOptions.retryDelay ?? 1000);
         continue;
       }
-      throw error;
+      throw lastError;
     }
   }
 
@@ -262,7 +276,10 @@ export class RemoteVectorSearch {
 export async function connectRemote(serverUrl: string): Promise<RemoteLanceConnection> {
   const connection = new RemoteLanceConnection(serverUrl);
   try {
-    await connection.tableNames();
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Connection timed out after 10s')), 10_000)
+    );
+    await Promise.race([connection.tableNames(), timeoutPromise]);
   } catch (error) {
     throw new Error(`Failed to connect to LanceDB server at ${serverUrl}: ${error}`);
   }

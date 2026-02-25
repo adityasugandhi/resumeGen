@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { createAgentTools, type AgentTool } from './tools';
 import { runCodeAgent } from './code-agent';
 import { loadResumeForAgent } from './resume-loader';
+import { createRunLogger } from '@/lib/logger';
 import { generateQueryEmbedding } from '@/lib/indexer/index-manager';
 import { storeJobSearch, storeLearning as storeCareerLearning } from '@/lib/vector-db/career-memory';
 import type { JobSearchDoc, LearningDoc } from '@/lib/vector-db/career-schemas';
@@ -47,6 +48,9 @@ export async function runJobSearchAgent(
   const onEvent = options?.onEvent;
   const maxCompanies = 10;
   const maxJobsPerCompany = Math.max(3, Math.ceil(maxJobs / 2));
+
+  const runLog = createRunLogger(uuidv4().slice(0, 8));
+  runLog.info('Agent run started', { jobTitle, location: location ?? '', maxJobs, maxCompanies });
 
   // Auto-load resume data from disk
   const { latex: masterResumeLatex, resumeData: masterResumeData, deepContext } = await loadResumeForAgent();
@@ -142,7 +146,7 @@ export async function runJobSearchAgent(
     if (r.status === 'fulfilled') {
       allCompanyResults.push(r.value);
     } else {
-      console.warn('[agent] Company worker failed:', r.reason);
+      runLog.warn('Company worker failed', { error: (r.reason as Error).message });
       onEvent?.({ type: 'error', message: `Worker failed: ${(r.reason as Error).message}` });
     }
   }
@@ -201,19 +205,25 @@ export async function runJobSearchAgent(
     };
     await writeQueue.enqueue(() => storeJobSearch(searchDoc));
   } catch (memErr) {
-    console.warn('[agent] Failed to store search in career memory:', memErr);
+    runLog.warn('Failed to store search in career memory', { error: (memErr as Error).message });
   }
 
   onEvent?.({ type: 'phase_transition', phase: 'summarize', status: 'completed' });
+
+  const jobsAnalyzed = allCompanyResults.reduce((sum, cr) => sum + cr.jobs.length, 0);
+
+  runLog.info('Agent run completed', {
+    companiesSearched: allCompanyResults.length,
+    jobsAnalyzed,
+    resultsReturned: allJobResults.length,
+    topScore: allJobResults[0]?.matchScore ?? 0,
+  });
 
   return {
     jobTitle,
     totalH1bSponsors: discovery.h1bData.totalPositions,
     companiesSearched: allCompanyResults.length,
-    jobsAnalyzed: allCompanyResults.reduce(
-      (sum, cr) => sum + cr.jobs.length,
-      0
-    ),
+    jobsAnalyzed,
     results: allJobResults,
   };
 }
@@ -588,13 +598,19 @@ export async function runJobSearchAgentLegacy(
 
   while (maxIterations-- > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const response = await (client.messages as any).create({
-      model,
-      max_tokens: 16384,
-      system: SYSTEM_PROMPT,
-      tools: anthropicTools,
-      messages,
-    });
+    const API_TIMEOUT = 120_000; // 2 minutes per Claude API call
+    const response = await Promise.race([
+      (client.messages as any).create({
+        model,
+        max_tokens: 16384,
+        system: SYSTEM_PROMPT,
+        tools: anthropicTools,
+        messages,
+      }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Claude API call timed out after 2m')), API_TIMEOUT)
+      ),
+    ]);
 
     const toolUseBlocks = (response.content as ContentBlock[]).filter(
       (block): block is ToolUseBlock => block.type === 'tool_use'

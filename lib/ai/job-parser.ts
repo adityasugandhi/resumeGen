@@ -22,6 +22,8 @@ export const JobDataSchema = z.object({
 
 export type JobData = z.infer<typeof JobDataSchema>;
 
+const GROQ_SDK_MAX_RETRIES = 3;
+
 export class JobParser {
   private client: Groq;
 
@@ -29,6 +31,43 @@ export class JobParser {
     this.client = new Groq({
       apiKey: apiKey || process.env.GROQ_API_KEY,
     });
+  }
+
+  /**
+   * Call Groq SDK with retry logic for rate limits (429) and service errors (503).
+   * Uses exponential backoff with jitter.
+   */
+  private async callWithRetry(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    params: Record<string, any>
+  ): Promise<any> {
+    let lastError: unknown = null;
+
+    for (let attempt = 0; attempt < GROQ_SDK_MAX_RETRIES; attempt++) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return await this.client.chat.completions.create(params as any);
+      } catch (error: unknown) {
+        lastError = error;
+        const status =
+          (error as { status_code?: number }).status_code ||
+          (error as { status?: number }).status ||
+          0;
+
+        if ((status === 429 || status === 503) && attempt < GROQ_SDK_MAX_RETRIES - 1) {
+          const waitMs = Math.min(1000 * Math.pow(2, attempt) + Math.random() * 500, 10000);
+          console.warn(
+            `[JobParser] Groq rate limited (${status}), retrying in ${Math.round(waitMs)}ms (attempt ${attempt + 1}/${GROQ_SDK_MAX_RETRIES})`
+          );
+          await new Promise(resolve => setTimeout(resolve, waitMs));
+          continue;
+        }
+
+        throw error;
+      }
+    }
+
+    throw lastError || new Error('Groq SDK call failed after retries');
   }
 
   /**
@@ -150,7 +189,7 @@ IMPORTANT: Respond with ONLY a valid JSON object. No explanatory text before or 
   "qualifications": ["qualification 1", "qualification 2"]
 }`;
 
-    const response = await this.client.chat.completions.create({
+    const response = await this.callWithRetry({
       model: process.env.GROQ_JOB_PARSER_MODEL || 'llama-3.3-70b-versatile',
       max_tokens: 4096,
       messages: [
@@ -198,7 +237,7 @@ ${jobData.requirements.slice(0, 5).join('\n')}
 
 Focus on what makes this role unique and what the ideal candidate should have.`;
 
-    const response = await this.client.chat.completions.create({
+    const response = await this.callWithRetry({
       model: process.env.GROQ_JOB_PARSER_MODEL || 'llama-3.3-70b-versatile',
       max_tokens: 256,
       messages: [

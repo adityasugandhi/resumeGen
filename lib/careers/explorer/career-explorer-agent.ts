@@ -49,10 +49,10 @@ export class CareerExplorerAgent {
     let registeredInDb = false;
 
     try {
-      // Initialize Stagehand — priority: Bedrock→Claude (best, uses existing token),
-      // then OpenRouter→Claude, then Groq (act/observe only, no extract)
-      const bedrockToken = process.env.AWS_BEARER_TOKEN_BEDROCK;
+      // Initialize Stagehand — priority: OpenRouter→Haiku (fastest for extract),
+      // then Bedrock→Sonnet, then Groq (act/observe only, no extract)
       const openRouterKey = process.env.OPENROUTER_API_KEY;
+      const bedrockToken = process.env.AWS_BEARER_TOKEN_BEDROCK;
       const groqKey = process.env.GROQ_API_KEY;
       let usesClaude = false;
 
@@ -61,7 +61,20 @@ export class CareerExplorerAgent {
         args: ['--no-sandbox', '--disable-dev-shm-usage'],
       };
 
-      if (bedrockToken) {
+      if (openRouterKey) {
+        // OpenRouter has lower latency than Bedrock for Stagehand operations
+        this.stagehand = new Stagehand({
+          env: 'LOCAL',
+          model: {
+            modelName: 'anthropic/claude-sonnet-4-6',
+            apiKey: openRouterKey,
+            baseURL: 'https://openrouter.ai/api/v1',
+          },
+          verbose: 0,
+          localBrowserLaunchOptions: browserOpts,
+        });
+        usesClaude = true;
+      } else if (bedrockToken) {
         const region = process.env.BEDROCK_AWS_REGION ?? 'us-east-1';
         const bedrockProvider = createAmazonBedrock({
           region,
@@ -77,18 +90,6 @@ export class CareerExplorerAgent {
           localBrowserLaunchOptions: browserOpts,
         });
         usesClaude = true;
-      } else if (openRouterKey) {
-        this.stagehand = new Stagehand({
-          env: 'LOCAL',
-          model: {
-            modelName: 'anthropic/claude-sonnet-4-6',
-            apiKey: openRouterKey,
-            baseURL: 'https://openrouter.ai/api/v1',
-          },
-          verbose: 0,
-          localBrowserLaunchOptions: browserOpts,
-        });
-        usesClaude = true;
       } else if (groqKey) {
         this.stagehand = new Stagehand({
           env: 'LOCAL',
@@ -100,7 +101,7 @@ export class CareerExplorerAgent {
           localBrowserLaunchOptions: browserOpts,
         });
       } else {
-        throw new Error('No LLM API key available (need AWS_BEARER_TOKEN_BEDROCK, OPENROUTER_API_KEY, or GROQ_API_KEY)');
+        throw new Error('No LLM API key available (need OPENROUTER_API_KEY, AWS_BEARER_TOKEN_BEDROCK, or GROQ_API_KEY)');
       }
 
       await this.stagehand.init();
@@ -139,6 +140,9 @@ export class CareerExplorerAgent {
       );
       await new Promise(r => setTimeout(r, 2000)); // Wait for dynamic content
       pagesExplored++;
+
+      // Dismiss cookie consent banners (common on EU-compliant career sites)
+      await this.dismissCookieConsent();
 
       // Step 2: Detect ATS type from the page URL
       const pageUrl = page.url();
@@ -449,8 +453,10 @@ export class CareerExplorerAgent {
         /smartrecruiters\.com\/.*\//, /jobs\.smartrecruiters\.com/,
         // Jobvite
         /jobvite\.com\/.*\/job/,
+        // SuccessFactors (SAP)
+        /successfactors.*\/job\//, /\/go\/.*\/\d+/,
         // Generic patterns
-        /\/requisition\//, /\/vacancy\//, /\/role\//,
+        /\/requisition\//, /\/vacancy\//, /\/role\//, /\/jobdetail\//,
       ];
 
       const seen = new Set<string>();
@@ -566,9 +572,17 @@ export class CareerExplorerAgent {
         /search.*opening/i, /current.*opening/i,
       ];
 
-      // First: find links whose text matches search patterns
+      const isUsableLink = (href: string) => {
+        if (!href) return false;
+        if (href === '#' || href.endsWith('#')) return false;
+        if (href.startsWith('javascript:')) return false;
+        if (href === page.url()) return false;
+        return true;
+      };
+
+      // First: find links whose text matches search patterns AND have real URLs
       for (const link of links) {
-        if (!link.href || link.href === '#') continue;
+        if (!isUsableLink(link.href)) continue;
         for (const pattern of searchPatterns) {
           if (pattern.test(link.text)) {
             return link.href;
@@ -576,10 +590,14 @@ export class CareerExplorerAgent {
         }
       }
 
-      // Second: find links whose URL contains /search, /results, or known patterns
-      const urlPatterns = [/\/search/i, /\/results/i, /\/en-us\/search/i, /\/en\/search/i];
+      // Second: find links whose URL contains /search, /results, or known ATS search patterns
+      const urlPatterns = [
+        /\/search\?/i, /\/search\//i, /\/results/i,
+        /\/en-us\/search/i, /\/en\/search/i,
+        /successfactors.*search/i, /\/go\//i,
+      ];
       for (const link of links) {
-        if (!link.href || link.href === '#') continue;
+        if (!isUsableLink(link.href)) continue;
         for (const pattern of urlPatterns) {
           if (pattern.test(link.href)) {
             return link.href;
@@ -820,6 +838,59 @@ export class CareerExplorerAgent {
     }
 
     return null;
+  }
+
+  /**
+   * Dismiss cookie consent banners that block page interaction.
+   * Uses Stagehand act() to find and click accept/reject buttons.
+   */
+  private async dismissCookieConsent(): Promise<void> {
+    if (!this.stagehand) return;
+
+    try {
+      // First try DOM-based dismissal (faster, no LLM call)
+      const page = this.stagehand.context.pages()[0];
+      const dismissed = await page.evaluate(() => {
+        const selectors = [
+          'button[id*="accept"]', 'button[id*="cookie"]',
+          'button[class*="accept"]', 'button[class*="consent"]',
+          'a[id*="accept"]', '[data-testid*="accept"]',
+        ];
+        for (const sel of selectors) {
+          const btn = document.querySelector(sel) as HTMLElement | null;
+          if (btn && btn.offsetParent !== null) {
+            btn.click();
+            return true;
+          }
+        }
+        // Try text-based matching
+        const buttons = Array.from(document.querySelectorAll('button, a[role="button"]'));
+        for (const btn of buttons) {
+          const text = btn.textContent?.trim().toLowerCase() || '';
+          if (text.includes('accept all') || text.includes('accept cookies') || text.includes('reject all')) {
+            (btn as HTMLElement).click();
+            return true;
+          }
+        }
+        return false;
+      });
+
+      if (dismissed) {
+        await new Promise(r => setTimeout(r, 1000));
+        return;
+      }
+
+      // Fallback: use Stagehand act() for complex cookie banners
+      await Promise.race([
+        this.stagehand.act(
+          'If there is a cookie consent banner or popup, click "Accept All Cookies", "Accept All", "Reject All Cookies", or similar button to dismiss it. If no cookie banner is visible, do nothing.'
+        ),
+        new Promise<void>(resolve => setTimeout(resolve, 8000)),
+      ]);
+      await new Promise(r => setTimeout(r, 1000));
+    } catch {
+      // Cookie banner not found or already dismissed — continue
+    }
   }
 
   /**

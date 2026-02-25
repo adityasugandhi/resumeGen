@@ -14,6 +14,7 @@ import { getMarketIntelligence } from '@/lib/goinglobal/h1b-intelligence';
 import { discoverAndRegisterCompanies } from '@/lib/careers/company-discovery';
 import { getAllCompanies } from '@/lib/careers/company-registry';
 import type { AgentStepEvent } from '../types';
+import { companiesMatch, findMatchingCompany } from '@/lib/careers/company-name-utils';
 import type { DiscoveryResult, TargetCompany } from './types';
 
 export async function runDiscoveryPhase(
@@ -115,19 +116,19 @@ export async function runDiscoveryPhase(
   }
 
   // 5. Build target company list by cross-referencing H1B data with registry
-  const registrySet = new Set(registryCompanies.map((c) => c.name.toLowerCase()));
-  const h1bMap = new Map(
-    h1bData.topCompanies.map((c) => [c.company.toLowerCase(), c])
-  );
+  const registryNames = registryCompanies.map((c) => c.name);
 
   let companies: TargetCompany[];
 
   if (targetCompany) {
-    // Single company mode — find it in registry
-    const companyConfig = registryCompanies.find(
-      (c) => c.name.toLowerCase() === targetCompany.toLowerCase()
+    // Single company mode — find it in registry using fuzzy match
+    const matchedName = findMatchingCompany(targetCompany, registryNames);
+    const companyConfig = matchedName
+      ? registryCompanies.find((c) => c.name === matchedName)
+      : undefined;
+    const h1bInfo = h1bData.topCompanies.find((c) =>
+      companiesMatch(c.company, targetCompany)
     );
-    const h1bInfo = h1bMap.get(targetCompany.toLowerCase());
 
     companies = companyConfig
       ? [{
@@ -138,13 +139,12 @@ export async function runDiscoveryPhase(
         }]
       : [];
   } else {
-    // Multi-company mode — H1B companies that are in registry, sorted by H1B count
+    // Multi-company mode — H1B companies that fuzzy-match the registry, sorted by H1B count
     companies = h1bData.topCompanies
-      .filter((c) => registrySet.has(c.company.toLowerCase()))
       .map((c) => {
-        const regEntry = registryCompanies.find(
-          (r) => r.name.toLowerCase() === c.company.toLowerCase()
-        );
+        const matchedName = findMatchingCompany(c.company, registryNames);
+        if (!matchedName) return null;
+        const regEntry = registryCompanies.find((r) => r.name === matchedName);
         return {
           name: regEntry?.name || c.company,
           platform: regEntry?.platform || 'unknown',
@@ -152,11 +152,10 @@ export async function runDiscoveryPhase(
           h1bAvgWage: c.avgWage,
         };
       })
+      .filter((c): c is TargetCompany => c !== null)
       .sort((a, b) => b.h1bPositions - a.h1bPositions);
 
     // Fallback: if no H1B companies matched the registry, search all registry companies
-    // This happens when H1B returns enterprise names (e.g. "Apple Inc.") that don't
-    // match startup-focused registry entries (e.g. "Stripe", "Anthropic")
     if (companies.length === 0 && registryCompanies.length > 0) {
       onEvent?.({
         type: 'error',
@@ -166,7 +165,9 @@ export async function runDiscoveryPhase(
       companies = registryCompanies
         .filter((c) => c.platform !== 'unknown')
         .map((c) => {
-          const h1bInfo = h1bMap.get(c.name.toLowerCase());
+          const h1bInfo = h1bData.topCompanies.find((h) =>
+            companiesMatch(h.company, c.name)
+          );
           return {
             name: c.name,
             platform: c.platform,

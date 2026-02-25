@@ -38,25 +38,33 @@ type LanceTable = any; // Both lancedb.Table and RemoteLanceTable share the same
 type LanceRow = any; // Row type from toArray() results
 
 let db: LanceConnection | null = null;
+let dbPromise: Promise<LanceConnection> | null = null;
 const tableCache = new Map<string, LanceTable>();
 
 // ---- Connection ----
 
 export async function initCareerMemory(): Promise<LanceConnection> {
   if (db) return db;
-  try {
-    if (LANCEDB_SERVER_URL) {
-      db = await connectRemote(LANCEDB_SERVER_URL);
-      console.log(`Career memory connected to remote server: ${LANCEDB_SERVER_URL}`);
-    } else {
-      db = await lancedb.connect(CAREER_DB_PATH);
-      console.log(`Career memory connected at: ${CAREER_DB_PATH}`);
+  if (dbPromise) return dbPromise;
+
+  dbPromise = (async () => {
+    try {
+      if (LANCEDB_SERVER_URL) {
+        db = await connectRemote(LANCEDB_SERVER_URL);
+        console.log(`Career memory connected to remote server: ${LANCEDB_SERVER_URL}`);
+      } else {
+        db = await lancedb.connect(CAREER_DB_PATH);
+        console.log(`Career memory connected at: ${CAREER_DB_PATH}`);
+      }
+      return db;
+    } catch (error) {
+      dbPromise = null; // Allow retry on failure
+      console.error('Failed to connect to career memory DB:', error);
+      throw new Error('Failed to initialize career memory');
     }
-    return db;
-  } catch (error) {
-    console.error('Failed to connect to career memory DB:', error);
-    throw new Error('Failed to initialize career memory');
-  }
+  })();
+
+  return dbPromise;
 }
 
 // ---- Table management ----
@@ -92,18 +100,28 @@ async function ensureTable(
   docs: Record<string, unknown>[]
 ): Promise<LanceTable> {
   const database = await initCareerMemory();
-  const tableNames = await database.tableNames();
 
-  if (tableNames.includes(tableName)) {
+  // Try to open existing table first
+  try {
+    const table = await database.openTable(tableName);
+    tableCache.set(tableName, table);
+    await table.add(docs);
+    return table;
+  } catch {
+    // Table doesn't exist, try to create it
+  }
+
+  try {
+    const table = await database.createTable(tableName, docs);
+    tableCache.set(tableName, table);
+    return table;
+  } catch {
+    // Another concurrent caller created it — open and add
     const table = await database.openTable(tableName);
     tableCache.set(tableName, table);
     await table.add(docs);
     return table;
   }
-
-  const table = await database.createTable(tableName, docs);
-  tableCache.set(tableName, table);
-  return table;
 }
 
 // ---- Resume Components ----
@@ -128,10 +146,11 @@ export async function upsertResumeComponents(
   const table = await database.openTable(tableName);
   tableCache.set(tableName, table);
 
-  // Delete existing by ID, then add
-  for (const doc of docs) {
+  // Batch delete all existing IDs first, then add all new docs
+  const ids = docs.map(d => d.id);
+  for (const id of ids) {
     try {
-      await table.delete(`id = '${doc.id}'`);
+      await table.delete(`id = '${id}'`);
     } catch { /* may not exist */ }
   }
 
@@ -333,19 +352,11 @@ export async function getMemoryStats(): Promise<MemoryStats> {
 
     try {
       const table = await database.openTable(tableName);
-      const rows = await table.query().toArray();
-      const count = rows.length;
+      const count = await table.countRows();
 
       switch (key) {
         case 'RESUME_COMPONENTS':
           stats.resumeComponents = count;
-          if (count > 0) {
-            // Find latest createdAt
-            const latest = rows.reduce((max, r) =>
-              r.createdAt > max ? r.createdAt : max, ''
-            );
-            stats.lastIndexedAt = latest || null;
-          }
           break;
         case 'JOB_SEARCHES':
           stats.jobSearches = count;

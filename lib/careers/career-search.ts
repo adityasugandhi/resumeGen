@@ -21,6 +21,7 @@ export async function searchJobs(params: CareerSearchParams): Promise<CareerSear
 
   const platform = params.platform || config.platform;
   let jobs: CareerJob[] = [];
+  let error: string | undefined;
 
   try {
     switch (platform) {
@@ -48,24 +49,28 @@ export async function searchJobs(params: CareerSearchParams): Promise<CareerSear
       case 'custom':
       case 'workday':
       case 'icims': {
-        try {
-          const { CareerExplorerAgent } = await import('./explorer/career-explorer-agent');
-          const explorer = new CareerExplorerAgent();
-          const result = await explorer.explore(params.company, {
+        const BROWSER_TIMEOUT = 120_000; // 2 minutes
+        const { CareerExplorerAgent } = await import('./explorer/career-explorer-agent');
+        const explorer = new CareerExplorerAgent();
+        const result = await Promise.race([
+          explorer.explore(params.company, {
             maxPages: 5,
             careersUrl: config.careersUrl,
-          });
-          jobs = result.jobs;
-        } catch (err) {
-          console.error(`[CAREERS] Browser exploration failed for ${params.company}:`, err);
-        }
+          }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('Browser exploration timed out after 2m')), BROWSER_TIMEOUT)
+          ),
+        ]);
+        jobs = result.jobs;
         break;
       }
       default:
         break;
     }
-  } catch (error) {
-    console.error(`[CAREERS] Error fetching jobs for ${params.company}:`, error);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`[CAREERS] Error fetching jobs for ${params.company}:`, message);
+    error = `Failed to fetch jobs: ${message}`;
   }
 
   // Filter by team if specified
@@ -79,6 +84,7 @@ export async function searchJobs(params: CareerSearchParams): Promise<CareerSear
     platform,
     jobs,
     totalCount: jobs.length,
+    ...(error && { error }),
   };
 }
 
@@ -93,9 +99,16 @@ export async function searchMultipleCompanies(
     )
   );
 
-  return results
-    .filter((r): r is PromiseFulfilledResult<CareerSearchResult> => r.status === 'fulfilled')
-    .map((r) => r.value);
+  return results.map((r, i) => {
+    if (r.status === 'fulfilled') return r.value;
+    return {
+      company: companies[i],
+      platform: 'unknown' as const,
+      jobs: [],
+      totalCount: 0,
+      error: `Search failed: ${(r.reason as Error).message}`,
+    };
+  });
 }
 
 export { getAllCompanies };

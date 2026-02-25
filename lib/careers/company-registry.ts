@@ -5,9 +5,13 @@ import {
   getAllCompaniesFromDb,
 } from '@/lib/db/queries/companies';
 
-// ── Static fallback (used when DB is unreachable) ──────────────────────────
-
-const STATIC_REGISTRY: readonly CompanyConfig[] = [
+/**
+ * Static company registry — the single source of truth for company configs.
+ * Used by: company-registry.ts (runtime fallback), db/seed.ts (DB seeding).
+ * New companies discovered at runtime are added to DB only.
+ * Run `npm run db:seed` to sync static registry → DB.
+ */
+export const STATIC_REGISTRY: readonly CompanyConfig[] = [
   { name: 'Stripe', platform: 'stripe', boardToken: 'stripe', careersUrl: 'https://stripe.com/jobs' },
   { name: 'Anthropic', platform: 'greenhouse', boardToken: 'anthropic', careersUrl: 'https://job-boards.greenhouse.io/anthropic' },
   { name: 'Figma', platform: 'greenhouse', boardToken: 'figma', careersUrl: 'https://boards.greenhouse.io/figma' },

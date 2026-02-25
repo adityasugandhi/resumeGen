@@ -43,8 +43,15 @@ async function discoverSingle(companyName: string): Promise<DiscoveryResult> {
     // DB might be down, continue with detection anyway
   }
 
-  // 2. Auto-detect ATS platform
-  const detection = await detectATS(companyName);
+  // 2. Auto-detect ATS platform (30s timeout to prevent hanging on slow search engines)
+  const DETECT_TIMEOUT = 30_000;
+  const detection = await Promise.race([
+    detectATS(companyName),
+    new Promise<null>((resolve) => setTimeout(() => {
+      console.warn(`[discovery] ATS detection timed out for ${companyName}`);
+      resolve(null);
+    }, DETECT_TIMEOUT)),
+  ]);
 
   if (detection) {
     // 3. Register in DB as active
@@ -77,11 +84,17 @@ async function discoverSingle(companyName: string): Promise<DiscoveryResult> {
     };
   }
 
-  // 3. Browser-based exploration fallback
+  // 3. Browser-based exploration fallback (60s timeout)
+  const EXPLORE_TIMEOUT = 60_000;
   try {
     const { CareerExplorerAgent } = await import('./explorer/career-explorer-agent');
     const explorer = new CareerExplorerAgent();
-    const result = await explorer.explore(companyName, { maxPages: 3 });
+    const result = await Promise.race([
+      explorer.explore(companyName, { maxPages: 3 }),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error(`Browser exploration timed out after 60s`)), EXPLORE_TIMEOUT)
+      ),
+    ]);
 
     if (result.registeredInDb || result.jobs.length > 0) {
       return {

@@ -9,6 +9,22 @@
  */
 
 import { flareSolve, isFlareSolverrAvailable, extractLinksFromHtml } from './flaresolverr-client';
+import { rateLimited } from '@/lib/rate-limiter';
+import { getCompanyConfig } from '@/lib/careers/company-registry';
+
+// ---------- in-memory TTL cache ----------
+
+interface CacheEntry {
+  result: CareersUrlResult;
+  expiresAt: number;
+}
+
+const urlCache = new Map<string, CacheEntry>();
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+export function clearUrlCache(): void {
+  urlCache.clear();
+}
 
 export interface CareersUrlResult {
   url: string;
@@ -214,14 +230,16 @@ async function searchBrave(companyName: string): Promise<string | null> {
 
   try {
     const url = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(query)}&count=10`;
-    const res = await fetch(url, {
-      headers: {
-        Accept: 'application/json',
-        'Accept-Encoding': 'gzip',
-        'X-Subscription-Token': apiKey,
-      },
-      signal: AbortSignal.timeout(10000),
-    });
+    const res = await rateLimited('brave', () =>
+      fetch(url, {
+        headers: {
+          Accept: 'application/json',
+          'Accept-Encoding': 'gzip',
+          'X-Subscription-Token': apiKey,
+        },
+        signal: AbortSignal.timeout(10000),
+      })
+    );
 
     if (!res.ok) {
       console.warn(`[search-orchestrator] Brave returned ${res.status}`);
@@ -264,29 +282,31 @@ async function searchPerplexity(companyName: string): Promise<string | null> {
   if (!apiKey) return null;
 
   try {
-    const res = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'sonar',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a research assistant. Return ONLY the URL, nothing else. No markdown, no explanation.',
-          },
-          {
-            role: 'user',
-            content: `What is the exact careers/jobs page URL for ${companyName}? I need the page where they list open software engineering positions. Return only the URL.`,
-          },
-        ],
-        max_tokens: 200,
-        temperature: 0,
-      }),
-      signal: AbortSignal.timeout(15000),
-    });
+    const res = await rateLimited('perplexity', () =>
+      fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'sonar',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a research assistant. Return ONLY the URL, nothing else. No markdown, no explanation.',
+            },
+            {
+              role: 'user',
+              content: `What is the exact careers/jobs page URL for ${companyName}? I need the page where they list open software engineering positions. Return only the URL.`,
+            },
+          ],
+          max_tokens: 200,
+          temperature: 0,
+        }),
+        signal: AbortSignal.timeout(15000),
+      })
+    );
 
     if (!res.ok) {
       console.warn(`[search-orchestrator] Perplexity returned ${res.status}`);
@@ -358,37 +378,66 @@ async function searchFlareSolverr(companyName: string): Promise<string | null> {
 
 export async function findCareersUrl(companyName: string): Promise<CareersUrlResult> {
   const none: CareersUrlResult = { url: '', source: 'none', confidence: 'low' };
+  const cacheKey = companyName.toLowerCase().trim();
+
+  // 0a. Check in-memory cache
+  const cached = urlCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    console.log(`[search-orchestrator] Cache hit for "${companyName}": ${cached.result.url}`);
+    return cached.result;
+  }
+
+  // 0b. Check company registry — skip all probing for known companies
+  const registryConfig = await getCompanyConfig(companyName);
+  if (registryConfig && registryConfig.careersUrl) {
+    const result: CareersUrlResult = {
+      url: registryConfig.careersUrl,
+      source: 'url_probe',
+      confidence: 'high',
+    };
+    urlCache.set(cacheKey, { result, expiresAt: Date.now() + CACHE_TTL });
+    console.log(`[search-orchestrator] Registry hit for "${companyName}": ${result.url}`);
+    return result;
+  }
 
   // 1. URL probing — fastest
   console.log(`[search-orchestrator] Probing URL patterns for "${companyName}"…`);
   const probed = await probeUrlPatterns(companyName);
   if (probed) {
+    const result: CareersUrlResult = { url: probed, source: 'url_probe', confidence: 'high' };
+    urlCache.set(cacheKey, { result, expiresAt: Date.now() + CACHE_TTL });
     console.log(`[search-orchestrator] ✓ Found via URL probe: ${probed}`);
-    return { url: probed, source: 'url_probe', confidence: 'high' };
+    return result;
   }
 
   // 2. Brave Search — fast, programmatic
   console.log(`[search-orchestrator] Trying Brave Search…`);
   const braved = await searchBrave(companyName);
   if (braved) {
+    const result: CareersUrlResult = { url: braved, source: 'brave', confidence: 'high' };
+    urlCache.set(cacheKey, { result, expiresAt: Date.now() + CACHE_TTL });
     console.log(`[search-orchestrator] ✓ Found via Brave: ${braved}`);
-    return { url: braved, source: 'brave', confidence: 'high' };
+    return result;
   }
 
   // 3. Perplexity — AI-synthesized
   console.log(`[search-orchestrator] Trying Perplexity Sonar…`);
   const perplexed = await searchPerplexity(companyName);
   if (perplexed) {
+    const result: CareersUrlResult = { url: perplexed, source: 'perplexity', confidence: 'medium' };
+    urlCache.set(cacheKey, { result, expiresAt: Date.now() + CACHE_TTL });
     console.log(`[search-orchestrator] ✓ Found via Perplexity: ${perplexed}`);
-    return { url: perplexed, source: 'perplexity', confidence: 'medium' };
+    return result;
   }
 
   // 4. FlareSolverr — heaviest
   console.log(`[search-orchestrator] Trying FlareSolverr Google search…`);
   const flared = await searchFlareSolverr(companyName);
   if (flared) {
+    const result: CareersUrlResult = { url: flared, source: 'flaresolverr', confidence: 'medium' };
+    urlCache.set(cacheKey, { result, expiresAt: Date.now() + CACHE_TTL });
     console.log(`[search-orchestrator] ✓ Found via FlareSolverr: ${flared}`);
-    return { url: flared, source: 'flaresolverr', confidence: 'medium' };
+    return result;
   }
 
   console.log(`[search-orchestrator] ✗ No careers URL found for "${companyName}"`);

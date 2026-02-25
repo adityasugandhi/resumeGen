@@ -10,6 +10,7 @@ import {
   jsonb,
   timestamp,
   uniqueIndex,
+  index,
 } from 'drizzle-orm/pg-core';
 
 // ── Enums ──────────────────────────────────────────────────────────────────
@@ -112,4 +113,6 @@ export const resumeVersions = pgTable('resume_versions', {
   changes: jsonb('changes').default([]),
   overallMatchScore: real('overall_match_score'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+}, (table) => [
+  index('resume_versions_created_at_idx').on(table.createdAt),
+]);

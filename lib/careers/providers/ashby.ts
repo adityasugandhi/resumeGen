@@ -1,4 +1,5 @@
 import { CareerJob } from '@/lib/careers/types';
+import { fetchWithTimeout } from '../fetch-with-timeout';
 
 interface AshbyJob {
   id: string;
@@ -20,7 +21,7 @@ export async function listAshbyJobs(
   location?: string
 ): Promise<CareerJob[]> {
   const url = `https://api.ashbyhq.com/posting-api/job-board/${boardToken}`;
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
   if (!response.ok) throw new Error(`Ashby API error: ${response.status}`);
   const data: AshbyResponse = await response.json();
 

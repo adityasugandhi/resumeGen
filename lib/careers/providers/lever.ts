@@ -1,4 +1,5 @@
 import { CareerJob } from '@/lib/careers/types';
+import { fetchWithTimeout } from '../fetch-with-timeout';
 
 interface LeverPosting {
   id: string;
@@ -14,7 +15,7 @@ export async function listLeverJobs(
   location?: string
 ): Promise<CareerJob[]> {
   const url = `https://api.lever.co/v0/postings/${company}?mode=json`;
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
   if (!response.ok) throw new Error(`Lever API error: ${response.status}`);
   const data: LeverPosting[] = await response.json();
 

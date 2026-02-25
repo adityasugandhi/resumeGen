@@ -26,20 +26,30 @@ export class SlackNotifier {
       return false;
     }
 
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10_000);
+
     try {
       const response = await fetch(this.webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
       if (!response.ok) {
-        console.error('[slack] Webhook failed:', response.status, await response.text());
+        console.warn(`[Slack] Webhook failed: ${response.status}`);
         return false;
       }
       return true;
     } catch (error) {
-      console.error('[slack] Webhook error:', (error as Error).message);
+      if ((error as Error).name === 'AbortError') {
+        console.warn('[Slack] Webhook timed out after 10s');
+      } else {
+        console.warn('[Slack] Webhook error:', (error as Error).message);
+      }
       return false;
+    } finally {
+      clearTimeout(timer);
     }
   }
 

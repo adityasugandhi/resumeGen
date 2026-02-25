@@ -25,7 +25,10 @@
     "db:push": "node --env-file=.env.local node_modules/.bin/drizzle-kit push",
     "db:seed": "tsx --env-file=.env.local lib/db/seed.ts",
     "db:studio": "node --env-file=.env.local node_modules/.bin/drizzle-kit studio",
-    "db:migrate-data": "tsx --env-file=.env.local lib/db/migrate-data.ts"
+    "db:migrate-data": "tsx --env-file=.env.local lib/db/migrate-data.ts",
+    "db:cleanup": "tsx scripts/cleanup-resume-versions.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@anthropic-ai/bedrock-sdk": "^0.26.3",
@@ -85,6 +88,7 @@
     "eslint-config-next": "^15.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   }
 }

@@ -56,10 +56,15 @@ export class Semaphore {
    * Run an async function with bounded concurrency.
    * Waits if the semaphore is at capacity.
    */
-  async run<T>(fn: () => Promise<T>): Promise<T> {
+  async run<T>(fn: () => Promise<T>, timeoutMs: number = 300_000): Promise<T> {
     await this.acquire();
     try {
-      return await fn();
+      return await Promise.race([
+        fn(),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error(`Semaphore task timed out after ${timeoutMs}ms`)), timeoutMs)
+        ),
+      ]);
     } finally {
       this.release();
     }

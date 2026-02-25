@@ -1,4 +1,5 @@
 import { CareerJob } from '@/lib/careers/types';
+import { fetchWithTimeout } from '../fetch-with-timeout';
 
 /** Cloudflare-specific metadata IDs used by their careers frontend. */
 const META_DEPARTMENT = 46546702;
@@ -42,7 +43,7 @@ export async function listCloudflareJobs(
   department?: string,
 ): Promise<CareerJob[]> {
   const url = 'https://boards-api.greenhouse.io/v1/boards/cloudflare/departments/?render_as=tree';
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
 
   if (!response.ok) {
     throw new Error(`Cloudflare/Greenhouse API error: ${response.status}`);
@@ -89,13 +90,14 @@ export async function listCloudflareJobs(
 }
 
 /** Recursively collect all jobs from the department tree. */
-function flattenDepartments(departments: DepartmentNode[]): GreenhouseJobRaw[] {
+function flattenDepartments(departments: DepartmentNode[], depth: number = 0): GreenhouseJobRaw[] {
+  if (depth > 10) return []; // Prevent infinite recursion
   const jobs: GreenhouseJobRaw[] = [];
 
   for (const dept of departments) {
     jobs.push(...dept.jobs);
     if (dept.children?.length) {
-      jobs.push(...flattenDepartments(dept.children));
+      jobs.push(...flattenDepartments(dept.children, depth + 1));
     }
   }
 

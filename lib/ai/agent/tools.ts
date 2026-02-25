@@ -30,6 +30,7 @@ import {
 } from '@/lib/docker-utils';
 import type { LearningDoc, JobMatchDoc, OptimizedResumeDoc } from '@/lib/vector-db/career-schemas';
 import { discoverAndRegisterCompanies, registerCompanyFromUrl } from '@/lib/careers/company-discovery';
+import { rateLimited } from '@/lib/rate-limiter';
 import type { AgentStepEvent, CodeAgentInput } from './types';
 
 const execAsync = promisify(exec);
@@ -423,25 +424,27 @@ export function createAgentTools(
           return JSON.stringify({ error: 'PERPLEXITY_API_KEY not configured', results: [] });
         }
 
-        const response = await fetch('https://api.perplexity.ai/chat/completions', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'sonar',
-            messages: [
-              {
-                role: 'system',
-                content:
-                  'You are a research assistant. Provide concise, factual answers with relevant details about companies, job roles, and tech stacks. Focus on actionable information.',
-              },
-              { role: 'user', content: input.query as string },
-            ],
-            max_tokens: 1024,
-          }),
-        });
+        const response = await rateLimited('perplexity', () =>
+          fetch('https://api.perplexity.ai/chat/completions', {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'sonar',
+              messages: [
+                {
+                  role: 'system',
+                  content:
+                    'You are a research assistant. Provide concise, factual answers with relevant details about companies, job roles, and tech stacks. Focus on actionable information.',
+                },
+                { role: 'user', content: input.query as string },
+              ],
+              max_tokens: 1024,
+            }),
+          })
+        );
 
         if (!response.ok) {
           const errorText = await response.text();

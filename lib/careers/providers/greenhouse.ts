@@ -1,4 +1,5 @@
 import { CareerJob } from '@/lib/careers/types';
+import { fetchWithTimeout } from '../fetch-with-timeout';
 
 interface GreenhouseJob {
   id: number;
@@ -20,7 +21,7 @@ export async function listGreenhouseJobs(
   location?: string
 ): Promise<CareerJob[]> {
   const url = `https://boards-api.greenhouse.io/v1/boards/${boardToken}/jobs`;
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
   if (!response.ok) throw new Error(`Greenhouse API error: ${response.status}`);
   const data: GreenhouseResponse = await response.json();
 

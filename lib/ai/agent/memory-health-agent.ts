@@ -7,7 +7,32 @@
 
 import AnthropicBedrock from '@anthropic-ai/bedrock-sdk';
 import Anthropic from '@anthropic-ai/sdk';
+import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
+import { join, dirname } from 'path';
 import { memoryHealthTools, formatHealthContext, type HealthCheckInput } from './memory-health-tools';
+
+const FIX_LOG_PATH = join(process.cwd(), 'Job_Applications/tracker/memory-health-log.json');
+
+interface HealthFixEntry {
+  timestamp: string;
+  issue: string;
+  action: string;
+  filesModified: string[];
+}
+
+function logHealthFix(entry: HealthFixEntry): void {
+  const dir = dirname(FIX_LOG_PATH);
+  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
+
+  let log: HealthFixEntry[] = [];
+  if (existsSync(FIX_LOG_PATH)) {
+    try { log = JSON.parse(readFileSync(FIX_LOG_PATH, 'utf-8')); } catch { /* start fresh */ }
+  }
+  log.push(entry);
+  // Keep last 100 entries
+  if (log.length > 100) log = log.slice(-100);
+  writeFileSync(FIX_LOG_PATH, JSON.stringify(log, null, 2), 'utf-8');
+}
 
 export interface HealthCheckResult {
   fixed: boolean;
@@ -55,14 +80,14 @@ function createClient(): { client: any; model: string } {
         skipAuth: true,
         defaultHeaders: { Authorization: `Bearer ${bedrockToken}` },
       }),
-      model: 'us.anthropic.claude-opus-4-6-v1',
+      model: 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
     };
   }
 
   if (anthropicKey) {
     return {
       client: new Anthropic({ apiKey: anthropicKey }),
-      model: 'claude-opus-4-6',
+      model: 'claude-3-5-sonnet-20241022',
     };
   }
 
@@ -130,12 +155,23 @@ export async function runMemoryHealthAgent(input: HealthCheckInput): Promise<Hea
         const jsonMatch = text.match(/\{[\s\S]*"fixed"[\s\S]*\}/);
         if (jsonMatch) {
           const parsed = JSON.parse(jsonMatch[0]);
-          return {
+          const result: HealthCheckResult = {
             fixed: parsed.fixed ?? false,
             filesModified: parsed.filesModified ?? [],
             summary: parsed.summary ?? text,
             retryRecommended: parsed.retryRecommended ?? false,
           };
+
+          if (result.fixed) {
+            logHealthFix({
+              timestamp: new Date().toISOString(),
+              issue: input.anomaly ?? 'Unknown anomaly',
+              action: result.summary,
+              filesModified: result.filesModified,
+            });
+          }
+
+          return result;
         }
       } catch {
         // JSON parsing failed

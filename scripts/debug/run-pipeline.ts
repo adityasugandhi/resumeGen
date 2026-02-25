@@ -109,39 +109,11 @@ async function main() {
     }
   }
 
-  // --- Step 2.5: Explore undetectable companies via browser ---
+  // Step 2.5 removed — discoverAndRegisterCompanies already runs browser
+  // exploration before marking companies as "undetectable". Re-running the
+  // browser agent for the same companies is redundant.
   if (undetectableNames.length > 0) {
-    console.log(`\n[Step 2.5] Exploring ${undetectableNames.length} undetectable companies via browser agent (sequential)...\n`);
-
-    const { CareerExplorerAgent } = await import('../../lib/careers/explorer/career-explorer-agent');
-    let browserRegistered = 0;
-    const PER_COMPANY_TIMEOUT = 60_000; // 60s per company
-
-    // Run sequentially to avoid CDP connection conflicts with parallel browsers
-    for (const name of undetectableNames) {
-      console.log(`    Exploring ${name}...`);
-      try {
-        const result = await Promise.race([
-          new CareerExplorerAgent().explore(name, { maxPages: 3 }),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout after 60s')), PER_COMPANY_TIMEOUT)
-          ),
-        ]);
-
-        if (result.registeredInDb) {
-          console.log(`    + ${result.company} (${result.platform}) — ${result.totalFound} jobs found`);
-          browserRegistered++;
-        } else if (result.jobs.length > 0) {
-          console.log(`    ~ ${result.company} — ${result.totalFound} jobs found (not registered)`);
-        } else {
-          console.log(`    - ${result.company} — no jobs found`);
-        }
-      } catch (err) {
-        console.warn(`    - ${name}: ${(err as Error).message}`);
-      }
-    }
-
-    console.log(`  Browser-registered: ${browserRegistered} additional companies`);
+    console.log(`\n  Skipping ${undetectableNames.length} undetectable companies (already attempted browser exploration)`);
   }
 
   // Refresh and take up to 20

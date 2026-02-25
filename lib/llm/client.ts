@@ -2,6 +2,8 @@
  * LLM Client - Supports multiple providers (Groq, Ollama)
  */
 
+import { rateLimited } from '@/lib/rate-limiter';
+
 export interface LLMMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -80,8 +82,28 @@ async function callOllama(
 }
 
 /**
- * Call Groq API
+ * Check if an error is retryable (network-level failures)
  */
+function isRetryableError(error: unknown): boolean {
+  if (error instanceof Error) {
+    return error.message.includes('fetch failed') ||
+           error.message.includes('ECONNRESET') ||
+           error.message.includes('ETIMEDOUT') ||
+           error.message.includes('ECONNREFUSED') ||
+           error.message.includes('UND_ERR_SOCKET');
+  }
+  return false;
+}
+
+/**
+ * Call Groq API with retry logic and exponential backoff
+ *
+ * Retries on HTTP 429 (rate limit) and 503 (service unavailable),
+ * as well as transient network errors. Respects the Retry-After header
+ * when present. Non-retryable errors (400, 401, 403, etc.) throw immediately.
+ */
+const GROQ_MAX_RETRIES = 3;
+
 async function callGroq(
   messages: LLMMessage[],
   options: LLMOptions = {}
@@ -92,38 +114,73 @@ async function callGroq(
   }
 
   const model = process.env.GROQ_OPTIMIZER_MODEL || 'llama-3.3-70b-versatile';
+  let lastError: Error | null = null;
 
-  console.log(`[Groq] Calling ${model}...`);
+  for (let attempt = 0; attempt < GROQ_MAX_RETRIES; attempt++) {
+    try {
+      console.log(`[Groq] Calling ${model}...${attempt > 0 ? ` (attempt ${attempt + 1}/${GROQ_MAX_RETRIES})` : ''}`);
 
-  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages,
-      temperature: options.temperature ?? 0.3,
-      max_tokens: options.maxTokens ?? 8000,
-    }),
-  });
+      const response = await rateLimited('groq', () =>
+        fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            temperature: options.temperature ?? 0.3,
+            max_tokens: options.maxTokens ?? 8000,
+          }),
+        })
+      );
 
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Groq API error: ${response.status} - ${error}`);
+      if (response.status === 429 || response.status === 503) {
+        const retryAfter = response.headers.get('retry-after');
+        const waitMs = retryAfter
+          ? parseInt(retryAfter, 10) * 1000
+          : Math.min(1000 * Math.pow(2, attempt) + Math.random() * 500, 10000);
+        console.warn(`[Groq] Rate limited (${response.status}), retrying in ${Math.round(waitMs)}ms (attempt ${attempt + 1}/${GROQ_MAX_RETRIES})`);
+
+        if (attempt < GROQ_MAX_RETRIES - 1) {
+          await new Promise(resolve => setTimeout(resolve, waitMs));
+          continue;
+        }
+        const errorText = await response.text();
+        throw new Error(`Groq API error: ${response.status} - ${errorText}`);
+      }
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`Groq API error: ${response.status} - ${error}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content || '';
+
+      console.log(`[Groq] Response received (${content.length} chars)`);
+
+      return {
+        content,
+        model,
+        provider: 'groq',
+      };
+    } catch (error) {
+      lastError = error as Error;
+
+      if (attempt < GROQ_MAX_RETRIES - 1 && isRetryableError(error)) {
+        const waitMs = Math.min(1000 * Math.pow(2, attempt) + Math.random() * 500, 10000);
+        console.warn(`[Groq] Network error, retrying in ${Math.round(waitMs)}ms (attempt ${attempt + 1}/${GROQ_MAX_RETRIES}): ${(error as Error).message}`);
+        await new Promise(resolve => setTimeout(resolve, waitMs));
+        continue;
+      }
+
+      throw error;
+    }
   }
 
-  const data = await response.json();
-  const content = data.choices?.[0]?.message?.content || '';
-
-  console.log(`[Groq] Response received (${content.length} chars)`);
-
-  return {
-    content,
-    model,
-    provider: 'groq',
-  };
+  throw lastError || new Error('Groq API call failed after retries');
 }
 
 /**

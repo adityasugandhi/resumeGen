@@ -82,7 +82,7 @@ export class CronOrchestrator {
               tool: 'code_fix',
               filesModified: event.filesModified,
               summary: event.summary,
-            });
+            }).catch(() => {/* swallow — fire-and-forget */});
             break;
           case 'new_provider':
             const providerEntry: SelfEvolutionEntry = {
@@ -100,7 +100,7 @@ export class CronOrchestrator {
               tool: 'new_provider',
               filesModified: [],
               summary: `New provider created for ${event.company} (${event.platform})`,
-            });
+            }).catch(() => {/* swallow — fire-and-forget */});
             break;
           case 'jobs_found':
             console.log(`  [cron] Found ${event.count} jobs at ${event.company}`);
@@ -115,11 +115,17 @@ export class CronOrchestrator {
       };
 
       try {
-        const response = await runJobSearchAgent(jobTitle, this.config.location, {
-          maxJobs: this.config.maxJobsPerTitle,
-          matchThreshold: this.config.matchThreshold,
-          onEvent,
-        });
+        const AGENT_TIMEOUT = 10 * 60_000; // 10 minutes per job title
+        const response = await Promise.race([
+          runJobSearchAgent(jobTitle, this.config.location, {
+            maxJobs: this.config.maxJobsPerTitle,
+            matchThreshold: this.config.matchThreshold,
+            onEvent,
+          }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error(`Agent timed out after 10m for "${jobTitle}"`)), AGENT_TIMEOUT)
+          ),
+        ]);
 
         summary.jobsFound += response.results.length;
         summary.selfEvolutionActions.push(...selfEvolutionActions);
@@ -168,8 +174,17 @@ export class CronOrchestrator {
       }
     }
 
-    // Send Slack summary
-    await this.notifier.sendDailySummary(summary);
+    // Send Slack summary (with timeout to prevent stalling)
+    try {
+      await Promise.race([
+        this.notifier.sendDailySummary(summary),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Slack notification timed out')), 15_000)
+        ),
+      ]);
+    } catch (slackErr) {
+      console.warn('[cron] Slack notification failed:', (slackErr as Error).message);
+    }
 
     console.log(`\n[cron] Summary: ${summary.jobsFound} found, ${summary.matchesAboveThreshold} above threshold, ${summary.queuedCount} queued`);
     return summary;

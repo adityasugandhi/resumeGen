@@ -1,5 +1,6 @@
 import * as cheerio from 'cheerio';
 import { CareerJob } from '@/lib/careers/types';
+import { fetchWithTimeout } from '../fetch-with-timeout';
 
 interface StripeResponse {
   viewContext: {
@@ -29,11 +30,13 @@ export async function listStripeNativeJobs(
   const allJobs: CareerJob[] = [];
   let skip = 0;
   const limit = 100;
+  const MAX_PAGES = 20;
+  let pageCount = 0;
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const url = buildUrl({ query, teams, officeLocations, remoteLocations, limit, skip });
-    const response = await fetch(url, {
+    const response = await fetchWithTimeout(url, {
       headers: {
         Accept: 'application/json',
         'User-Agent': 'Mozilla/5.0 (compatible; ResumeApp/1.0)',
@@ -50,8 +53,9 @@ export async function listStripeNativeJobs(
 
     const total = data.viewContext?.pagination?.total ?? 0;
     skip += limit;
+    pageCount++;
 
-    if (skip >= total || jobs.length === 0) break;
+    if (skip >= total || jobs.length === 0 || pageCount >= MAX_PAGES) break;
   }
 
   // Client-side location filter for the generic `location` param

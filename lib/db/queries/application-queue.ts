@@ -26,7 +26,7 @@ function toQueuedApplication(row: typeof applicationQueue.$inferSelect): QueuedA
 export async function addToQueue(
   app: Omit<QueuedApplication, 'id' | 'status' | 'queuedAt'>
 ): Promise<QueuedApplication> {
-  // Check for existing URL
+  // Check for existing URL first (fast path)
   const existing = await db
     .select()
     .from(applicationQueue)
@@ -35,8 +35,11 @@ export async function addToQueue(
 
   if (existing.length > 0) return toQueuedApplication(existing[0]);
 
+  // Insert with onConflictDoNothing to handle the race condition where
+  // concurrent callers both pass the SELECT check above. The unique index
+  // on application_queue.url (see schema.ts) ensures no duplicates.
   const shortId = crypto.randomUUID().slice(0, 8);
-  const [row] = await db
+  const inserted = await db
     .insert(applicationQueue)
     .values({
       shortId,
@@ -50,9 +53,21 @@ export async function addToQueue(
       tailoredResumePath: app.tailoredResumePath,
       tailoredPdfPath: app.tailoredPdfPath,
     })
+    .onConflictDoNothing({ target: applicationQueue.url })
     .returning();
 
-  return toQueuedApplication(row);
+  // If the insert was a no-op due to a concurrent duplicate, fetch the
+  // existing row instead of returning undefined.
+  if (inserted.length === 0) {
+    const [duplicate] = await db
+      .select()
+      .from(applicationQueue)
+      .where(eq(applicationQueue.url, app.url))
+      .limit(1);
+    return toQueuedApplication(duplicate);
+  }
+
+  return toQueuedApplication(inserted[0]);
 }
 
 export async function hasUrl(url: string): Promise<boolean> {
