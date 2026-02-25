@@ -18,7 +18,7 @@ interface ChangeCardProps {
 }
 
 // Category badge colors
-const CATEGORY_COLORS: Record<string, string> = {
+const _CATEGORY_COLORS: Record<string, string> = {
   grammar: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-300 dark:border-blue-700',
   style: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border-purple-300 dark:border-purple-700',
   keyword_optimization: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700',

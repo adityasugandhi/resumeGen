@@ -36,6 +36,85 @@ function createOptimizerClient(): { client: Anthropic | AnthropicBedrock; model:
   throw new Error('No AI API key configured. Set ANTHROPIC_API_KEY or AWS_BEARER_TOKEN_BEDROCK.');
 }
 
+// ---- Role-type classifier (no LLM call) ----
+
+type RoleType = 'ai-ml' | 'fullstack' | 'backend' | 'data-platform' | 'devops-infra' | 'general';
+
+function classifyRoleType(jobTitle: string, requirements: string[]): RoleType {
+  const text = ` ${jobTitle} ${requirements.join(' ')} `.toLowerCase();
+
+  // Multi-word phrases use substring match; single short words use word-boundary regex
+  const patterns: Record<Exclude<RoleType, 'general'>, string[]> = {
+    'ai-ml': ['llm', 'machine learning', 'ai engineer', 'inference', 'nlp', 'deep learning', 'rag', 'generative ai', 'neural', 'pytorch', 'tensorflow'],
+    'fullstack': ['full-stack', 'fullstack', 'full stack', 'frontend', 'front-end', 'react', 'ui/ux', 'user interface'],
+    'backend': ['distributed system', 'microservice', 'backend', 'back-end', 'scalability', 'api design', 'grpc', 'kafka', 'message queue'],
+    'data-platform': ['data pipeline', 'etl', 'analytics', 'spark', 'warehouse', 'data engineer', 'airflow', 'dbt', 'snowflake', 'bigquery'],
+    'devops-infra': ['kubernetes', 'ci/cd', 'infrastructure', 'terraform', 'cloud engineer', 'sre', 'site reliability', 'devops', 'platform engineer'],
+  };
+
+  let bestType: RoleType = 'general';
+  let bestCount = 0;
+
+  for (const [roleType, keywords] of Object.entries(patterns)) {
+    const count = keywords.filter(kw => {
+      // For short keywords (<=3 chars like 'sre', 'etl', 'dbt', 'rag'), use word boundary
+      if (kw.length <= 3) {
+        return new RegExp(`\\b${kw}\\b`).test(text);
+      }
+      return text.includes(kw);
+    }).length;
+    if (count > bestCount) {
+      bestCount = count;
+      bestType = roleType as RoleType;
+    }
+  }
+
+  return bestCount >= 1 ? bestType : 'general';
+}
+
+// ---- Section order recommender ----
+
+function recommendSectionOrder(roleType: RoleType, requirements: string[]): string[] {
+  const text = requirements.join(' ').toLowerCase();
+
+  // If requirements mention advanced degree / PhD, promote Education
+  const educationFirst = /advanced degree|ph\.?d|doctorate|master.*required/.test(text);
+
+  if (educationFirst) {
+    return ['Summary', 'Education', 'Experience', 'Technical Skills', 'Projects', 'Publications & Awards'];
+  }
+
+  switch (roleType) {
+    case 'ai-ml':
+      return ['Summary', 'Experience', 'Projects', 'Technical Skills', 'Education', 'Publications & Awards'];
+    case 'data-platform':
+      return ['Summary', 'Experience', 'Technical Skills', 'Projects', 'Education', 'Publications & Awards'];
+    case 'devops-infra':
+      return ['Summary', 'Technical Skills', 'Experience', 'Projects', 'Education', 'Publications & Awards'];
+    default:
+      return ['Summary', 'Experience', 'Technical Skills', 'Projects', 'Education', 'Publications & Awards'];
+  }
+}
+
+// ---- Role-specific prompt blocks ----
+
+function getRoleSpecificGuidance(roleType: RoleType): string {
+  switch (roleType) {
+    case 'ai-ml':
+      return `ROLE-SPECIFIC (AI/ML): Emphasize multi-agent systems, RAG pipelines, model evaluation, inference optimization, and LLM integration. Highlight projects involving AI-powered features and data processing at scale.`;
+    case 'fullstack':
+      return `ROLE-SPECIFIC (Full-Stack): Emphasize product impact, user-facing features, deployment velocity, and end-to-end ownership. Lead with features shipped, user metrics, and cross-stack contributions.`;
+    case 'backend':
+      return `ROLE-SPECIFIC (Backend): Emphasize distributed systems design decisions, throughput, reliability, and API architecture. Lead with system design choices and their measurable impact.`;
+    case 'data-platform':
+      return `ROLE-SPECIFIC (Data Platform): Emphasize pipeline throughput, data quality, ETL performance, and analytical impact. Highlight data volume metrics and downstream business outcomes.`;
+    case 'devops-infra':
+      return `ROLE-SPECIFIC (DevOps/Infra): Emphasize infrastructure reliability, deployment frequency, incident reduction, and cost optimization. Lead with SLO improvements and operational metrics.`;
+    default:
+      return `ROLE-SPECIFIC (General): Balance technical depth with business impact. Emphasize measurable outcomes and system-level thinking.`;
+  }
+}
+
 export class ResumeOptimizer {
   private client: Anthropic | AnthropicBedrock;
   private model: string;
@@ -157,6 +236,11 @@ export class ResumeOptimizer {
       ? `\nHigh-performing bullets from past tailored resumes (use these as inspiration for rephrasing):\n${topBullets.map((b, i) => `  ${i + 1}. ${b}`).join('\n')}\n`
       : '';
 
+    // Classify role and determine section order
+    const roleType = classifyRoleType(jobTitle, jobRequirements);
+    const sectionOrder = recommendSectionOrder(roleType, jobRequirements);
+    const roleGuidance = getRoleSpecificGuidance(roleType);
+
     const prompt = `You are an expert resume optimization assistant. Your task is to tailor a resume for a specific job posting while maintaining honesty and accuracy.
 
 CRITICAL RULES:
@@ -167,9 +251,32 @@ CRITICAL RULES:
 - You may REORDER bullets, REPHRASE for emphasis, or ADD relevant keywords — but NEVER invent new roles, companies, or degrees.
 - If the resume has placeholder markers like "%%% CONTENT HERE %%%" — this is a SKELETON. Use the Additional Context section below to fill it with REAL content.
 
+BULLET FORMULA — Every experience bullet MUST follow:
+Action verb + System/Tool + Scale/Constraint + Metric + Proof
+GOOD: "Built real-time pipeline using Kafka processing 50M events/day, reducing latency from 850ms to 100ms (P99)"
+BAD: "Worked on data pipeline improvements"
+BAD: "Responsible for maintaining backend services"
+
+KEYWORD STRATEGY:
+- Each critical requirement keyword must appear 2-3x across sections (Skills, Experience, Summary)
+- Every mention must be in genuine, defensible context — no keyword stuffing
+- Mirror exact phrasing from job requirements where truthful (e.g., if they say "distributed systems", use that exact phrase)
+
+SECTION ORDER: Emit LaTeX sections in this order: ${sectionOrder.join(' → ')}
+
+${roleGuidance}
+
+FRAMING (senior roles):
+Lead with DECISION or IMPACT, not the tool.
+BAD: "Used Kafka for event streaming"
+GOOD: "Decoupled 73 service dependencies via event-driven architecture, enabling 12x faster release velocity"
+BAD: "Built a React dashboard"
+GOOD: "Shipped real-time monitoring dashboard serving 200+ operators, reducing incident response from 45min to 8min"
+
 Job Information:
 - Title: ${jobTitle}
 - Company: ${jobCompany}
+- Detected Role Type: ${roleType}
 - Key Requirements:
 ${jobRequirements.map((req, idx) => `  ${idx + 1}. ${req}`).join('\n')}
 ${marketContextBlock}${deepContextBlock}${topBulletsBlock}
@@ -183,11 +290,12 @@ ${originalLatex}
 
 Your task:
 1. Optimize the resume to better highlight relevant experience and skills for this specific job
-2. Reorder or rephrase bullet points to emphasize relevant accomplishments
-3. Add keywords from job requirements where they genuinely apply
+2. Reorder or rephrase bullet points to emphasize relevant accomplishments using the BULLET FORMULA above
+3. Add keywords from job requirements where they genuinely apply (2-3x across sections)
 4. DO NOT fabricate experience or skills
 5. DO NOT change facts, dates, or company names
 6. Focus on reframing existing experience to better match job requirements
+7. Emit sections in the recommended order: ${sectionOrder.join(' → ')}
 
 Return your response in this EXACT JSON format:
 {

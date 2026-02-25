@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { searchDocuments } from '@/lib/vector-db';
 import { generateQueryEmbedding } from '@/lib/indexer';
-import { callLLM, checkLLMStatus, getLLMProvider } from '@/lib/llm';
+import { callLLM, checkLLMStatus } from '@/lib/llm';
 
 export const maxDuration = 120; // 2 minutes max
 

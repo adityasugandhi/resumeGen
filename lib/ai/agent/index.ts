@@ -8,11 +8,28 @@ export type {
   AgentSearchResponse,
   CodeAgentInput,
   CodeAgentResult,
+  JobSearchAgentOptions,
+  PipelineStage,
+  InterventionAction,
+  InterventionResponse,
+  CodeAgentOptions,
 } from './types';
 
-// Job Search Agent
-export { runJobSearchAgent } from './job-search-agent';
-export type { JobSearchAgentOptions } from './job-search-agent';
+// Job Search Agent (3-phase parallel orchestrator)
+export { runJobSearchAgent, runJobSearchAgentLegacy } from './job-search-agent';
+
+// Sub-agents
+export { runDiscoveryPhase } from './sub-agents/discovery-agent';
+export { processCompany } from './sub-agents/company-worker';
+export { processJob } from './sub-agents/job-processor';
+export { WriteQueue, Semaphore, lanceWriteQueue } from './sub-agents/write-queue';
+export type {
+  DiscoveryResult,
+  TargetCompany,
+  CompanyWorkerResult,
+  JobWorkerResult,
+  WorkerProgress,
+} from './sub-agents/types';
 
 // Code Agent
 export { runCodeAgent } from './code-agent';

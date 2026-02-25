@@ -34,6 +34,8 @@ const LANCEDB_SERVER_URL = process.env.LANCEDB_SERVER_URL;
 type LanceConnection = lancedb.Connection | RemoteLanceConnection;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type LanceTable = any; // Both lancedb.Table and RemoteLanceTable share the same chainable API
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LanceRow = any; // Row type from toArray() results
 
 let db: LanceConnection | null = null;
 const tableCache = new Map<string, LanceTable>();
@@ -62,7 +64,7 @@ export async function initCareerMemory(): Promise<LanceConnection> {
 async function getOrCreateTable(
   tableName: CareerTableName,
   initialDocs?: Record<string, unknown>[]
-): Promise<lancedb.Table | null> {
+): Promise<LanceTable | null> {
   const cached = tableCache.get(tableName);
   if (cached) return cached;
 
@@ -88,7 +90,7 @@ async function getOrCreateTable(
 async function ensureTable(
   tableName: CareerTableName,
   docs: Record<string, unknown>[]
-): Promise<lancedb.Table> {
+): Promise<LanceTable> {
   const database = await initCareerMemory();
   const tableNames = await database.tableNames();
 
@@ -163,7 +165,7 @@ export async function searchResumeComponents(
 
   const results = await search.toArray();
 
-  return results.slice(0, topK).map((row) => ({
+  return results.slice(0, topK).map((row: LanceRow) => ({
     doc: {
       id: row.id,
       type: row.type,
@@ -202,7 +204,7 @@ export async function searchPastSearches(
     .limit(topK)
     .toArray();
 
-  return results.map((row) => ({
+  return results.map((row: LanceRow) => ({
     doc: {
       id: row.id,
       jobTitle: row.jobTitle,
@@ -241,7 +243,7 @@ export async function searchJobMatches(
     .limit(topK)
     .toArray();
 
-  return results.map((row) => ({
+  return results.map((row: LanceRow) => ({
     doc: {
       id: row.id,
       jobTitle: row.jobTitle,
@@ -296,7 +298,7 @@ export async function searchLearnings(
 
   const results = await search.toArray();
 
-  return results.map((row) => ({
+  return results.map((row: LanceRow) => ({
     doc: {
       id: row.id,
       category: row.category,

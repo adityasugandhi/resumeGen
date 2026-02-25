@@ -4,9 +4,6 @@
 
 import {
   ProjectDocument,
-  ProjectMetadata,
-  DocumentType,
-  EMBEDDING_DIMENSION,
   DEFAULT_CHUNK_CONFIG,
 } from '../vector-db/schemas';
 import {

@@ -58,8 +58,8 @@ function convertToLineDiff(
     currentHunk: null,
   };
 
-  let leftIdx = 0;
-  let rightIdx = 0;
+  let _leftIdx = 0;
+  let _rightIdx = 0;
 
   for (const diff of charDiffs) {
     const text = diff[1];
@@ -85,8 +85,8 @@ function convertToLineDiff(
           });
         }
       }
-      leftIdx += text.length;
-      rightIdx += text.length;
+      _leftIdx += text.length;
+      _rightIdx += text.length;
     } else if (isDiffDelete(diff)) {
       // Deleted content - advance left side only
       const lines = text.split('\n');
@@ -104,7 +104,7 @@ function convertToLineDiff(
           });
         }
       }
-      leftIdx += text.length;
+      _leftIdx += text.length;
     } else if (isDiffInsert(diff)) {
       // Inserted content - advance right side only
       const lines = text.split('\n');
@@ -122,7 +122,7 @@ function convertToLineDiff(
           });
         }
       }
-      rightIdx += text.length;
+      _rightIdx += text.length;
     }
   }
 

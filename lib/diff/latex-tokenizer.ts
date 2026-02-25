@@ -5,10 +5,10 @@
 
 import DiffMatchPatch from 'diff-match-patch';
 import type { DiffResult } from '@/types/diff';
-import type { LaTeXToken, LaTeXTokenType } from './diff-types';
+import type { LaTeXToken } from './diff-types';
 import { computeDiff } from './diff-engine';
 
-const dmp = new DiffMatchPatch();
+const _dmp = new DiffMatchPatch();
 
 /**
  * Tokenize LaTeX content preserving structure

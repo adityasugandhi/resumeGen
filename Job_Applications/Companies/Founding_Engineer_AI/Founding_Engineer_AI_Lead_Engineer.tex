@@ -1,0 +1,147 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS — tighter spacing for 1-page fit
+\setlist[itemize]{topsep=1pt, parsep=1pt, itemsep=1pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-2pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{4pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{2pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{4pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-14pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-4pt}
+Full-stack engineer with 5+ years building \textbf{AI-native products from zero to production}. Hands-on experience designing \textbf{agentic AI systems}, \textbf{multi-agent orchestration}, \textbf{RAG pipelines with vector databases}, and \textbf{knowledge-graph-driven architectures}. Ship end-to-end across \textbf{Python/FastAPI} backends and \textbf{React/Next.js/TypeScript} frontends. Thrive in founding-team environments---own architecture, build infrastructure, iterate fast.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-4pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, TypeScript/JavaScript, SQL, Go, Java, Scala, Bash, C++}
+\resumeItem{\textbf{AI \& Knowledge Systems:} Agentic AI, Multi-Agent Orchestration (LangChain, CrewAI), RAG Pipelines, LLMs (GPT, Llama, Groq), Vector DBs (Pinecone, ChromaDB, pgvector), Knowledge Graphs, Semantic Search, Prompt Engineering}
+\resumeItem{\textbf{Frontend:} React, Next.js 14, TypeScript, TailwindCSS, Zustand, Framer Motion, Vapi Voice AI}
+\resumeItem{\textbf{Backend \& Infra:} FastAPI, Node.js, PostgreSQL, Redis, MongoDB, Kafka, Spark, GraphQL, WebSockets, AWS (EKS, Lambda, S3), Kubernetes, Docker, CI/CD (GitHub Actions), Vercel, Grafana}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer --- AI \& Full-Stack Systems}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{agentic AI system} with \textbf{multi-agent orchestration}: autonomous agents discover, classify, and map \textbf{35K+ devices} across \textbf{172+ networks} using \textbf{LLM-driven reasoning} and \textbf{graph-based dependency resolution}, reducing manual investigation by \textbf{85\%}.}
+\resumeItem{Built \textbf{RAG pipelines} with \textbf{vector DB integration} (pgvector, ChromaDB) and \textbf{knowledge-graph traversal} for context-aware retrieval; agents reason over structured relationships, cutting debugging time by \textbf{40\%} for \textbf{15+ teams}.}
+\resumeItem{Delivered \textbf{full-stack platform}: \textbf{FastAPI} backend (\textbf{120+ REST endpoints} + \textbf{WebSocket streaming}), \textbf{React/Next.js} frontend with real-time dashboards, \textbf{Redis caching}---owned architecture from schema to UI as sole engineer.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer --- Data \& AI Platform}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero --- FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Designed \textbf{vector embedding pipelines} and \textbf{semantic search} using Transformers; deployed retrieval engine processing \textbf{1,000+ documents} at \textbf{95\% accuracy}, \textbf{sub-200ms latency}---foundational architecture decisions made independently.}
+\resumeItem{Built \textbf{distributed data pipelines} with \textbf{Python}, \textbf{Spark}, \textbf{Kubernetes}; orchestrated parallel execution achieving \textbf{+40\% throughput} over \textbf{1TB+ datasets} with \textbf{99\% success rate}.}
+\resumeItem{Partnered with researchers, data scientists, and platform engineers to define \textbf{AI pipeline standards}; reduced \textbf{pipeline runtime by 50\%} through architecture optimization.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer --- Full-Stack \& Integrations}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Built \textbf{event-driven microservices} with \textbf{Kafka} processing \textbf{500K+ events/day}; designed fault-tolerant async workflows handling \textbf{10x traffic spikes} with \textbf{99.5\% availability}.}
+\resumeItem{Developed \textbf{React/TypeScript frontends} and \textbf{REST/GraphQL APIs} end-to-end across \textbf{3 product lines}; mentored \textbf{5 engineers} on best practices, code review, and TDD.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{AI Resume Optimization Platform} \textit{(Private)} --- \textbf{Multi-agent system}: job scanning, semantic matching, and optimization agents with \textbf{RAG pipelines}, \textbf{vector DB integration}, \textbf{LLM tool-calling}. Tech: \textbf{Python, TypeScript, Next.js, FastAPI, Llama 3.3, Groq API}.}
+\resumeItem{\textbf{Enterprise Slack Bot --- Agentic AI} \textit{(Internal)} --- \textbf{Agentic chatbot} with \textbf{tool/agent integrations} for automated workflow management and retrieval-augmented responses. \textbf{24/7 uptime}, \textbf{sub-40s latency}. Tech: \textbf{Python, Node.js, AWS EC2, OAuth 2.0, WebSockets}.}
+\resumeItem{\textbf{Pragle Chiropractic --- Production Client Website} \href{https://www.praglechiropractictallahassee.com/}{Live} --- Shipped production website for healthcare client: \textbf{Vapi Voice AI} integration, multi-step booking system (\textbf{Zod validation}), symptom questionnaire, \textbf{content-driven architecture} via typed JSON config. Tech: \textbf{Next.js 14, TypeScript, TailwindCSS, Framer Motion, Zustand, Vercel}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Machine Learning, Data Communications, Algorithms}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & AWARDS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST)}
+\resumeItem{2nd Place, SRM University Hackathon (2019)}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

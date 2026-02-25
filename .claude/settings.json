@@ -1,0 +1,28 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "file=\"$CLAUDE_FILE_PATHS\"; ext=\"${file##*.}\"; if [ \"$ext\" = \"ts\" ] || [ \"$ext\" = \"tsx\" ] || [ \"$ext\" = \"js\" ] || [ \"$ext\" = \"jsx\" ]; then npx eslint --fix \"$file\" 2>/dev/null; fi; true",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "file=\"$CLAUDE_FILE_PATHS\"; case \"$file\" in *.env*|*credentials*|*secret*) echo 'BLOCKED: Cannot edit sensitive files directly' >&2; exit 1;; *) exit 0;; esac",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

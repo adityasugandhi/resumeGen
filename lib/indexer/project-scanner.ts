@@ -4,7 +4,7 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import { DocumentType, ProjectScanResult, ProjectMetadata } from '../vector-db/schemas';
+import { ProjectScanResult, ProjectMetadata } from '../vector-db/schemas';
 import {
   detectDocumentType,
   parsePackageJson,

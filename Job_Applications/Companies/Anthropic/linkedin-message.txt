@@ -1,0 +1,5 @@
+Hi Teeona — your post about the People Products team really resonated. I've been building LLM-native products with Claude's API end-to-end — multi-agent orchestration, MCP integrations, vector search, real-time streaming. The greenfield nature of what Mike's team is doing, rebuilding people tools from first principles with Claude at the center, is exactly the kind of 0→1 work I thrive in.
+
+I also built production integrations with Greenhouse, Lever, and Ashby — so the people/career tooling space isn't new to me.
+
+Would love to be considered for the SWE role. Happy to share more about what I've been building!

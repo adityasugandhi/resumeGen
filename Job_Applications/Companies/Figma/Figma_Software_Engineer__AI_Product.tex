@@ -1,0 +1,153 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Software Engineer with \textbf{5+ years} building \textbf{0→1 AI products} and \textbf{generative AI solutions} from ideation through production. Proven track record \textbf{prototyping and pathfinding} new opportunities with \textbf{LLMs, RAG pipelines, and AI agents}, delivering \textbf{measurable business value} through \textbf{deep product and stakeholder collaboration}. Production experience implementing \textbf{full lifecycle AI development}—from model selection and prompt engineering to productionizing, monitoring, and maintaining AI systems at scale.
+
+\vspace{-9pt}
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — Enterprise Applications \& AI}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Led 0→1 generative AI product development} from ideation to production: worked embedded with stakeholders to identify highest-impact use cases, prototyped \textbf{LLM-based solutions} with multiple model architectures (GPT-4, Llama 3.3), and productionized \textbf{AI agents with RAG pipelines} that reduced manual analysis time by \textbf{40\%} across \textbf{172+ networks}.}
+\resumeItem{\textbf{Implemented full lifecycle AI development}: evaluated and selected models based on latency/accuracy tradeoffs, built \textbf{prompt engineering frameworks} with version control, deployed \textbf{production monitoring} (accuracy tracking, hallucination detection), and maintained systems with \textbf{99.2\% reliability} serving daily operational workflows.}
+\resumeItem{Developed \textbf{deep product and business knowledge} by embedding with facility managers and operations teams; translated abstract AI capabilities into \textbf{tangible business value}, connecting \textbf{semantic search and document analysis} to \textbf{85\% reduction in manual processes} and \textbf{\$200K+ annual operational savings}.}
+\resumeItem{Built \textbf{production-grade AI product} with \textbf{React/TypeScript frontend} and \textbf{Python backend} (\textbf{37 REST API endpoints}); shipped \textbf{real-time WebSocket streaming} for AI responses, designed \textbf{user-centered interfaces} for non-technical operators, and established \textbf{CI/CD pipelines} with automated testing for AI components.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — Data Platform \& ML Systems}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Prototyped and pathfound generative AI opportunities} on \textbf{1TB+ unstructured datasets}: experimented with \textbf{vector embedding models} (OpenAI, Sentence-BERT), built \textbf{semantic search prototypes}, and validated \textbf{RAG architecture patterns} that became foundation for production AI systems processing \textbf{1,000+ documents} with \textbf{95\% accuracy}.}
+\resumeItem{Implemented \textbf{early-phase AI development lifecycle}: evaluated \textbf{5+ embedding models} and \textbf{3 vector databases} (Pinecone, Weaviate, ChromaDB) through rapid prototyping, selected optimal architecture based on \textbf{retrieval precision and latency} (\textbf{sub-200ms}), and productionized with monitoring and feedback loops.}
+\resumeItem{Connected \textbf{AI modeling tasks to business outcomes}: collaborated cross-functionally with researchers and domain experts to translate \textbf{complex analytical problems} into \textbf{operationalized AI workflows}, delivering \textbf{50\% pipeline runtime reduction} through iterative optimization and stakeholder feedback.}
+\resumeItem{Built \textbf{production ML/LLM infrastructure} on \textbf{Kubernetes} with \textbf{distributed compute} (\textbf{Spark/Python}); designed \textbf{data pipelines} for AI model training and inference, achieving \textbf{+40\% throughput} through custom partitioning and query optimization on large-scale datasets.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer — Enterprise Data Integration}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Delivered \textbf{end-to-end enterprise software solutions} using \textbf{Java/Spring Boot} and \textbf{React}; built \textbf{event-driven microservices} with \textbf{Kafka} processing \textbf{500K+ events/day}, demonstrating \textbf{full-stack product development} skills from backend architecture to user-facing interfaces with \textbf{99.5\% availability}.}
+\resumeItem{Developed \textbf{product and business acumen} by working closely with stakeholders across departments; identified high-value problems, designed \textbf{data integration workflows} connecting enterprise systems, and delivered solutions that enabled \textbf{automated decision-making} with measurable operational impact.}
+\resumeItem{Built \textbf{production monitoring and observability infrastructure} with \textbf{Prometheus}, \textbf{Grafana}, and \textbf{distributed tracing}; took full ownership of \textbf{system maintenance and incident response}, reducing \textbf{MTTR by 60\%} through proactive monitoring and rapid troubleshooting.}
+\resumeItem{Collaborated with \textbf{cross-functional teams} and mentored \textbf{5 engineers} on best practices; shipped iteratively with rapid feedback cycles, achieving \textbf{90\% test coverage} and maintaining high code quality standards across distributed systems.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-5pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt]
+\begin{itemize}
+\resumeItem{\textbf{AI-Powered Resume Optimization Platform} \href{https://github.com/adityasugandhi}{GitHub} --- \textbf{0→1 generative AI product}: prototyped and built \textbf{full-stack AI application} from scratch in \textbf{React/TypeScript} and \textbf{Next.js}. Implemented \textbf{full AI lifecycle}—evaluated \textbf{LLMs (Llama 3.3, GPT-4)}, built \textbf{RAG pipelines} with \textbf{vector embeddings}, deployed \textbf{AI agents} for document analysis, and productionized with monitoring. Delivered end-to-end: \textbf{semantic search}, prompt engineering, and production UI. Tech: \textbf{TypeScript, React, Python, Groq API, Vector DBs}.}
+\resumeItem{\textbf{Enterprise Slack Bot — AI Workflow Automation} \href{https://github.com/adityasugandhi}{GitHub} --- \textbf{Productionized LLM-based solution} as enterprise Slack integration; implemented \textbf{full lifecycle development} from model selection to deployment and maintenance. Built \textbf{AI agent} with tool integrations, achieved \textbf{24/7 availability} and \textbf{sub-40s response times}, deployed on \textbf{AWS EC2} with monitoring. Tech: \textbf{Python, Node.js, OAuth 2.0, WebSockets, PM2}.}
+\resumeItem{\textbf{Distributed Data Pipeline (Spark/Kafka/Kubernetes)} \href{https://github.com/adityasugandhi}{GitHub} --- Architected \textbf{real-time data ingestion platform} with \textbf{Spark} and \textbf{Kafka} on \textbf{Kubernetes}; built orchestration layer for multi-source enterprise data integration processing \textbf{10K+ events/sec}. Demonstrated infrastructure skills for \textbf{scaling AI/ML workloads}. Tech: \textbf{Java, Scala, Spark, Kafka, Kubernetes, Docker}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{AI/ML \& Generative AI:} LLMs (GPT-4, Llama, Claude), RAG Pipelines, AI Agents, Vector Databases (Pinecone, Weaviate, ChromaDB), Embedding Models, Prompt Engineering, Model Evaluation, MLflow, Full Lifecycle AI Development}
+\resumeItem{\textbf{Languages:} Python, TypeScript, JavaScript, Java, Scala, SQL, Go, Bash, C++}
+\resumeItem{\textbf{Frontend \& Product:} React, Next.js, TypeScript, HTML/CSS, Responsive UI, Component Libraries, Production Frontend Applications, User-Centered Design}
+\resumeItem{\textbf{Data \& Platforms:} Apache Spark (PySpark/Scala), Kafka, PostgreSQL, Redis, MongoDB, Snowflake (familiar), Data Pipelines, Real-time Streaming}
+\resumeItem{\textbf{Infrastructure \& DevOps:} Kubernetes (EKS/AKS), Docker, AWS (EKS, EMR, Lambda, S3, EC2), CI/CD (GitHub Actions, Jenkins), Grafana, Prometheus, Production Monitoring}
+\resumeItem{\textbf{Practices:} 0→1 Product Development, Rapid Prototyping, Stakeholder Collaboration, Agile/Scrum, End-to-End Ownership, TDD, Code Review, Technical Documentation}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Machine Learning, Data Communications, Algorithms}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS \& AWARDS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{\textbf{2nd Place, SRM University Hackathon (2019)} --- Built end-to-end data-driven application in 24 hours; designed ML-based review classification system from problem discovery to working demo, judged on business impact and technical execution.}
+\resumeItem{Review Classification \& False Feedback Detection --- Published in IJAST; built production ML pipeline for large-scale unstructured text analysis.}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024) \textbar\ Active participant in AI/ML hackathons and rapid prototyping challenges.}
+\end{itemize}
+
+\end{document}

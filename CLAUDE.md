@@ -266,7 +266,7 @@ Images: remote pattern for `img.logo.dev` (Logo.dev API).
 
 ## Contact Details
 
-- Email: adityasugandhi.dev.ai@gmail.com
+- Email: adityasugandhi.work@outlook.com
 - Phone: +1 448 500 6857
 - GitHub: https://github.com/adityasugandhi
 - Website: https://adityasugandhi.com

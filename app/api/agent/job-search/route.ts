@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { v4 as uuidv4 } from 'uuid';
 import { runJobSearchAgent } from '@/lib/ai/agent/job-search-agent';
-import type { AgentSearchRequest, AgentStepEvent } from '@/lib/ai/agent/types';
+import { waitForIntervention, cancelIntervention } from './intervention-store';
+import type { AgentSearchRequest, AgentStepEvent, JobSearchAgentOptions } from '@/lib/ai/agent/types';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120;
@@ -45,7 +47,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Generate unique stream ID for this agent session
+  const streamId = uuidv4();
+
   const encoder = new TextEncoder();
+  const runStart = Date.now();
   const stream = new ReadableStream({
     async start(controller) {
       function sendEvent(event: string, data: unknown) {
@@ -54,16 +60,25 @@ export async function POST(request: NextRequest) {
 
       try {
         const onEvent = (stepEvent: AgentStepEvent) => {
-          sendEvent('step', stepEvent);
+          sendEvent('step', { ...stepEvent, _ts: Date.now(), _elapsedMs: Date.now() - runStart });
+        };
+
+        // Create intervention callback — params received from agent but not needed here
+        const onIntervention = async (_tool: string, _error: string) => {
+          return await waitForIntervention(streamId);
         };
 
         // Resume data is now auto-loaded from disk inside runJobSearchAgent
-        const results = await runJobSearchAgent(body.jobTitle, body.location, {
+        const options: JobSearchAgentOptions = {
           maxJobs: body.maxJobs ?? 5,
           matchThreshold: body.matchThreshold ?? 60,
           targetCompany: body.targetCompany,
           onEvent,
-        });
+          streamId,
+          onIntervention,
+        };
+
+        const results = await runJobSearchAgent(body.jobTitle, body.location, options);
 
         sendEvent('result', results);
       } catch (error) {
@@ -79,6 +94,8 @@ export async function POST(request: NextRequest) {
           error: err.message,
         });
       } finally {
+        // Clean up intervention state on stream abort
+        cancelIntervention(streamId);
         controller.close();
       }
     },

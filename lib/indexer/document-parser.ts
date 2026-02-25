@@ -2,7 +2,8 @@
  * Document parser for extracting metadata from project files
  */
 
-import { DocumentType, ProjectMetadata } from '../vector-db/schemas';
+import { DocumentType } from '../vector-db/schemas';
+import type { ProjectMetadata } from '../vector-db/schemas';
 
 /**
  * Detect document type from file path

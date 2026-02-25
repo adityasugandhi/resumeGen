@@ -15,6 +15,7 @@ export async function searchJobs(params: CareerSearchParams): Promise<CareerSear
       platform: 'unknown',
       jobs: [],
       totalCount: 0,
+      error: `Company "${params.company}" not in registry. Use register_company to add it.`,
     };
   }
 
@@ -44,6 +45,22 @@ export async function searchJobs(params: CareerSearchParams): Promise<CareerSear
       case 'cloudflare':
         jobs = await listCloudflareJobs(params.query, params.location, params.department);
         break;
+      case 'custom':
+      case 'workday':
+      case 'icims': {
+        try {
+          const { CareerExplorerAgent } = await import('./explorer/career-explorer-agent');
+          const explorer = new CareerExplorerAgent();
+          const result = await explorer.explore(params.company, {
+            maxPages: 5,
+            careersUrl: config.careersUrl,
+          });
+          jobs = result.jobs;
+        } catch (err) {
+          console.error(`[CAREERS] Browser exploration failed for ${params.company}:`, err);
+        }
+        break;
+      }
       default:
         break;
     }

@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ChevronRight, ChevronDown, File, Pin } from 'lucide-react';
+import { ChevronRight, ChevronDown, File, Pin, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useCompanyStore } from '@/store/companyStore';
 import { useEditorStore } from '@/store/editorStore';
@@ -84,6 +84,28 @@ export default function CompanyFolder({
               >
                 <File className="w-4 h-4 text-gray-600 dark:text-gray-400 flex-shrink-0" />
                 <span className="flex-1 text-sm truncate">{file.name}</span>
+                {file.matchScore !== undefined && (
+                  <span className={cn(
+                    'text-[10px] font-semibold px-1.5 py-0.5 rounded-full flex-shrink-0',
+                    file.matchScore >= 80 ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400' :
+                    file.matchScore >= 60 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400' :
+                    'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'
+                  )}>
+                    {file.matchScore}%
+                  </span>
+                )}
+                {file.jobUrl && (
+                  <a
+                    href={file.jobUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 p-0.5 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30"
+                    title="Open job posting"
+                  >
+                    <ExternalLink className="w-3 h-3 text-blue-500" />
+                  </a>
+                )}
                 {isPinned && <Pin className="w-3 h-3 text-blue-500 flex-shrink-0" />}
               </div>
             );

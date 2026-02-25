@@ -1,0 +1,166 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+\definecolor{coxblue}{RGB}{0,82,155}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage[breakable]{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\
+ewcommand{\resumeItem}[1]{\item\small #1}
+
+\
+ewcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \
+oindent
+  \textbf{#1} \hfill {\footnotesize #2} \
+  [-1pt]
+  \
+oindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\
+ewcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\
+ewcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \
++1 448 500 6857 \textbar\ \textcolor{metablue}{Atlanta, GA (Open to Hybrid)} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Senior Software Engineer with 5+ years building \textbf{AI-powered platforms}, \textbf{distributed backend systems}, and \textbf{developer infrastructure} at scale. Deep expertise in \textbf{Python}, \textbf{TypeScript}, and \textbf{Java} with proven track record architecting \textbf{resilient production systems} processing \textbf{5M+ daily requests}. Strong system design skills with experience building \textbf{real-time data pipelines}, \textbf{event-driven microservices}, and \textbf{AI/ML integrations}. Excellent communicator with history of \textbf{cross-functional collaboration} and \textbf{mentoring engineers} on distributed systems best practices.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Languages:} Python, TypeScript/JavaScript, Java, SQL, Bash, Go (familiar)}
+\resumeItem{\textbf{AI \& ML Platforms:} LLM Integration (Groq, OpenAI), RAG Pipelines, Vector Databases, AI-Powered Chatbots}
+\resumeItem{\textbf{Backend \& Infrastructure:} FastAPI, Spring Boot, Node.js, Microservices, Event-Driven Architecture, gRPC, REST APIs}
+\resumeItem{\textbf{AWS Cloud:} Lambda, EC2, SQS, SNS, API Gateway, DynamoDB, S3, CloudFormation, EKS, MSK (Kafka)}
+\resumeItem{\textbf{Data Infrastructure:} PostgreSQL, DynamoDB, Redis, Elasticsearch, Kafka, Real-time Streaming, Time-Series DBs}
+\resumeItem{\textbf{DevOps \& Platform Engineering:} Docker, Kubernetes, Terraform, CloudFormation, CI/CD (Jenkins, GitHub Actions), IaC}
+\resumeItem{\textbf{Practices:} System Design, Resilient Architecture, Technical Mentorship, Cross-Team Collaboration, Agile/Scrum}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer II}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Architected \textbf{distributed utility digital twin platform} for \textbf{35k+ IoT devices} across \textbf{172+ networks} using \textbf{Python/FastAPI}, \textbf{Java/Spring Boot}, and \textbf{Kubernetes}; designed \textbf{real-time telemetry ingestion pipeline} processing \textbf{5M+ daily events} with \textbf{99.99\% availability} and \textbf{sub-100ms P99 latency}.}
+\resumeItem{Designed \textbf{37 REST/gRPC API endpoints} serving \textbf{10K+ concurrent users} with \textbf{rate limiting}, \textbf{JWT authentication}, and \textbf{RBAC}; implemented \textbf{resilient production architecture} with circuit breakers, retry policies, and graceful degradation achieving \textbf{99.2\% uptime}.}
+\resumeItem{Built \textbf{serverless event-driven microservices} using \textbf{AWS Lambda}, \textbf{SQS}, and \textbf{SNS} for async orchestration; architected \textbf{fault-tolerant system} with dead-letter queues and exponential backoff handling \textbf{10x traffic spikes} with zero data loss.}
+\resumeItem{Led \textbf{monolith-to-microservices migration} to event-driven architecture, reducing service coupling by \textbf{60\%} and enabling independent scaling of telemetry ingestion, analytics, and monitoring modules; increased release velocity by \textbf{3x}.}
+\resumeItem{\textbf{Mentored 3 junior engineers} on \textbf{distributed systems design}, \textbf{TDD/BDD practices}, and \textbf{code review standards}; collaborated with cross-functional teams (product, data science, operations) to deliver platform features; achieved \textbf{85\%+ test coverage}.}
+\resumeItem{Deployed \textbf{CI/CD pipelines} with \textbf{Docker} containerization and \textbf{CloudFormation IaC}; established \textbf{observability stack} with \textbf{CloudWatch/Kibana dashboards} and automated alerting reducing \textbf{MTTR by 40\%}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built \textbf{high-throughput data pipelines} on \textbf{AWS EMR/EC2} processing \textbf{1TB+ datasets} using \textbf{Python (PySpark)}; designed \textbf{resilient architecture} with optimized partitioning and shuffle operations achieving \textbf{+40\% throughput} and \textbf{99\% job success rate}.}
+\resumeItem{Developed \textbf{full-stack analytics platform} with \textbf{React.js/TypeScript} frontend and \textbf{Python/FastAPI} backend; integrated \textbf{Elasticsearch} for \textbf{real-time search} across \textbf{50M+ records} with \textbf{sub-second query response} and custom aggregation pipelines.}
+\resumeItem{Deployed end-to-end \textbf{monitoring infrastructure} with \textbf{Prometheus/Grafana} and \textbf{CloudWatch}; implemented \textbf{custom metrics collection}, \textbf{automated drift detection}, and \textbf{SLA alerting} reducing pipeline failures by \textbf{50\%}.}
+\resumeItem{Collaborated with \textbf{cross-functional teams} (data scientists, operations) to architect \textbf{data integration workflows} connecting enterprise systems and third-party APIs enabling \textbf{automated decision-making} and real-time analytics.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Architected and led \textbf{monolith-to-microservices migration} on \textbf{AWS EKS}; designed \textbf{resilient event-driven services} in \textbf{Java (Spring Boot)} and \textbf{Python} with circuit breakers and health checks; improved system availability to \textbf{99.5\%} and reduced infrastructure costs by \textbf{20\%}.}
+\resumeItem{Built \textbf{real-time event streaming platform} using \textbf{AWS SQS/SNS} and \textbf{Kafka (MSK)} with consumer groups and \textbf{DynamoDB Streams}; processed \textbf{500k+ events/day} with \textbf{fault-tolerant architecture} enabling \textbf{10x spike handling} with zero message loss.}
+\resumeItem{Designed \textbf{comprehensive observability dashboards} with \textbf{Kibana}, \textbf{Grafana}, and \textbf{CloudWatch}; established \textbf{24/7 on-call rotation} with PagerDuty integration, reducing \textbf{MTTR by 60\%} through \textbf{automated runbooks} and incident response workflows.}
+\resumeItem{Deployed \textbf{auto-scaling infrastructure} with \textbf{Docker}, \textbf{Kubernetes}, and \textbf{CloudFormation IaC}; implemented \textbf{CodeBuild CI/CD pipelines} with \textbf{blue-green deployments} for rapid, safe releases across dev/staging/prod environments.}
+\resumeItem{\textbf{Mentored 5 engineers} on \textbf{microservices architecture}, \textbf{system design patterns}, and \textbf{distributed systems best practices}; collaborated across engineering teams to establish \textbf{code review standards} and \textbf{TDD/BDD} achieving \textbf{90\% test coverage}.}
+\resumeItemsEnd
+\vspace{-6pt}
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-3pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt,breakable]
+\begin{itemize}
+\resumeItem{\textbf{AI-Powered Resume Platform} --- Architected \textbf{full-stack AI platform} with \textbf{Next.js 14/TypeScript} frontend and \textbf{Python/FastAPI} backend. Integrated \textbf{LLM APIs (Groq, Llama 3.3)} with \textbf{RAG pipelines} and \textbf{vector embeddings} for intelligent job matching. Deployed on \textbf{serverless AWS architecture} with \textbf{Lambda}, \textbf{DynamoDB}, and \textbf{S3}. Implemented \textbf{real-time workflow orchestration} and \textbf{AI evaluation harnesses}. Tech: \textbf{TypeScript, Python, AWS Lambda, AI/ML, Vector Stores}.}
+
+\resumeItem{\textbf{Enterprise Slack Bot Integration} --- Deployed \textbf{AI-powered Slack bot} for workflow automation achieving \textbf{24/7 availability} and \textbf{sub-40-second response times}. Implemented \textbf{Socket Mode API} for secure real-time bidirectional communication with \textbf{OAuth 2.0} authentication. Built on \textbf{AWS EC2} with \textbf{Node.js/TypeScript}, \textbf{PM2 process management}, and \textbf{systemd services}. Integrated \textbf{WebSocket connections} and \textbf{event subscriptions} for real-time message delivery. Tech: \textbf{TypeScript, Node.js, AWS, Slack API, Real-time Systems}.}
+
+\resumeItem{\textbf{Worker-AI (Multi-Agent Platform)} --- Architected \textbf{distributed task orchestration system} with \textbf{FastAPI} backend, \textbf{PostgreSQL}, \textbf{Redis} caching, and \textbf{React.js/TypeScript} frontend. Implemented \textbf{async event-driven} processing with \textbf{SQS}-style message queues and \textbf{Prometheus metrics collection}. Containerized with \textbf{Docker Compose}. Tech: \textbf{Python, TypeScript, PostgreSQL, Redis, Docker, Monitoring}.}
+
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{Aug 2022 -- May 2024}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Cloud Computing, Data Mining}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{Aug 2016 -- May 2020}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- CERTIFICATIONS & AWARDS ----------
+\section{\textcolor{metablue}{CERTIFICATIONS \& AWARDS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{AWS Solutions Architect Course (Udemy, 2024) --- pursuing AWS Developer Associate certification}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST Publication)}
+\resumeItem{2nd Place, SRM University Hackathon (2019)}
+\end{itemize}
+
+\end{document}

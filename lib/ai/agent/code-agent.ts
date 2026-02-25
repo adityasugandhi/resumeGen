@@ -1,7 +1,7 @@
 import AnthropicBedrock from '@anthropic-ai/bedrock-sdk';
 import Anthropic from '@anthropic-ai/sdk';
 import { codeTools, formatErrorContext } from './code-tools';
-import type { CodeAgentInput, CodeAgentResult } from './types';
+import type { CodeAgentInput, CodeAgentResult, CodeAgentOptions, AgentStepEvent } from './types';
 
 const CODE_AGENT_SYSTEM_PROMPT = `You are a self-healing code agent for a Next.js resume optimization platform.
 A tool in the job search pipeline has failed. Your job:
@@ -55,7 +55,29 @@ function createClient(): { client: any; model: string } {
   throw new Error('No Claude API credentials');
 }
 
-export async function runCodeAgent(errorContext: CodeAgentInput): Promise<CodeAgentResult> {
+function summarizeToolInput(name: string, input: Record<string, unknown>): string {
+  switch (name) {
+    case 'read_file':
+      return `Reading ${input.path || 'file'}`;
+    case 'write_file':
+      return `Writing ${input.path || 'file'}`;
+    case 'list_files':
+      return `Listing ${input.directory || 'directory'}`;
+    case 'web_search':
+      return `Searching: "${String(input.query || '').slice(0, 80)}"`;
+    case 'run_fetch':
+      return `Fetching ${input.url || 'URL'}`;
+    case 'get_error':
+      return 'Getting error details';
+    default:
+      return `Running ${name}`;
+  }
+}
+
+export async function runCodeAgent(
+  errorContext: CodeAgentInput,
+  options?: CodeAgentOptions
+): Promise<CodeAgentResult> {
   if (!process.env.AWS_BEARER_TOKEN_BEDROCK && !process.env.ANTHROPIC_API_KEY) {
     console.warn('[code-agent] No Claude credentials configured, skipping self-healing');
     return {
@@ -86,14 +108,23 @@ export async function runCodeAgent(errorContext: CodeAgentInput): Promise<CodeAg
     { role: 'user', content: formatErrorContext(errorContext) },
   ];
 
-  let maxIterations = 10;
+  const totalIterations = 10;
+  let maxIterations = totalIterations;
+
+  const systemPrompt = options?.additionalPrompt
+    ? `${CODE_AGENT_SYSTEM_PROMPT}\n\nAdditional user context: ${options.additionalPrompt}`
+    : CODE_AGENT_SYSTEM_PROMPT;
+
+  const emitStep = (event: AgentStepEvent) => options?.onEvent?.(event);
 
   while (maxIterations-- > 0) {
+    const currentIteration = totalIterations - maxIterations;
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const response = await (client.messages as any).create({
       model,
       max_tokens: 8192,
-      system: CODE_AGENT_SYSTEM_PROMPT,
+      system: systemPrompt,
       tools: anthropicTools,
       messages,
     });
@@ -102,6 +133,22 @@ export async function runCodeAgent(errorContext: CodeAgentInput): Promise<CodeAg
     const toolUseBlocks = (response.content as ContentBlock[]).filter(
       (block): block is ToolUseBlock => block.type === 'tool_use'
     );
+
+    // Emit thinking events for text blocks between tool calls
+    const textBlocks = (response.content as ContentBlock[]).filter(
+      (block): block is TextBlock => block.type === 'text'
+    );
+    for (const tb of textBlocks) {
+      if (tb.text.trim()) {
+        emitStep({
+          type: 'code_agent_step',
+          action: 'thinking',
+          detail: tb.text.slice(0, 200),
+          iteration: currentIteration,
+          maxIterations: totalIterations,
+        });
+      }
+    }
 
     if (toolUseBlocks.length === 0) {
       // No more tool calls — extract final text response
@@ -132,6 +179,15 @@ export async function runCodeAgent(errorContext: CodeAgentInput): Promise<CodeAg
 
     const toolResults: { type: 'tool_result'; tool_use_id: string; content: string }[] = [];
     for (const toolUse of toolUseBlocks) {
+      // Emit code agent step before each tool call
+      emitStep({
+        type: 'code_agent_step',
+        action: toolUse.name as 'read_file' | 'write_file' | 'list_files' | 'web_search' | 'run_fetch' | 'thinking',
+        detail: summarizeToolInput(toolUse.name, toolUse.input),
+        iteration: currentIteration,
+        maxIterations: totalIterations,
+      });
+
       const handler = toolHandlers.get(toolUse.name);
       let result: string;
       if (handler) {

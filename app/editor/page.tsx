@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 import { useJobStore } from '@/store/jobStore';
 import { useEditorStore } from '@/store/editorStore';
 import { useResumeStore } from '@/store/resumeStore';
-import { ResumeChange, ResumeVersion } from '@/lib/indexeddb';
+import { ResumeVersion } from '@/lib/indexeddb';
 
 // Import all editor components
 import EditorLayout from '@/components/Editor/EditorLayout';
@@ -39,8 +39,8 @@ function EditorPageContent() {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [isCompiling, setIsCompiling] = useState(false);
   const [currentVersion, setCurrentVersion] = useState<ResumeVersion | null>(null);
-  const [originalPdfUrl, setOriginalPdfUrl] = useState<string | undefined>();
-  const [optimizedPdfUrl, setOptimizedPdfUrl] = useState<string | undefined>();
+  const [originalPdfUrl, _setOriginalPdfUrl] = useState<string | undefined>();
+  const [optimizedPdfUrl, _setOptimizedPdfUrl] = useState<string | undefined>();
   const [showPreview, setShowPreview] = useState(false);
   const [highlightedLineNumber, setHighlightedLineNumber] = useState<number | undefined>();
 

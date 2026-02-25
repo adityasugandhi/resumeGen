@@ -30,6 +30,7 @@
   "dependencies": {
     "@anthropic-ai/bedrock-sdk": "^0.26.3",
     "@anthropic-ai/sdk": "^0.67.0",
+    "@browserbasehq/stagehand": "^3.1.0",
     "@gsap/react": "^2.1.2",
     "@lancedb/lancedb": "^0.22.3",
     "@modelcontextprotocol/sdk": "^1.20.1",

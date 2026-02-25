@@ -53,7 +53,7 @@ When tailoring resumes that need deeper technical framing for the FSU role, use 
 - Horizontal PostgreSQL sharding for 500M+ records
 
 ### Contact Details
-- Email: adityasugandhi.dev.ai@gmail.com
+- Email: adityasugandhi.work@outlook.com
 - Phone: +1 448 500 6857
 - GitHub: https://github.com/adityasugandhi
 - Website: https://adityasugandhi.com
@@ -142,3 +142,48 @@ The **Building Information Portal** is an enterprise web application designed to
 - "Implemented **multi-criteria search system** with auto-filtering for building lookups by address, name, number, or abbreviation, reducing average search time by 60% for **10K+ monthly active users**."
 - "Built **role-based access control** for sensitive floor plan data, ensuring compliance with university security policies while serving **50K+ students and staff**."
 - "Designed **interactive building profiles** with real-time room information, department contacts, and integrated navigation/directions, improving campus wayfinding for new students and visitors."
+
+---
+
+## SkillSync MCP → AI Security Tool for Developer Environments
+
+### Project Overview
+**SkillSync MCP** is an npm-published MCP (Model Context Protocol) server providing **security-gated skill management** for Claude Code and 7+ AI IDEs. It enables developers to discover, install, audit, and sync community-built AI coding skills from the SkillsMP marketplace — with automated security scanning that detects **60+ threat patterns** (prompt injection, credential theft, reverse shells, supply chain attacks) before any code enters the developer environment.
+
+### Key Metrics (use in resume bullets)
+- **3,085 lines** of TypeScript across the MCP server implementation
+- **60+ threat detection patterns** covering prompt injection, reverse shells, credential theft, crypto mining, and supply chain attacks
+- **8 MCP tools** exposed: search, install, uninstall, audit, compare, suggest, scan, sync
+- **8 IDE integrations**: Claude Code, Cursor, Windsurf, Cline, Roo Code, Amazon Q, Augment Code, Copilot
+- **Published on npm** as `@stranzwersweb2/skillsync-mcp`
+- **Subscription-based sync engine** with configurable risk thresholds and conflict policies
+
+### Enhanced Resume Bullets (use when targeting security, DevEx, open-source, or AI tooling roles)
+
+**Security Engineering:**
+- "Built **automated security scanning pipeline** that analyzes GitHub repositories against **60+ threat patterns** including prompt injection, credential exfiltration, and supply chain attacks, blocking critical threats before code enters developer environments."
+- "Designed **risk-tiered installation system** with configurable thresholds (safe/low/medium/high/critical), enabling teams to enforce **security policies for AI-generated code** while maintaining developer velocity."
+- "Implemented **deep audit capabilities** for installed AI coding skills, performing fresh scans on demand and generating detailed threat reports with pattern-specific findings and severity classifications."
+
+**Developer Experience & Tooling:**
+- "Developed **npm-published MCP server** (`@stranzwersweb2/skillsync-mcp`) providing security-gated skill management for **8 AI IDE platforms** (Claude Code, Cursor, Windsurf, Copilot), streamlining developer onboarding and skill discovery."
+- "Engineered **subscription-based sync engine** with configurable conflict policies and auto-update capabilities, reducing manual skill management overhead for development teams."
+- "Built **AI-powered semantic search** and side-by-side skill comparison tools, enabling developers to evaluate community skills by security posture, functionality, and compatibility before installation."
+
+**Open-Source & Publishing:**
+- "Published and maintained **open-source MCP server** on npm with comprehensive documentation, CLI configuration guides for 8 IDE platforms, and automated security scanning for community contributions."
+- "Architected **extensible tool framework** using Model Context Protocol specification, enabling seamless integration with AI coding assistants through standardized tool definitions and JSON Schema validation."
+
+### Technical Skills Demonstrated
+- **MCP Protocol**: Tool definitions, JSON Schema, StreamableHTTP transport, resource management
+- **Security**: Static analysis, pattern matching for 60+ threat categories, risk classification, supply chain security
+- **TypeScript**: 3,085 LOC, strict typing, async patterns, npm package publishing
+- **DevEx Tooling**: Multi-IDE integration (8 platforms), CLI configuration, subscription sync engine
+- **Open Source**: npm publishing, documentation, community marketplace integration
+
+### When to Use This Experience
+- **DevEx / Developer Tooling** roles (IDE integrations, CLI tools, developer productivity)
+- **Security Engineering** positions (static analysis, threat detection, supply chain security)
+- **Open-Source Engineering** roles (npm publishing, community tools, documentation)
+- **AI Platform / AI Tooling** positions (MCP protocol, AI IDE ecosystem, LLM tool integration)
+- Roles emphasizing **TypeScript**, **API design**, or **security automation**

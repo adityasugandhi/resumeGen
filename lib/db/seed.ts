@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { companies } from './schema';
-import type { CompanyConfig, CareerPlatform } from '@/lib/careers/types';
+import type { CompanyConfig } from '@/lib/careers/types';
 
 const COMPANY_REGISTRY: CompanyConfig[] = [
   // Greenhouse

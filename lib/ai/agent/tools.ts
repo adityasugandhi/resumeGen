@@ -29,6 +29,7 @@ import {
   cleanupTempDir,
 } from '@/lib/docker-utils';
 import type { LearningDoc, JobMatchDoc, OptimizedResumeDoc } from '@/lib/vector-db/career-schemas';
+import { discoverAndRegisterCompanies, registerCompanyFromUrl } from '@/lib/careers/company-discovery';
 import type { AgentStepEvent, CodeAgentInput } from './types';
 
 const execAsync = promisify(exec);
@@ -48,7 +49,7 @@ export function createAgentTools(
   masterResumeLatex: string,
   masterResumeData: { experiences: string[]; skills: string[]; projects: string[] },
   deepContext: string,
-  onSelfHeal?: (input: CodeAgentInput) => Promise<void>,
+  onSelfHeal?: (input: CodeAgentInput) => Promise<'skip' | 'retry' | void>,
   onEvent?: (event: AgentStepEvent) => void
 ): AgentTool[] {
   const scanH1bSponsors: AgentTool = {
@@ -65,12 +66,43 @@ export function createAgentTools(
     handler: async (input) => {
       try {
         const result = await getMarketIntelligence(input.jobTitle as string, input.location as string | undefined);
+
+        // Auto-discover and register new companies from H1B results
+        let discoveredCompanies: { newlyRegistered: { company: string; platform: string }[]; undetectable: string[] } = {
+          newlyRegistered: [],
+          undetectable: [],
+        };
+        try {
+          const companyNames = result.topCompanies.map((c: { company: string }) => c.company);
+          const discoveryResults = await discoverAndRegisterCompanies(companyNames);
+
+          discoveredCompanies = {
+            newlyRegistered: discoveryResults
+              .filter((r) => r.status === 'registered')
+              .map((r) => ({ company: r.company, platform: r.platform || 'unknown' })),
+            undetectable: discoveryResults
+              .filter((r) => r.status === 'undetectable')
+              .map((r) => r.company),
+          };
+
+          if (discoveredCompanies.newlyRegistered.length > 0) {
+            onEvent?.({
+              type: 'companies_discovered',
+              message: `Auto-discovered ${discoveredCompanies.newlyRegistered.length} new companies`,
+              companies: discoveredCompanies.newlyRegistered.map((c) => ({ name: c.company, platform: c.platform })),
+            });
+          }
+        } catch (discoveryErr) {
+          console.warn('[tools] Company discovery failed (non-fatal):', discoveryErr);
+        }
+
         return JSON.stringify({
           totalPositions: result.totalPositions,
           avgWage: result.avgWage,
           medianWage: result.medianWage,
           topCompanies: result.topCompanies,
           wageRange: result.wageRange,
+          discoveredCompanies,
         });
       } catch (error) {
         const err = error as Error;
@@ -266,9 +298,18 @@ export function createAgentTools(
           company: input.company as string,
         });
 
-        // Collect top bullets from recall_best_bullets if available via closure
-        // (the agent calls recall_best_bullets before optimize_resume — results are in the Claude context)
-        // We still pass deepContext and empty topBullets; the Groq prompt has the deep context for grounding.
+        // Fetch top bullets from career memory for this job's requirements
+        let topBullets: string[] = [];
+        try {
+          const topReqs = (input.requirements as string[]).slice(0, 5).join(' ');
+          const bulletQueryVec = await generateQueryEmbedding(`${input.jobTitle} ${topReqs}`);
+          const bulletMatches = await searchResumeComponents(bulletQueryVec, 10, { type: 'bullet' });
+          topBullets = bulletMatches.map(m => m.doc.content);
+          console.log(`[tools] Fetched ${topBullets.length} top bullets for optimizer`);
+        } catch (bulletErr) {
+          console.warn('[tools] Failed to fetch top bullets (non-fatal):', bulletErr);
+        }
+
         const optimizer = new ResumeOptimizer();
         const result = await optimizer.optimizeResume(
           baseResumeLatex,
@@ -278,8 +319,14 @@ export function createAgentTools(
           input.gaps as string[],
           undefined, // h1bContext
           deepContext,
-          [] // topBullets — agent passes best bullets via its own context to Claude, which calls this tool
+          topBullets
         );
+
+        // Post-optimization quality validation
+        const validation = validateOptimizedResume(baseResumeLatex, result.tailoredLatex);
+        if (!validation.valid) {
+          console.warn(`[tools] Optimization validation issues for ${input.company}:`, validation.issues);
+        }
 
         // --- Save .tex to disk ---
         const sanitize = (s: string) => s.replace(/[^a-zA-Z0-9]/g, '_');
@@ -346,6 +393,8 @@ export function createAgentTools(
           filePath: texPath,
           pdfPath: pdfPath || null,
           compilationMethod: compilationMethod || null,
+          validation: { issues: validation.issues, isClean: validation.valid },
+          topBulletsUsed: topBullets.length,
         });
       } catch (error) {
         const err = error as Error;
@@ -561,12 +610,51 @@ export function createAgentTools(
         const result = await searchJobs({ company: input.company as string });
 
         if (result.jobs.length === 0) {
+          // Fallback: try browser-based exploration
+          try {
+            const { CareerExplorerAgent } = await import('@/lib/careers/explorer/career-explorer-agent');
+            const explorer = new CareerExplorerAgent();
+            const browserResult = await explorer.explore(input.company as string, { maxPages: 3, onEvent });
+
+            if (browserResult.jobs.length > 0) {
+              const departments: Record<string, { count: number; roles: { title: string; location: string; url: string }[] }> = {};
+              for (const job of browserResult.jobs) {
+                const dept = job.team || 'Unspecified';
+                if (!departments[dept]) departments[dept] = { count: 0, roles: [] };
+                departments[dept].count++;
+                departments[dept].roles.push({ title: job.title, location: job.location, url: job.url });
+              }
+
+              onEvent?.({
+                type: 'engineering_roles',
+                company: input.company as string,
+                totalJobs: browserResult.totalFound,
+                engineeringCount: browserResult.jobs.length,
+                departments: Object.keys(departments),
+              });
+
+              return JSON.stringify({
+                company: input.company,
+                platform: browserResult.platform,
+                totalJobs: browserResult.totalFound,
+                engineeringRoleCount: browserResult.jobs.length,
+                departments,
+                engineeringRoles: browserResult.jobs.map(j => ({
+                  id: j.id, title: j.title, location: j.location, team: j.team, url: j.url,
+                })),
+                source: 'browser_exploration',
+              });
+            }
+          } catch (browserErr) {
+            console.warn(`[tools] Browser exploration fallback failed for ${input.company}:`, (browserErr as Error).message);
+          }
+
           return JSON.stringify({
             company: input.company,
             totalJobs: 0,
             engineeringRoles: [],
             departments: {},
-            message: 'No jobs found for this company',
+            message: 'No jobs found for this company via API or browser exploration',
           });
         }
 
@@ -635,11 +723,238 @@ export function createAgentTools(
     },
   };
 
+  const registerCompany: AgentTool = {
+    name: 'register_company',
+    description:
+      'Register a new company in the career search registry from a known careers URL. Use this as a fallback for companies that scan_h1b_sponsors could not auto-detect. After registration, the company becomes searchable via search_company_jobs.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        company: { type: 'string', description: 'Company name, e.g. "Acme Corp"' },
+        careersUrl: {
+          type: 'string',
+          description:
+            'Careers page URL from a supported ATS (Greenhouse, Lever, or Ashby), e.g. "https://boards.greenhouse.io/acme"',
+        },
+      },
+      required: ['company', 'careersUrl'],
+    },
+    handler: async (input) => {
+      try {
+        const result = await registerCompanyFromUrl(input.company as string, input.careersUrl as string);
+
+        if (result.status === 'registered') {
+          onEvent?.({
+            type: 'company_registered',
+            message: `Registered ${result.company} (${result.platform})`,
+            company: result.company,
+            platform: result.platform || 'unknown',
+          });
+        }
+
+        return JSON.stringify(result);
+      } catch (error) {
+        const err = error as Error;
+        return JSON.stringify({ error: err.message, status: 'undetectable' });
+      }
+    },
+  };
+
+  const applyToJob: AgentTool = {
+    name: 'apply_to_job',
+    description: 'Apply to a job posting. Uses a tiered approach: first tries a hardcoded ATS provider (fast, free), then falls back to AI browser automation (adaptive, costs LLM tokens). Only invoke this when the user explicitly requested auto-apply. Always dry-run first.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        jobId: { type: 'string', description: 'Job posting ID' },
+        company: { type: 'string', description: 'Company name' },
+        jobUrl: { type: 'string', description: 'Full URL of the job posting' },
+        jobTitle: { type: 'string', description: 'Job title' },
+        platform: { type: 'string', description: 'ATS platform (greenhouse, lever, ashby, or unknown)' },
+        coverLetter: { type: 'string', description: 'Optional cover letter text' },
+        customAnswers: {
+          type: 'object',
+          description: 'Optional custom answers for application questions (key: question label, value: answer)',
+        },
+        dryRun: { type: 'boolean', description: 'If true, fill out the form but do not submit. Always dry-run first.' },
+      },
+      required: ['jobId', 'company', 'jobUrl', 'jobTitle'],
+    },
+    handler: async (input) => {
+      const jobUrl = input.jobUrl as string;
+      const company = input.company as string;
+      const jobTitle = input.jobTitle as string;
+      const jobId = input.jobId as string;
+      const platform = (input.platform as string) || 'unknown';
+      const dryRun = (input.dryRun as boolean) ?? true;
+      const coverLetter = input.coverLetter as string | undefined;
+      const customAnswers = input.customAnswers as Record<string, string> | undefined;
+
+      // Check for duplicate applications
+      try {
+        const { PersistentTracker } = await import('@/lib/careers/auto-apply/tracker');
+        const tracker = new PersistentTracker();
+        const alreadyApplied = await tracker.hasApplied(jobUrl);
+        if (alreadyApplied) {
+          return JSON.stringify({ error: 'Already applied to this job', skipped: true });
+        }
+      } catch {
+        // Tracker not available, continue
+      }
+
+      // Tier 1: Try hardcoded provider
+      const knownPlatforms = ['greenhouse', 'lever', 'ashby'];
+      if (knownPlatforms.includes(platform)) {
+        try {
+          onEvent?.({ type: 'applying', company, jobTitle, method: 'provider' });
+
+          const { JobApplicationEngine } = await import('@/lib/careers/auto-apply/engine');
+          const { getProfileFromEnv } = await import('@/lib/careers/auto-apply/applicant-profile');
+          const profile = getProfileFromEnv();
+          const engine = new JobApplicationEngine(profile);
+
+          const result = await engine.apply(jobId, company, {
+            dryRun,
+            coverLetter,
+            answers: customAnswers,
+          });
+
+          if (result.success) {
+            onEvent?.({
+              type: 'application_submitted',
+              success: true,
+              method: 'provider',
+              confirmationId: result.confirmationId,
+            });
+            return JSON.stringify({
+              success: true,
+              method: 'provider',
+              platform,
+              confirmationId: result.confirmationId,
+              dryRun,
+            });
+          }
+
+          // Provider failed — fall through to Tier 2
+          console.warn(`[apply_to_job] Provider failed for ${company}: ${result.error}`);
+        } catch (providerErr) {
+          console.warn(`[apply_to_job] Provider error for ${company}:`, providerErr);
+        }
+      }
+
+      // Tier 2: AI Browser Agent
+      try {
+        onEvent?.({ type: 'applying', company, jobTitle, method: 'ai_browser' });
+
+        const { AIBrowserAgent } = await import('@/lib/careers/auto-apply/browser/ai-browser-agent');
+        const agent = new AIBrowserAgent();
+        const result = await agent.fill({
+          company,
+          jobTitle,
+          jobUrl,
+          coverLetter,
+          customAnswers,
+          dryRun,
+          onEvent,
+        });
+
+        onEvent?.({
+          type: 'application_submitted',
+          success: result.success,
+          method: 'ai_browser',
+          confirmationId: result.confirmationId,
+          error: result.error,
+        });
+
+        // Track in database
+        if (result.success && !dryRun) {
+          try {
+            const { trackApplication } = await import('@/lib/careers/auto-apply/tracker');
+            await trackApplication(result, jobTitle, jobUrl);
+          } catch {
+            // Tracking failure is non-fatal
+          }
+        }
+
+        return JSON.stringify({
+          success: result.success,
+          method: 'ai_browser',
+          platform: result.platform,
+          confirmationId: result.confirmationId,
+          error: result.error,
+          dryRun,
+        });
+      } catch (browserErr) {
+        const err = browserErr as Error;
+        onEvent?.({
+          type: 'application_submitted',
+          success: false,
+          method: 'ai_browser',
+          error: err.message,
+        });
+        return JSON.stringify({ error: `Application failed: ${err.message}`, success: false });
+      }
+    },
+  };
+
+  const exploreCompanyBrowser: AgentTool = {
+    name: 'explore_company_browser',
+    description: "Use an autonomous browser agent to explore a company's careers page when API-based search fails. Navigates the actual website, handles any ATS (Workday, iCIMS, custom portals), and extracts job listings.",
+    input_schema: {
+      type: 'object',
+      properties: {
+        company: { type: 'string', description: 'Company name to explore' },
+        careersUrl: { type: 'string', description: 'Optional known careers URL to start from' },
+        maxPages: { type: 'number', description: 'Max pages to explore (default 5)' },
+      },
+      required: ['company'],
+    },
+    handler: async (input) => {
+      try {
+        const { CareerExplorerAgent } = await import('@/lib/careers/explorer/career-explorer-agent');
+        const explorer = new CareerExplorerAgent();
+        const result = await explorer.explore(input.company as string, {
+          maxPages: (input.maxPages as number) || 5,
+          careersUrl: input.careersUrl as string | undefined,
+          onEvent,
+        });
+
+        onEvent?.({
+          type: 'engineering_roles',
+          company: input.company as string,
+          totalJobs: result.totalFound,
+          engineeringCount: result.jobs.length,
+          departments: [],
+        });
+
+        return JSON.stringify({
+          company: result.company,
+          careersUrl: result.careersUrl,
+          platform: result.platform,
+          totalFound: result.totalFound,
+          pagesExplored: result.pagesExplored,
+          registeredInDb: result.registeredInDb,
+          jobs: result.jobs.map(j => ({
+            id: j.id,
+            title: j.title,
+            location: j.location,
+            team: j.team,
+            url: j.url,
+          })),
+        });
+      } catch (error) {
+        const err = error as Error;
+        return JSON.stringify({ error: err.message, jobs: [] });
+      }
+    },
+  };
+
   return [
     scanH1bSponsors,
     listAvailableCompanies,
     searchCompanyJobs,
     exploreEngineeringRoles,
+    exploreCompanyBrowser,
     fetchJobDetails,
     matchResume,
     optimizeResume,
@@ -647,6 +962,8 @@ export function createAgentTools(
     recallPastSearches,
     recallBestBullets,
     storeLearningTool,
+    registerCompany,
+    applyToJob,
   ];
 }
 
@@ -706,4 +1023,49 @@ function safeJsonParse<T>(str: string, fallback: T): T {
   } catch {
     return fallback;
   }
+}
+
+/**
+ * Validate an optimized resume for fabricated content and structural integrity.
+ */
+function validateOptimizedResume(
+  original: string,
+  optimized: string
+): { valid: boolean; issues: string[] } {
+  const issues: string[] = [];
+
+  // Check for placeholder/fabricated patterns — flag if NEW (not in original) or present at all
+  const placeholderPatterns = ['ABC Company', 'XYZ Corp', 'Lorem ipsum', 'PLACEHOLDER', 'Company Name Here', 'Your Name', 'Jane Doe', 'John Doe'];
+  for (const pattern of placeholderPatterns) {
+    if (optimized.includes(pattern)) {
+      if (original.includes(pattern)) {
+        issues.push(`Pre-existing placeholder carried through: "${pattern}"`);
+      } else {
+        issues.push(`Fabricated content introduced: "${pattern}"`);
+      }
+    }
+  }
+
+  // Verify known companies preserved
+  const knownEntities = ['FSU', 'Aspire Systems', 'Florida State University', 'SRM Institute'];
+  for (const entity of knownEntities) {
+    if (original.includes(entity) && !optimized.includes(entity)) {
+      issues.push(`Known entity removed: "${entity}"`);
+    }
+  }
+
+  // Verify LaTeX structure
+  if (!optimized.includes('\\documentclass')) {
+    issues.push('Missing \\documentclass — LaTeX structure broken');
+  }
+  if (!optimized.includes('\\end{document}')) {
+    issues.push('Missing \\end{document} — LaTeX structure incomplete');
+  }
+
+  // Check optimized isn't drastically shorter (sign of truncation)
+  if (optimized.length < original.length * 0.5) {
+    issues.push(`Output suspiciously short (${optimized.length} chars vs original ${original.length})`);
+  }
+
+  return { valid: issues.length === 0, issues };
 }

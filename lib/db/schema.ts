@@ -15,7 +15,7 @@ import {
 // ── Enums ──────────────────────────────────────────────────────────────────
 
 export const careerPlatformEnum = pgEnum('career_platform', [
-  'greenhouse', 'lever', 'ashby', 'workday', 'stripe', 'cloudflare', 'unknown',
+  'greenhouse', 'lever', 'ashby', 'workday', 'icims', 'custom', 'stripe', 'cloudflare', 'unknown',
 ]);
 
 export const queueStatusEnum = pgEnum('queue_status', [

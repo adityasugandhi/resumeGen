@@ -103,6 +103,13 @@ export class JobApplicationEngine {
     return results;
   }
 
+  /**
+   * Check if a hardcoded provider exists for the given platform.
+   */
+  hasProvider(platform: CareerPlatform): boolean {
+    return this.providers.has(platform);
+  }
+
   async getFormSchema(jobId: string, company: string) {
     const config = await getCompanyConfig(company);
     if (!config) throw new Error(`Company "${company}" not found in registry`);

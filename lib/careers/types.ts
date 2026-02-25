@@ -9,7 +9,7 @@
  */
 
 /** ATS platforms that the career module can interact with. */
-export type CareerPlatform = 'greenhouse' | 'lever' | 'ashby' | 'workday' | 'stripe' | 'cloudflare' | 'unknown';
+export type CareerPlatform = 'greenhouse' | 'lever' | 'ashby' | 'workday' | 'icims' | 'custom' | 'stripe' | 'cloudflare' | 'unknown';
 
 /** Normalised representation of a single job posting regardless of source platform. */
 export interface CareerJob {
@@ -42,6 +42,7 @@ export interface CareerSearchResult {
   platform: CareerPlatform;
   jobs: CareerJob[];
   totalCount: number;
+  error?: string;
 }
 
 /** Static configuration that maps a company to its ATS board. */

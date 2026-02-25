@@ -11,7 +11,7 @@ export async function getSessionCookies(): Promise<string> {
 
   const authUrl = process.env.GOINGLOBAL_AUTH_URL;
   if (!authUrl) {
-    throw new Error("GOINGGOBAL_AUTH_URL is not configured");
+    throw new Error("GOINGLOBAL_AUTH_URL is not configured");
   }
 
   const browser = await chromium.launch({ headless: true });

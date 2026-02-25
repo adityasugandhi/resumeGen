@@ -5,9 +5,328 @@ import { createAgentTools, type AgentTool } from './tools';
 import { runCodeAgent } from './code-agent';
 import { loadResumeForAgent } from './resume-loader';
 import { generateQueryEmbedding } from '@/lib/indexer/index-manager';
-import { storeJobSearch } from '@/lib/vector-db/career-memory';
-import type { JobSearchDoc } from '@/lib/vector-db/career-schemas';
-import type { CodeAgentInput, AgentStepEvent, AgentSearchResponse } from './types';
+import { storeJobSearch, storeLearning as storeCareerLearning } from '@/lib/vector-db/career-memory';
+import type { JobSearchDoc, LearningDoc } from '@/lib/vector-db/career-schemas';
+import type {
+  CodeAgentInput,
+  AgentStepEvent,
+  AgentSearchResponse,
+  AgentJobResult,
+  JobSearchAgentOptions,
+  PipelineStage,
+  InterventionResponse,
+  CodeAgentOptions,
+} from './types';
+
+// Sub-agent imports
+import { runDiscoveryPhase } from './sub-agents/discovery-agent';
+import { processCompany } from './sub-agents/company-worker';
+import { WriteQueue, Semaphore } from './sub-agents/write-queue';
+import type { CompanyWorkerResult } from './sub-agents/types';
+
+// ============================================================
+// 3-Phase Parallel Orchestrator (default)
+// ============================================================
+
+/**
+ * Runs the job search agent using a 3-phase parallel architecture:
+ * 1. Discovery (sequential): memory + H1B + cross-reference
+ * 2. Processing (parallel): per-company workers with per-job processors
+ * 3. Summarize (sequential): aggregate + store learnings
+ *
+ * Auto-loads resume data from disk — no need to pass it in.
+ */
+export async function runJobSearchAgent(
+  jobTitle: string,
+  location: string | undefined,
+  options?: JobSearchAgentOptions
+): Promise<AgentSearchResponse> {
+  const maxJobs = options?.maxJobs ?? 5;
+  const matchThreshold = options?.matchThreshold ?? 60;
+  const targetCompany = options?.targetCompany;
+  const onEvent = options?.onEvent;
+  const maxCompanies = 10;
+  const maxJobsPerCompany = Math.max(3, Math.ceil(maxJobs / 2));
+
+  // Auto-load resume data from disk
+  const { latex: masterResumeLatex, resumeData: masterResumeData, deepContext } = await loadResumeForAgent();
+
+  onEvent?.({
+    type: 'resume_loaded',
+    message: `Loaded resume: ${masterResumeData.experiences.length} experience bullets, ${masterResumeData.skills.length} skills, ${masterResumeData.projects.length} project bullets`,
+    experiences: masterResumeData.experiences.length,
+    skills: masterResumeData.skills.length,
+    projects: masterResumeData.projects.length,
+  });
+
+  // Concurrency primitives
+  const writeQueue = new WriteQueue();
+  const companySemaphore = new Semaphore(5);
+  const jobSemaphore = new Semaphore(3);
+  const optimizeSemaphore = new Semaphore(2);
+
+  // ── PHASE 1: Discovery ──
+  onEvent?.({ type: 'phase_transition', phase: 'discovery', status: 'started' });
+
+  const discovery = await runDiscoveryPhase(jobTitle, location, targetCompany, onEvent);
+
+  onEvent?.({ type: 'phase_transition', phase: 'discovery', status: 'completed' });
+
+  if (discovery.companies.length === 0) {
+    onEvent?.({ type: 'error', message: 'No searchable companies found after discovery phase' });
+    return {
+      jobTitle,
+      totalH1bSponsors: discovery.h1bData.totalPositions,
+      companiesSearched: 0,
+      jobsAnalyzed: 0,
+      results: [],
+    };
+  }
+
+  // ── PHASE 2: Parallel Company Processing (binary split) ──
+  onEvent?.({ type: 'phase_transition', phase: 'processing', status: 'started' });
+
+  const companies = discovery.companies.slice(0, maxCompanies);
+  const mid = Math.ceil(companies.length / 2);
+  const leftBatch = companies.slice(0, mid);
+  const rightBatch = companies.slice(mid);
+
+  const processHalf = (batch: typeof companies, batchIndex: number) => {
+    onEvent?.({
+      type: 'parallel_batch',
+      batchIndex,
+      companies: batch.map((c) => c.name),
+      status: 'started',
+    });
+
+    return Promise.allSettled(
+      batch.map((c) =>
+        companySemaphore.run(() =>
+          processCompany(
+            c,
+            jobTitle,
+            location,
+            matchThreshold,
+            maxJobsPerCompany,
+            masterResumeLatex,
+            masterResumeData,
+            deepContext,
+            writeQueue,
+            optimizeSemaphore,
+            jobSemaphore,
+            onEvent,
+          )
+        )
+      )
+    ).then((results) => {
+      onEvent?.({
+        type: 'parallel_batch',
+        batchIndex,
+        companies: batch.map((c) => c.name),
+        status: 'completed',
+      });
+      return results;
+    });
+  };
+
+  const [leftResults, rightResults] = await Promise.all([
+    processHalf(leftBatch, 0),
+    processHalf(rightBatch, 1),
+  ]);
+
+  onEvent?.({ type: 'phase_transition', phase: 'processing', status: 'completed' });
+
+  // Collect all results
+  const allCompanyResults: CompanyWorkerResult[] = [];
+  for (const r of [...leftResults, ...rightResults]) {
+    if (r.status === 'fulfilled') {
+      allCompanyResults.push(r.value);
+    } else {
+      console.warn('[agent] Company worker failed:', r.reason);
+      onEvent?.({ type: 'error', message: `Worker failed: ${(r.reason as Error).message}` });
+    }
+  }
+
+  // ── PHASE 3: Summarize ──
+  onEvent?.({ type: 'phase_transition', phase: 'summarize', status: 'started' });
+
+  // Flatten job results, sort by match score
+  const allJobResults: AgentJobResult[] = allCompanyResults
+    .flatMap((cr) =>
+      cr.jobs.map((j) => ({
+        title: j.title,
+        company: j.company,
+        url: j.url,
+        location: j.location,
+        h1bAvgWage: discovery.companies.find(
+          (c) => c.name.toLowerCase() === j.company.toLowerCase()
+        )?.h1bAvgWage ?? 0,
+        matchScore: j.matchScore,
+        gaps: j.gaps,
+        strengths: j.strengths,
+        optimizedResume: j.optimizedResume,
+      }))
+    )
+    .sort((a, b) => b.matchScore - a.matchScore)
+    .slice(0, maxJobs);
+
+  // Generate and store learnings
+  await generateLearnings(allCompanyResults, jobTitle, writeQueue, onEvent);
+
+  // Store search summary in career memory
+  try {
+    const topMatches = allJobResults.map((r) => ({
+      company: r.company,
+      score: r.matchScore,
+    }));
+    const avgScore = topMatches.length > 0
+      ? topMatches.reduce((sum, m) => sum + m.score, 0) / topMatches.length
+      : 0;
+    const bestCompany = topMatches.length > 0
+      ? topMatches.sort((a, b) => b.score - a.score)[0].company
+      : '';
+
+    const vector = await generateQueryEmbedding(`${jobTitle} ${location || ''}`);
+    const searchDoc: JobSearchDoc = {
+      id: `search-${uuidv4()}`,
+      jobTitle,
+      location: location || '',
+      vector,
+      totalSponsors: discovery.h1bData.totalPositions,
+      companiesSearched: allCompanyResults.length,
+      topMatches: JSON.stringify(topMatches),
+      avgMatchScore: avgScore,
+      bestCompany,
+      timestamp: new Date().toISOString(),
+    };
+    await writeQueue.enqueue(() => storeJobSearch(searchDoc));
+  } catch (memErr) {
+    console.warn('[agent] Failed to store search in career memory:', memErr);
+  }
+
+  onEvent?.({ type: 'phase_transition', phase: 'summarize', status: 'completed' });
+
+  return {
+    jobTitle,
+    totalH1bSponsors: discovery.h1bData.totalPositions,
+    companiesSearched: allCompanyResults.length,
+    jobsAnalyzed: allCompanyResults.reduce(
+      (sum, cr) => sum + cr.jobs.length,
+      0
+    ),
+    results: allJobResults,
+  };
+}
+
+/**
+ * Generate and store learnings from all company results.
+ */
+async function generateLearnings(
+  companyResults: CompanyWorkerResult[],
+  jobTitle: string,
+  writeQueue: WriteQueue,
+  onEvent?: (e: AgentStepEvent) => void,
+): Promise<void> {
+  const allJobs = companyResults.flatMap((cr) => cr.jobs);
+  if (allJobs.length === 0) return;
+
+  // Aggregate gaps and strengths across all matches
+  const gapCounts = new Map<string, number>();
+  const strengthCounts = new Map<string, number>();
+  const scores = allJobs.map((j) => j.matchScore);
+
+  for (const job of allJobs) {
+    for (const gap of job.gaps) {
+      gapCounts.set(gap, (gapCounts.get(gap) || 0) + 1);
+    }
+    for (const strength of job.strengths) {
+      strengthCounts.set(strength, (strengthCounts.get(strength) || 0) + 1);
+    }
+  }
+
+  const topGaps = Array.from(gapCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([gap, count]) => `${gap} (${count}x)`);
+
+  const topStrengths = Array.from(strengthCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([strength, count]) => `${strength} (${count}x)`);
+
+  const avgScore = scores.reduce((s, v) => s + v, 0) / scores.length;
+
+  // Store gap learning
+  if (topGaps.length > 0) {
+    try {
+      const insight = `Most common gaps for "${jobTitle}": ${topGaps.join(', ')}. Average match: ${avgScore.toFixed(0)}%.`;
+      const vector = await generateQueryEmbedding(insight);
+      const doc: LearningDoc = {
+        id: `learning-${uuidv4()}`,
+        category: 'gap',
+        insight,
+        vector,
+        evidence: JSON.stringify(topGaps),
+        confidence: 0.8,
+        createdAt: new Date().toISOString(),
+      };
+      await writeQueue.enqueue(() => storeCareerLearning(doc));
+      onEvent?.({ type: 'memory_store', message: insight, category: 'gap' });
+    } catch (err) {
+      console.warn('[agent] Failed to store gap learning:', err);
+    }
+  }
+
+  // Store strength learning
+  if (topStrengths.length > 0) {
+    try {
+      const insight = `Top strengths for "${jobTitle}": ${topStrengths.join(', ')}.`;
+      const vector = await generateQueryEmbedding(insight);
+      const doc: LearningDoc = {
+        id: `learning-${uuidv4()}`,
+        category: 'strength',
+        insight,
+        vector,
+        evidence: JSON.stringify(topStrengths),
+        confidence: 0.8,
+        createdAt: new Date().toISOString(),
+      };
+      await writeQueue.enqueue(() => storeCareerLearning(doc));
+      onEvent?.({ type: 'memory_store', message: insight, category: 'strength' });
+    } catch (err) {
+      console.warn('[agent] Failed to store strength learning:', err);
+    }
+  }
+
+  // Store pattern learning
+  const companiesWithMatches = companyResults
+    .filter((cr) => cr.jobs.some((j) => j.matchScore >= 60))
+    .map((cr) => cr.company);
+
+  if (companiesWithMatches.length > 0) {
+    try {
+      const insight = `Best-matching companies for "${jobTitle}": ${companiesWithMatches.join(', ')}. Searched ${companyResults.length} companies, ${allJobs.length} jobs analyzed.`;
+      const vector = await generateQueryEmbedding(insight);
+      const doc: LearningDoc = {
+        id: `learning-${uuidv4()}`,
+        category: 'pattern',
+        insight,
+        vector,
+        evidence: JSON.stringify(companiesWithMatches),
+        confidence: 0.7,
+        createdAt: new Date().toISOString(),
+      };
+      await writeQueue.enqueue(() => storeCareerLearning(doc));
+      onEvent?.({ type: 'memory_store', message: insight, category: 'pattern' });
+    } catch (err) {
+      console.warn('[agent] Failed to store pattern learning:', err);
+    }
+  }
+}
+
+// ============================================================
+// Legacy Single-Conversation Agent (fallback for CLI / debug)
+// ============================================================
 
 const SYSTEM_PROMPT = `You are an autonomous H1B job search agent powered by Claude. Your mission is to find the best job matches for a candidate by leveraging H1B visa sponsorship data and company job boards.
 
@@ -19,7 +338,7 @@ Follow this exact workflow:
 
 1. DISCOVER: Call scan_h1b_sponsors with the user's job title to find companies that sponsor H1B visas for this role. Note the top companies by position count and average wage.
 
-2. CROSS-REFERENCE: Call list_available_companies to see which companies we can search. Find the intersection — H1B sponsors that are also in our searchable registry.
+2. CROSS-REFERENCE: scan_h1b_sponsors auto-registers new companies. For any undetectable ones, use web_search + register_company. Then call list_available_companies to confirm the full searchable set.
 
 3. EXPLORE ENGINEERING: For each target company (or if a specific company is requested), call explore_engineering_roles to get ALL engineering and software engineering roles at that company. This gives you a complete picture of the engineering hiring landscape — departments, team sizes, and role levels. Use this to identify the best-fit roles rather than relying on keyword search alone.
 
@@ -59,7 +378,9 @@ Follow this exact workflow:
 Rules:
 - Always start with memory check, then H1B scan — never skip these steps
 - When a target company is specified, focus primarily on that company — explore ALL its engineering roles first
-- If a company isn't in the registry, skip it and note why
+- The scan_h1b_sponsors tool auto-discovers and registers new companies. Check the discoveredCompanies field:
+  - newlyRegistered: these are now searchable, proceed to explore their roles
+  - undetectable: use web_search to find their careers URL, then call register_company to add them. If no supported ATS URL found, skip and note why
 - If job fetching fails, skip that job and continue with others
 - Include H1B salary data in your final summary for context
 - You can use web_search to research companies or roles for better context
@@ -98,18 +419,60 @@ type ContentBlock = { type: string; [key: string]: unknown };
 type ToolUseBlock = { type: 'tool_use'; id: string; name: string; input: Record<string, unknown> };
 type TextBlock = { type: 'text'; text: string };
 
-export interface JobSearchAgentOptions {
-  maxJobs?: number;
-  matchThreshold?: number;
-  targetCompany?: string;
-  onEvent?: (event: AgentStepEvent) => void;
+// Pipeline stage tracking — maps tool names to pipeline stages
+const TOOL_STAGE_MAP: Record<string, PipelineStage> = {
+  recall_past_searches: 'memory_check',
+  recall_best_bullets: 'memory_check',
+  scan_h1b_sponsors: 'h1b_scan',
+  list_available_companies: 'cross_reference',
+  register_company: 'cross_reference',
+  explore_engineering_roles: 'explore_roles',
+  search_company_jobs: 'search',
+  fetch_job_details: 'fetch',
+  match_resume: 'match',
+  optimize_resume: 'optimize',
+  apply_to_job: 'apply',
+  store_learning: 'summarize',
+};
+
+class PipelineStageTracker {
+  private currentStage: PipelineStage | null = null;
+  private completedStages = new Set<PipelineStage>();
+  private onEvent: ((event: AgentStepEvent) => void) | undefined;
+
+  constructor(onEvent?: (event: AgentStepEvent) => void) {
+    this.onEvent = onEvent;
+  }
+
+  transition(toolName: string) {
+    const stage = TOOL_STAGE_MAP[toolName];
+    if (!stage) return;
+
+    if (stage !== this.currentStage) {
+      // Complete previous stage
+      if (this.currentStage && !this.completedStages.has(this.currentStage)) {
+        this.completedStages.add(this.currentStage);
+        this.onEvent?.({ type: 'pipeline_stage', stage: this.currentStage, status: 'completed' });
+      }
+      // Activate new stage
+      this.currentStage = stage;
+      this.onEvent?.({ type: 'pipeline_stage', stage, status: 'active' });
+    }
+  }
+
+  complete() {
+    if (this.currentStage && !this.completedStages.has(this.currentStage)) {
+      this.completedStages.add(this.currentStage);
+      this.onEvent?.({ type: 'pipeline_stage', stage: this.currentStage, status: 'completed' });
+    }
+  }
 }
 
 /**
- * Runs the job search agent using Claude via Bedrock or direct API.
- * Auto-loads resume data from disk — no need to pass it in.
+ * Legacy single-conversation agent using Claude via Bedrock or direct API.
+ * Kept for fallback/CLI mode. The new parallel version is `runJobSearchAgent`.
  */
-export async function runJobSearchAgent(
+export async function runJobSearchAgentLegacy(
   jobTitle: string,
   location: string | undefined,
   options?: JobSearchAgentOptions
@@ -135,8 +498,8 @@ export async function runJobSearchAgent(
     projects: masterResumeData.projects.length,
   });
 
-  // Self-healing callback
-  const onSelfHeal = async (input: CodeAgentInput) => {
+  // Self-healing callback with optional user intervention
+  const onSelfHeal = async (input: CodeAgentInput): Promise<'skip' | 'retry' | void> => {
     onEvent?.({
       type: 'self_healing',
       tool: input.toolName,
@@ -144,8 +507,40 @@ export async function runJobSearchAgent(
       message: `Attempting to self-heal ${input.toolName} failure...`,
     });
 
+    // If intervention callback exists, pause and wait for user decision
+    let interventionResult: InterventionResponse | null = null;
+    if (options?.onIntervention) {
+      onEvent?.({
+        type: 'intervention_required',
+        streamId: options.streamId || '',
+        tool: input.toolName,
+        error: input.error,
+        options: ['auto_fix', 'skip', 'retry', 'edit_prompt'],
+      });
+
+      interventionResult = await options.onIntervention(input.toolName, input.error);
+
+      onEvent?.({
+        type: 'intervention_resolved',
+        action: interventionResult.action,
+      });
+
+      if (interventionResult.action === 'skip') {
+        return 'skip';
+      }
+      if (interventionResult.action === 'retry') {
+        return 'retry';
+      }
+    }
+
+    // Proceed with code agent (auto_fix or edit_prompt)
+    const codeAgentOptions: CodeAgentOptions = {
+      onEvent,
+      additionalPrompt: interventionResult?.action === 'edit_prompt' ? interventionResult.prompt : undefined,
+    };
+
     try {
-      const result = await runCodeAgent(input);
+      const result = await runCodeAgent(input, codeAgentOptions);
       if (result.fixed) {
         onEvent?.({
           type: 'code_fix',
@@ -175,6 +570,7 @@ export async function runJobSearchAgent(
     input_schema: t.input_schema,
   }));
 
+  const stageTracker = new PipelineStageTracker(onEvent);
   const { client, model } = createClient();
 
   const companyClause = targetCompany
@@ -219,6 +615,7 @@ export async function runJobSearchAgent(
 
     // Emit SSE events for each tool call
     for (const toolUse of toolUseBlocks) {
+      stageTracker.transition(toolUse.name);
       emitToolStartEvent(toolUse, onEvent);
     }
 
@@ -252,6 +649,9 @@ export async function runJobSearchAgent(
 
     messages.push({ role: 'user', content: toolResults });
   }
+
+  // Complete final pipeline stage
+  stageTracker.complete();
 
   // Parse final results from the agent's last text response
   const agentResponse = parseAgentResponse(finalText, jobTitle, onEvent);
@@ -339,6 +739,22 @@ function emitToolStartEvent(toolUse: ToolUseBlock, onEvent?: (e: AgentStepEvent)
         category: (input.category as string) || '',
       });
       break;
+    case 'register_company':
+      onEvent({
+        type: 'company_registered',
+        message: `Registering ${input.company} from URL...`,
+        company: (input.company as string) || '',
+        platform: '',
+      });
+      break;
+    case 'apply_to_job':
+      onEvent({
+        type: 'applying',
+        company: (input.company as string) || '',
+        jobTitle: (input.jobTitle as string) || '',
+        method: (input.platform as string) && ['greenhouse', 'lever', 'ashby'].includes(input.platform as string) ? 'provider' : 'ai_browser',
+      });
+      break;
   }
 }
 
@@ -353,6 +769,24 @@ function emitToolEndEvent(toolName: string, result: string, onEvent?: (e: AgentS
         type: 'h1b_scan',
         message: `Found ${output.topCompanies.length} H1B sponsors (${output.totalPositions} total positions)`,
         companies: output.topCompanies,
+      });
+      // Emit discovery results if present
+      if (output.discoveredCompanies?.newlyRegistered?.length > 0) {
+        onEvent({
+          type: 'companies_discovered',
+          message: `Auto-discovered ${output.discoveredCompanies.newlyRegistered.length} new companies`,
+          companies: output.discoveredCompanies.newlyRegistered.map((c: { company: string; platform: string }) => ({
+            name: c.company,
+            platform: c.platform,
+          })),
+        });
+      }
+    } else if (toolName === 'register_company' && output.status === 'registered') {
+      onEvent({
+        type: 'company_registered',
+        message: `Registered ${output.company} (${output.platform})`,
+        company: output.company,
+        platform: output.platform || 'unknown',
       });
     } else if (toolName === 'list_available_companies') {
       onEvent({
@@ -376,6 +810,14 @@ function emitToolEndEvent(toolName: string, result: string, onEvent?: (e: AgentS
         jobTitle: '',
         company: '',
         changeCount: output.changeCount,
+      });
+    } else if (toolName === 'apply_to_job') {
+      onEvent({
+        type: 'application_submitted',
+        success: output.success || false,
+        method: output.method || 'ai_browser',
+        confirmationId: output.confirmationId,
+        error: output.error,
       });
     } else if (toolName === 'recall_past_searches') {
       onEvent({

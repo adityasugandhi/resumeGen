@@ -82,7 +82,7 @@ async function migrateTable(localDb: lancedb.Connection, tableName: string): Pro
     return obj;
   });
 
-  // Check if table already exists on server — server returns {tables: [{name, ...}]}
+  // Check if table already exists on server
   const serverTables = await serverFetchJson('/tables');
   const existingNames = (serverTables.tables || []).map(
     (t: { name: string } | string) => typeof t === 'string' ? t : t.name
@@ -97,12 +97,31 @@ async function migrateTable(localDb: lancedb.Connection, tableName: string): Pro
     }
   }
 
-  // Create table — server expects POST /tables with {table_name, data} in body
-  console.log(`  PUSH: ${tableName} (${plainRows.length} rows, ${(JSON.stringify(plainRows).length / 1024).toFixed(0)}KB)...`);
-  await serverFetchJson(`/tables`, {
-    method: 'POST',
-    body: JSON.stringify({ table_name: tableName, data: plainRows }),
-  });
+  const jsonSize = (JSON.stringify(plainRows).length / 1024).toFixed(0);
+  console.log(`  PUSH: ${tableName} (${plainRows.length} rows, ${jsonSize}KB)...`);
+
+  // API: POST /tables/{name} with {"data": [...]} to create table with initial data
+  // For large tables, send in batches
+  const BATCH_SIZE = 200;
+  for (let i = 0; i < plainRows.length; i += BATCH_SIZE) {
+    const batch = plainRows.slice(i, i + BATCH_SIZE);
+    if (i === 0) {
+      // First batch creates the table
+      await serverFetchJson(`/tables/${encodeURIComponent(tableName)}`, {
+        method: 'POST',
+        body: JSON.stringify({ data: batch }),
+      });
+    } else {
+      // Subsequent batches add to the table
+      await serverFetchJson(`/tables/${encodeURIComponent(tableName)}/add`, {
+        method: 'POST',
+        body: JSON.stringify({ data: batch }),
+      });
+    }
+    if (plainRows.length > BATCH_SIZE) {
+      console.log(`    batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(plainRows.length / BATCH_SIZE)}`);
+    }
+  }
 
   console.log(`  OK: ${tableName} → ${plainRows.length} rows`);
   return plainRows.length;

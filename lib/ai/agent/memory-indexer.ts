@@ -5,7 +5,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { loadMasterResume, type ExperienceVariation, type ProjectVariation } from './resume-loader';
+import { loadMasterResume } from './resume-loader';
 import { generateQueryEmbedding } from '@/lib/indexer/index-manager';
 import { upsertResumeComponents, storeLearning } from '@/lib/vector-db/career-memory';
 import type { ResumeComponentDoc, LearningDoc } from '@/lib/vector-db/career-schemas';

@@ -6,6 +6,8 @@
 
 import fs from 'fs/promises';
 import path from 'path';
+import { generateQueryEmbedding } from '@/lib/indexer/index-manager';
+import { cosineSimilarity } from '@/lib/ai/semantic-matcher';
 
 // ---- Types ----
 
@@ -193,33 +195,57 @@ export function extractResumeComponents(
   latex: string,
   sourceCompany: string
 ): { experiences: ExperienceVariation[]; skills: string[]; projects: ProjectVariation[] } {
-  const experiences = parseExperiences(latex, sourceCompany);
-  const skills = parseSkills(latex);
-  const projects = parseProjects(latex, sourceCompany);
+  // Auto-detect and fix double-escaped LaTeX (single-line files with literal \n and \\)
+  const normalizedLatex = unescapeLatexIfNeeded(latex);
+
+  const experiences = parseExperiences(normalizedLatex, sourceCompany);
+  const skills = parseSkills(normalizedLatex);
+  const projects = parseProjects(normalizedLatex, sourceCompany);
 
   return { experiences, skills, projects };
+}
+
+/**
+ * Detect and fix double-escaped LaTeX content.
+ * Some .tex files were saved with JSON-escaped content (\\n instead of newlines, \\\\ instead of \\).
+ * This heuristic detects and unescapes them so the parser works on both formats.
+ */
+function unescapeLatexIfNeeded(latex: string): string {
+  // Heuristic: if the file has \\documentclass (double backslash) and literal \n sequences
+  // but no actual newlines, it's double-escaped
+  const hasRealNewlines = latex.includes('\n');
+  const hasLiteralEscapedNewlines = latex.includes('\\n');
+  const hasDoubleBackslash = latex.includes('\\\\documentclass');
+
+  if (hasDoubleBackslash && hasLiteralEscapedNewlines && !hasRealNewlines) {
+    return latex
+      .replace(/\\n/g, '\n')
+      .replace(/\\\\/g, '\\');
+  }
+
+  return latex;
 }
 
 function parseExperiences(latex: string, sourceCompany: string): ExperienceVariation[] {
   const experiences: ExperienceVariation[] = [];
 
+  // Only parse within the WORK EXPERIENCE section to avoid picking up Education subheadings
+  const experienceSection = extractSection(latex, 'WORK EXPERIENCE') || extractSection(latex, 'EXPERIENCE');
+  if (!experienceSection) return experiences;
+
   // Match \resumeSubheading{title}{dates}{company}{location} — handles multi-line format
   const subheadingRegex = /\\resumeSubheading\s*\n?\s*\{([^}]*)\}\{([^}]*)\}\s*\n?\s*\{([^}]*)\}\{([^}]*)\}/g;
   let match;
 
-  while ((match = subheadingRegex.exec(latex)) !== null) {
+  while ((match = subheadingRegex.exec(experienceSection)) !== null) {
     const [, title, dates, company, location] = match;
     const startPos = match.index + match[0].length;
 
     // Find bullets between this subheading and the next one (or section end)
-    const nextSubheading = latex.indexOf('\\resumeSubheading', startPos);
-    const nextSection = latex.indexOf('\\section', startPos);
-    const endPos = Math.min(
-      nextSubheading === -1 ? latex.length : nextSubheading,
-      nextSection === -1 ? latex.length : nextSection
-    );
+    const nextSubheading = experienceSection.indexOf('\\resumeSubheading', startPos);
+    const endPos = nextSubheading === -1 ? experienceSection.length : nextSubheading;
 
-    const bulletSection = latex.substring(startPos, endPos);
+    const bulletSection = experienceSection.substring(startPos, endPos);
     const bullets = parseBullets(bulletSection);
 
     if (bullets.length > 0) {
@@ -389,6 +415,43 @@ function stripLatex(text: string): string {
     .trim();
 }
 
+/**
+ * Deep-strip LaTeX to plain text for embedding generation.
+ * Removes preamble, commands, environments, and LaTeX syntax — keeps only human-readable content.
+ */
+function stripLatexDeep(latex: string): string {
+  // Auto-unescape if double-escaped
+  let text = unescapeLatexIfNeeded(latex);
+
+  // Remove everything before \begin{document}
+  const docStart = text.indexOf('\\begin{document}');
+  text = docStart !== -1 ? text.substring(docStart + 16) : text;
+
+  // Remove \end{document}
+  text = text.replace(/\\end\{document\}/g, '');
+
+  // Strip LaTeX commands progressively (deepest nesting first)
+  for (let i = 0; i < 3; i++) {
+    text = text
+      .replace(/\\textbf\{((?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*)\}/g, '$1')
+      .replace(/\\textit\{((?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*)\}/g, '$1')
+      .replace(/\\textcolor\{[^}]*\}\{((?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*)\}/g, '$1')
+      .replace(/\\href\{[^}]*\}\{((?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*)\}/g, '$1')
+      .replace(/\\emph\{((?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*)\}/g, '$1');
+  }
+
+  // Remove remaining commands and syntax
+  text = text
+    .replace(/\\[a-zA-Z]+\{[^}]*\}/g, ' ')  // \command{arg}
+    .replace(/\\[a-zA-Z]+\[[^\]]*\]/g, ' ')  // \command[opt]
+    .replace(/\\[a-zA-Z]+/g, ' ')             // \command
+    .replace(/[{}%\\]/g, ' ')                 // braces, percent, backslash
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return text;
+}
+
 // ---- Cache helpers ----
 
 async function isCacheValid(mtimes: Map<string, number>): Promise<boolean> {
@@ -403,28 +466,53 @@ async function isCacheValid(mtimes: Map<string, number>): Promise<boolean> {
   return true;
 }
 
+// ---- Embedding cache for semantic base resume selection ----
+const embeddingCache = new Map<string, { vec: number[]; mtime: number }>();
+
+// Placeholder patterns that indicate fabricated or incomplete content
+const PLACEHOLDER_PATTERNS = ['ABC Company', 'XYZ Corp', 'Lorem ipsum', 'PLACEHOLDER', 'Company Name Here', 'Your Name'];
+
 /**
  * Select the best existing tailored resume as a base for optimization.
- * Scores each resume against job requirements using keyword overlap.
- * Falls back to the most generic resume (Google) if no good match.
+ * Uses semantic embedding similarity (primary) + keyword overlap (bonus).
+ * Includes quality guards to reject resumes with fabricated content.
+ * Falls back to master template if no good match (threshold 0.35).
  */
 export async function selectBestBaseResume(
   jobRequirements: string[],
   jobTitle: string,
   excludeCompany?: string
-): Promise<{ latex: string; sourceCompany: string }> {
-  const resumes: { sourceCompany: string; latex: string; score: number }[] = [];
+): Promise<{ latex: string; sourceCompany: string; semanticScore?: number; keywordScore?: number }> {
+  const candidates: {
+    sourceCompany: string;
+    filePath: string;
+    latex: string;
+    semanticScore: number;
+    keywordScore: number;
+    totalScore: number;
+  }[] = [];
 
-  // Build a set of lowercase requirement keywords for matching
+  // Build query text for embedding
+  const queryText = `${jobTitle} ${jobRequirements.slice(0, 10).join(' ')}`;
+
+  // Build keyword set for bonus scoring
   const requirementKeywords = new Set<string>();
   for (const req of jobRequirements) {
     for (const word of req.toLowerCase().split(/\W+/)) {
       if (word.length > 2) requirementKeywords.add(word);
     }
   }
-  // Also add words from job title
   for (const word of jobTitle.toLowerCase().split(/\W+/)) {
     if (word.length > 2) requirementKeywords.add(word);
+  }
+
+  // Generate query embedding
+  let queryVec: number[];
+  try {
+    queryVec = await generateQueryEmbedding(queryText);
+  } catch (embErr) {
+    console.warn('[resume-loader] Embedding generation failed, falling back to keyword-only:', embErr);
+    return selectBestBaseResumeKeywordFallback(jobRequirements, jobTitle, excludeCompany);
   }
 
   try {
@@ -432,8 +520,10 @@ export async function selectBestBaseResume(
 
     for (const dir of companyDirs) {
       if (!dir.isDirectory()) continue;
-      // Skip the target company's directory to avoid self-reinforcing hallucination loops
-      if (excludeCompany && dir.name.toLowerCase() === excludeCompany.toLowerCase()) continue;
+      // Normalize for comparison: "Verse Medical" matches "Verse_Medical"
+      const normalizedDir = dir.name.toLowerCase().replace(/[_\-\s]+/g, '');
+      const normalizedExclude = excludeCompany?.toLowerCase().replace(/[_\-\s]+/g, '') ?? '';
+      if (excludeCompany && normalizedDir === normalizedExclude) continue;
 
       const companyPath = path.join(COMPANIES_DIR, dir.name);
       const files = await fs.readdir(companyPath);
@@ -443,18 +533,61 @@ export async function selectBestBaseResume(
 
         const filePath = path.join(companyPath, file);
         try {
+          const stat = await fs.stat(filePath);
           const latex = await fs.readFile(filePath, 'utf-8');
-          // Skip empty/skeleton templates
-          if (latex.includes('%%% CONTENT HERE %%%') || latex.length < 500) continue;
 
-          // Score: count how many requirement keywords appear in the resume
-          const lowerLatex = latex.toLowerCase();
-          let score = 0;
-          for (const keyword of requirementKeywords) {
-            if (lowerLatex.includes(keyword)) score++;
+          // Quality guard: skip skeletons
+          if (latex.includes('%%% CONTENT HERE %%%') || latex.length < 2000) continue;
+
+          // Quality guard: skip resumes with placeholder/fabricated content
+          if (PLACEHOLDER_PATTERNS.some(p => latex.includes(p))) {
+            console.warn(`[resume-loader] Skipping ${dir.name}/${file} — contains placeholder pattern`);
+            continue;
           }
 
-          resumes.push({ sourceCompany: dir.name, latex, score });
+          // Quality guard: must have at least 3 experience bullets
+          const components = extractResumeComponents(latex, dir.name);
+          const totalBullets = components.experiences.reduce((sum, e) => sum + e.bullets.length, 0);
+          if (totalBullets < 3) {
+            console.warn(`[resume-loader] Skipping ${dir.name}/${file} — only ${totalBullets} bullets`);
+            continue;
+          }
+
+          // Get or compute resume embedding (cached by file path + mtime)
+          let resumeVec: number[];
+          const cached = embeddingCache.get(filePath);
+          if (cached && cached.mtime === stat.mtimeMs) {
+            resumeVec = cached.vec;
+          } else {
+            // Deep-strip LaTeX to plain text for better embeddings
+            const plainText = stripLatexDeep(latex);
+            resumeVec = await generateQueryEmbedding(plainText.substring(0, 1500));
+            embeddingCache.set(filePath, { vec: resumeVec, mtime: stat.mtimeMs });
+          }
+
+          // Primary: semantic similarity (0-1)
+          const semanticScore = cosineSimilarity(queryVec, resumeVec);
+
+          // Bonus: keyword overlap (0-0.05 range)
+          const lowerLatex = latex.toLowerCase();
+          let keywordHits = 0;
+          for (const keyword of requirementKeywords) {
+            if (lowerLatex.includes(keyword)) keywordHits++;
+          }
+          const keywordScore = requirementKeywords.size > 0
+            ? 0.05 * (keywordHits / requirementKeywords.size)
+            : 0;
+
+          const totalScore = semanticScore + keywordScore;
+
+          candidates.push({
+            sourceCompany: dir.name,
+            filePath,
+            latex,
+            semanticScore,
+            keywordScore,
+            totalScore,
+          });
         } catch {
           // skip unreadable files
         }
@@ -464,19 +597,96 @@ export async function selectBestBaseResume(
     console.warn('[resume-loader] Companies directory not found for base resume selection');
   }
 
-  if (resumes.length === 0) {
-    // Absolute fallback: return the master template
+  if (candidates.length === 0) {
     const masterLatex = await parseMasterTemplate();
     return { latex: masterLatex, sourceCompany: 'master' };
   }
 
-  // Sort by score descending, pick the best
-  resumes.sort((a, b) => b.score - a.score);
+  // Sort by total score descending
+  candidates.sort((a, b) => b.totalScore - a.totalScore);
+
+  const best = candidates[0];
+
+  // Minimum threshold: if best semantic score < 0.35, use master template
+  if (best.semanticScore < 0.35) {
+    console.log(
+      `[resume-loader] Best candidate ${best.sourceCompany} scored ${best.semanticScore.toFixed(3)} (below 0.35 threshold) — using master template`
+    );
+    const masterLatex = await parseMasterTemplate();
+    return { latex: masterLatex, sourceCompany: 'master', semanticScore: best.semanticScore };
+  }
 
   console.log(
-    `[resume-loader] Best base resume: ${resumes[0].sourceCompany} (score: ${resumes[0].score}/${requirementKeywords.size} keywords)`
+    `[resume-loader] Best base resume: ${best.sourceCompany} (semantic: ${best.semanticScore.toFixed(3)}, keyword: ${best.keywordScore.toFixed(3)}, total: ${best.totalScore.toFixed(3)})`
   );
 
+  return {
+    latex: best.latex,
+    sourceCompany: best.sourceCompany,
+    semanticScore: best.semanticScore,
+    keywordScore: best.keywordScore,
+  };
+}
+
+/**
+ * Keyword-only fallback for selectBestBaseResume when embeddings fail.
+ */
+async function selectBestBaseResumeKeywordFallback(
+  jobRequirements: string[],
+  jobTitle: string,
+  excludeCompany?: string
+): Promise<{ latex: string; sourceCompany: string }> {
+  const resumes: { sourceCompany: string; latex: string; score: number }[] = [];
+
+  const requirementKeywords = new Set<string>();
+  for (const req of jobRequirements) {
+    for (const word of req.toLowerCase().split(/\W+/)) {
+      if (word.length > 2) requirementKeywords.add(word);
+    }
+  }
+  for (const word of jobTitle.toLowerCase().split(/\W+/)) {
+    if (word.length > 2) requirementKeywords.add(word);
+  }
+
+  try {
+    const companyDirs = await fs.readdir(COMPANIES_DIR, { withFileTypes: true });
+    for (const dir of companyDirs) {
+      if (!dir.isDirectory()) continue;
+      const nDir = dir.name.toLowerCase().replace(/[_\-\s]+/g, '');
+      const nExclude = excludeCompany?.toLowerCase().replace(/[_\-\s]+/g, '') ?? '';
+      if (excludeCompany && nDir === nExclude) continue;
+
+      const companyPath = path.join(COMPANIES_DIR, dir.name);
+      const files = await fs.readdir(companyPath);
+
+      for (const file of files) {
+        if (!file.endsWith('.tex') || file.includes('Cover_Letter')) continue;
+        const filePath = path.join(companyPath, file);
+        try {
+          const latex = await fs.readFile(filePath, 'utf-8');
+          if (latex.includes('%%% CONTENT HERE %%%') || latex.length < 2000) continue;
+          if (PLACEHOLDER_PATTERNS.some(p => latex.includes(p))) continue;
+
+          const lowerLatex = latex.toLowerCase();
+          let score = 0;
+          for (const keyword of requirementKeywords) {
+            if (lowerLatex.includes(keyword)) score++;
+          }
+          resumes.push({ sourceCompany: dir.name, latex, score });
+        } catch { /* skip */ }
+      }
+    }
+  } catch {
+    console.warn('[resume-loader] Companies directory not found');
+  }
+
+  if (resumes.length === 0) {
+    const masterLatex = await parseMasterTemplate();
+    return { latex: masterLatex, sourceCompany: 'master' };
+  }
+
+  resumes.sort((a, b) => b.score - a.score);
+  console.log(`[resume-loader] Keyword fallback — best: ${resumes[0].sourceCompany} (${resumes[0].score}/${requirementKeywords.size})`);
   return { latex: resumes[0].latex, sourceCompany: resumes[0].sourceCompany };
 }
 

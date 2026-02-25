@@ -47,3 +47,9 @@ latex-errors/
 *.log
 *.out
 *.synctex.gz
+
+# Playwright MCP screenshots & artifacts
+.playwright-mcp/
+
+# Claude Code
+.claude/settings.local.json

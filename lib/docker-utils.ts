@@ -156,8 +156,9 @@ export async function ensureTexliveImage(tag: string = 'latest', autoPull: boole
  * Create a temporary directory for LaTeX compilation
  */
 export async function createTempLatexDir(): Promise<string> {
+  const { v4: uuidv4 } = await import('uuid');
   const prefix = 'latex-compile-';
-  const dirPath = join(tmpdir(), prefix + Date.now());
+  const dirPath = join(tmpdir(), prefix + uuidv4());
   await mkdir(dirPath, { recursive: true });
   return dirPath;
 }

@@ -1,0 +1,162 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.18in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE — blue rule to match template format
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{0pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Full-Stack Software Engineer with \textbf{5+ years building, shipping, and maintaining production full-stack applications} across healthcare, finance, and research domains. Expert in \textbf{Python (FastAPI, Flask), TypeScript/JavaScript (Node.js, Next.js), and Java (Spring Boot)} for backend development, with \textbf{React, Angular, and Vue.js} for frontend applications. \textbf{Strong command of SQL and relational database design}—architected \textbf{PostgreSQL and MySQL} schemas with normalization, foreign key relationships, and horizontal sharding for \textbf{500M+ record databases}; wrote \textbf{complex SQL queries with multi-table joins, CTEs, window functions, and aggregations} improving performance by \textbf{2-3x}. Holds \textbf{M.S. in Computer Science} from Florida State University. Proven ability to \textbf{articulate complex technical concepts clearly to both technical and non-technical stakeholders}, translating database architecture, API design, and distributed systems into actionable business insights for cross-functional teams.
+
+\vspace{-9pt}
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{Aug 2022 -- Dec 2023}
+{Master of Science in Computer Science (Advanced Degree)}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Advanced degree in Computer Science} with relevant technical focus in Distributed Systems, Advanced Database Systems, Machine Learning, and Data Communications}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{Jun 2015 -- May 2019}
+{Bachelor of Technology in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-10pt}
+
+\resumeSubheading
+{Software Engineer II}{Nov 2024 -- Present}
+{Florida State University — Finance Technology Division}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Built, shipped, and maintained production full-stack applications} serving \textbf{10K+ users} with \textbf{Python (FastAPI) and Java (Spring Boot) backend microservices}, \textbf{React and Angular frontend}, and \textbf{PostgreSQL relational database}, processing \textbf{5M+ daily requests} with \textbf{99.99\% uptime} through distributed architecture.}
+\resumeItem{\textbf{Designed and queried PostgreSQL relational database schemas} with normalization, foreign key relationships, and horizontal sharding for \textbf{500M+ records}; wrote \textbf{complex SQL queries with multi-table joins, CTEs, window functions, and aggregations} for time-series analytics and compliance reporting, improving query performance by \textbf{2x} through strategic indexing and query optimization.}
+\resumeItem{Developed \textbf{37 RESTful API endpoints} using \textbf{Python (FastAPI) and Java (Spring Boot)} with real-time WebSocket streaming; implemented \textbf{distributed caching with Redis} reducing API latency by \textbf{45\%} (850ms to 470ms) and enabling sub-second response times for real-time dashboards serving concurrent users.}
+\resumeItem{\textbf{Articulated complex technical concepts clearly to both technical and non-technical stakeholders}, translating database schema design, SQL query optimization strategies, API performance metrics, microservices architecture, and infrastructure costs into business impact through presentations and documentation; enabled data-driven decision making for finance and compliance teams.}
+\resumeItem{\textbf{Maintained production systems end-to-end} including monitoring, reliability, and incident response; established observability infrastructure with Prometheus/Grafana, implemented automated alerting, and reduced MTTR by \textbf{60\%} through systematic troubleshooting and root cause analysis.}
+\resumeItem{Led technical initiatives mentoring \textbf{6 engineers} on full-stack development patterns, SQL optimization, and API design best practices; conducted code reviews and set team standards improving development velocity by \textbf{25\%}.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Engineer}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Built and shipped full-stack data applications} processing \textbf{1TB+ datasets} with \textbf{Python (FastAPI) backend} and \textbf{React frontend}; designed \textbf{PostgreSQL relational database schemas} with normalized tables and wrote \textbf{advanced SQL queries with CTEs, subqueries, and complex joins} for analytics achieving \textbf{99\% job success rate}.}
+\resumeItem{Shipped \textbf{production ML infrastructure} on Kubernetes with \textbf{RESTful APIs built in Python} and real-time monitoring dashboards; maintained system reliability through automated testing, performance tuning, and cost optimization reducing cloud costs by \textbf{40\%}.}
+\resumeItem{\textbf{Communicated technical architecture decisions clearly to non-technical research stakeholders}, explaining database design trade-offs, SQL query performance, API architecture, distributed systems design, and infrastructure costs through technical presentations; delivered data-driven insights supporting strategic research decisions.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer I}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{\textbf{Developed, shipped, and maintained production full-stack applications} using \textbf{Java (Spring Boot) backend}, \textbf{React and Angular frontend}, and \textbf{PostgreSQL relational database} processing \textbf{500K+ events/day}; shipped features for financial reporting platform serving enterprise clients with \textbf{99.5\% availability}.}
+\resumeItem{\textbf{Designed and queried PostgreSQL relational database schemas} with normalization and foreign key relationships; wrote \textbf{complex SQL queries with multi-table joins, aggregations, and subqueries} for general ledger integration and P\&L calculations; implemented \textbf{database indexing strategies and query optimization} improving report generation speed by \textbf{3x}.}
+\resumeItem{Built \textbf{RESTful APIs and microservices} with \textbf{Java (Spring Boot)} and Kafka event streaming; implemented distributed tracing and monitoring with Prometheus/Grafana ensuring production system reliability and performance under high load.}
+\resumeItem{\textbf{Communicated technical concepts clearly to product managers and business stakeholders}, explaining API design decisions, database performance metrics, SQL optimization strategies, and system architecture trade-offs through technical presentations and documentation; influenced product roadmap through clear articulation of technical constraints and opportunities.}
+\resumeItem{Mentored \textbf{5 junior engineers} on full-stack development, SQL best practices, and API design patterns; led code reviews and established team standards improving code quality and development velocity.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Associate Software Engineer}{Jun 2019 -- Sep 2020}
+{IMPETUS Technologies}{Noida, India}
+\resumeItemsStart
+\resumeItem{\textbf{Developed and maintained full-stack applications} with \textbf{Java backend} and \textbf{JavaScript frontend}; built \textbf{RESTful APIs} handling \textbf{100K+ daily requests} with \textbf{MySQL relational database integration} and Redis caching for low-latency data access.}
+\resumeItem{Maintained production systems including \textbf{SQL query optimization}, API performance tuning, and bug fixes; implemented workflow automation improving engineering team productivity and system reliability.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-6pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt,before skip=0pt,after skip=0pt]
+\begin{itemize}[topsep=0pt,partopsep=0pt]
+\resumeItem{\textbf{BookedFlow Slack Bot (Full-Stack Integration)} --- \textbf{Deployed and maintained production Slack bot} with \textbf{TypeScript/Node.js backend} and Socket Mode API achieving \textbf{24/7 availability}. Built \textbf{WebSocket connections}, OAuth 2.0 authentication, and \textbf{RESTful APIs} on AWS EC2. Implemented real-time messaging with \textbf{sub-40-second response times}. Tech: \textbf{TypeScript, Node.js, Next.js, WebSocket, REST APIs, AWS}.}
+\resumeItem{\textbf{Building Information Portal (Full-Stack)} --- \textbf{Built and shipped production web application} managing \textbf{14.6M+ sq. ft.} of university infrastructure with \textbf{Angular frontend} and \textbf{Java (Spring Boot) backend}. Designed \textbf{PostgreSQL relational database schema} with normalized tables and \textbf{role-based access control}. Built \textbf{multi-criteria search with complex SQL queries} (joins, aggregations) serving \textbf{50K+ users}. Tech: \textbf{Java, Spring Boot, Angular, PostgreSQL, SQL, REST APIs}.}
+\resumeItem{\textbf{SkillSync MCP (Full-Stack Security Tool)} --- \textbf{Built, shipped, and published npm package} with \textbf{TypeScript backend (3,085 LOC)} providing security-gated skill management for \textbf{8 AI IDE platforms}. Developed automated security scanning detecting \textbf{60+ threat patterns}. Integrated with GitHub API and \textbf{SQLite relational database} for skill metadata storage with SQL queries. Tech: \textbf{TypeScript, Node.js, SQLite, SQL, REST APIs, npm}.}
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Full-Stack Development:} 5+ Years Building, Shipping, and Maintaining Production Full-Stack Applications; End-to-End Application Development; API Design; Database Architecture; Authentication/Authorization; Production Deployment; System Maintenance}
+\resumeItem{\textbf{Backend Technologies (Proficient):} Python (FastAPI, Flask), TypeScript/JavaScript (Node.js, Next.js), Java (Spring Boot), RESTful APIs, WebSocket, Microservices Architecture, Event-Driven Architecture}
+\resumeItem{\textbf{Frontend Technologies (Proficient):} React, Vue.js, Angular, TypeScript, JavaScript, HTML/CSS, Responsive Design, Real-Time Dashboards}
+\resumeItem{\textbf{SQL \& Relational Databases (Strong Command):} PostgreSQL (Schema Design, Normalization, Query Optimization, Indexing, Sharding, Complex Joins, CTEs, Window Functions, Aggregations), MySQL (Schema Design, Query Optimization), SQL (Multi-Table Joins, Subqueries, Performance Tuning), Database Modeling, Foreign Keys, Transaction Management}
+\resumeItem{\textbf{Cloud \& Infrastructure:} AWS (EKS, Lambda, S3, EC2), Kubernetes, Docker, Distributed Systems, CI/CD Pipelines}
+\resumeItem{\textbf{Data Processing:} Apache Kafka, Apache Spark, Apache Airflow, ETL/ELT Pipelines, Batch \& Streaming Processing, Redis Caching}
+\resumeItem{\textbf{Monitoring \& Reliability:} Prometheus, Grafana, Distributed Tracing, Observability, Production Support, Incident Response, Performance Tuning}
+\resumeItem{\textbf{Communication \& Leadership:} Articulating Complex Technical Concepts Clearly to Both Technical and Non-Technical Audiences, Technical Presentations, Stakeholder Management, Cross-Functional Collaboration, Mentoring, Agile/Scrum}
+\resumeItem{\textbf{Additional:} MongoDB, Time-Series Databases (InfluxDB), gRPC, Code Reviews, Testing (Unit, Integration, E2E)}
+\end{itemize}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS \& CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

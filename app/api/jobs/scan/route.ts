@@ -97,12 +97,12 @@ export async function POST(request: NextRequest) {
     ];
 
     let content = '';
-    let selectedSelector = 'none';
+    let _selectedSelector = 'none';
     for (const selector of mainSelectors) {
       const element = $(selector);
       if (element.length > 0) {
         content = element.text();
-        selectedSelector = selector;
+        _selectedSelector = selector;
         console.log(`[job-scan] Selected selector: ${selector}, content length: ${content.length}`);
         break;
       }
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
     // Fallback to body if no main content found
     if (!content || content.length < 200) {
       content = $('body').text();
-      selectedSelector = 'body (fallback)';
+      _selectedSelector = 'body (fallback)';
       console.log(`[job-scan] Using fallback body, content length: ${content.length}`);
     }
 

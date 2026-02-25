@@ -10,11 +10,13 @@ import {
   Sun,
   FileText,
   Briefcase,
+  Activity,
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useFileSystemStore } from '@/store/fileSystemStore';
 import { useUIStore } from '@/store/uiStore';
+import { useAgentRunStore } from '@/store/agentRunStore';
 import FolderTree from './FolderTree';
 import QuickAccess from './QuickAccess';
 
@@ -27,6 +29,7 @@ export default function Sidebar() {
 
   const { isSidebarCollapsed, theme, showQuickAccess, toggleSidebar, toggleTheme } = useUIStore();
   const { createFile, createFolder } = useFileSystemStore();
+  const activeRunId = useAgentRunStore((s) => s.activeRunId);
 
   const handleCreateFile = () => {
     if (newItemName.trim()) {
@@ -100,6 +103,22 @@ export default function Sidebar() {
           >
             <Briefcase className="w-4 h-4" />
             <span>Jobs</span>
+          </button>
+          <button
+            onClick={() => router.push('/monitor')}
+            className={cn(
+              "flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm rounded transition-colors relative",
+              pathname === '/monitor'
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700"
+            )}
+            title="Agent Monitor"
+          >
+            <Activity className="w-4 h-4" />
+            <span>Monitor</span>
+            {activeRunId && (
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            )}
           </button>
         </div>
 

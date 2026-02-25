@@ -3,6 +3,7 @@ import { FileSystemStore, FileSystemNode, FileNode, FolderNode } from '@/types';
 import { generateId, buildPath } from '@/lib/utils';
 import { saveFileSystem, loadFileSystem } from '@/lib/indexeddb';
 import { DEFAULT_RESUME_TEMPLATE } from '@/lib/latex-utils';
+import { useCompanyStore } from '@/store/companyStore';
 
 export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
   nodes: {},
@@ -273,6 +274,130 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
 
       return { nodes };
     });
+  },
+
+  createFileWithContent: (name: string, parentId: string | null, content: string, meta?: { jobUrl?: string; jobTitle?: string; matchScore?: number; companyId?: string; companyName?: string }) => {
+    const id = generateId();
+    const now = Date.now();
+
+    const newFile: FileNode = {
+      id,
+      name: name.endsWith('.tex') ? name : `${name}.tex`,
+      type: 'file',
+      content,
+      parentId,
+      path: '',
+      createdAt: now,
+      modifiedAt: now,
+      isPinned: false,
+      ...(meta?.companyId && { companyId: meta.companyId }),
+      ...(meta?.companyName && { companyName: meta.companyName }),
+      ...(meta?.jobUrl && { jobUrl: meta.jobUrl }),
+      ...(meta?.jobTitle && { jobTitle: meta.jobTitle }),
+      ...(meta?.matchScore !== undefined && { matchScore: meta.matchScore }),
+    };
+
+    set((state) => {
+      const nodes = { ...state.nodes, [id]: newFile };
+      newFile.path = buildPath(nodes, id);
+
+      if (parentId && state.nodes[parentId]) {
+        const parent = state.nodes[parentId] as FolderNode;
+        nodes[parentId] = {
+          ...parent,
+          children: [...parent.children, id],
+        };
+      }
+
+      const rootIds = parentId ? state.rootIds : [...state.rootIds, id];
+      saveFileSystem(nodes, rootIds);
+      return { nodes, rootIds };
+    });
+
+    return id;
+  },
+
+  importFromDisk: async (companies, agentResults) => {
+    const companyStore = useCompanyStore.getState();
+    let mostRecentFileId: string | null = null;
+    let mostRecentTime = 0;
+    let totalFiles = 0;
+
+    for (const diskCompany of companies) {
+      // Ensure company exists in store
+      const company = await companyStore.addCompany(diskCompany.name);
+
+      // Check existing files under this company
+      const existingFiles = get().getFilesByCompany(company.id);
+      const existingNames = new Set(existingFiles.map((f) => f.name));
+
+      for (const diskFile of diskCompany.files) {
+        // Find matching agent result for job metadata
+        let jobUrl: string | undefined;
+        let jobTitle: string | undefined;
+        let matchScore: number | undefined;
+
+        if (agentResults) {
+          const match = agentResults.find((r) => {
+            const normalizedCompany = r.company.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const normalizedDiskCompany = diskCompany.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            return normalizedCompany === normalizedDiskCompany ||
+              diskFile.name.toLowerCase().includes(r.company.toLowerCase().replace(/\s+/g, '_').toLowerCase());
+          });
+          if (match) {
+            jobUrl = match.url;
+            jobTitle = match.title;
+            matchScore = match.matchScore;
+          }
+        }
+
+        if (existingNames.has(diskFile.name)) {
+          // Update existing file content
+          const existingFile = existingFiles.find((f) => f.name === diskFile.name);
+          if (existingFile) {
+            set((state) => {
+              const node = state.nodes[existingFile.id] as FileNode;
+              const nodes = {
+                ...state.nodes,
+                [existingFile.id]: {
+                  ...node,
+                  content: diskFile.content,
+                  modifiedAt: diskFile.modifiedAt,
+                  ...(jobUrl && { jobUrl }),
+                  ...(jobTitle && { jobTitle }),
+                  ...(matchScore !== undefined && { matchScore }),
+                },
+              };
+              saveFileSystem(nodes, state.rootIds);
+              return { nodes };
+            });
+
+            if (diskFile.modifiedAt > mostRecentTime) {
+              mostRecentTime = diskFile.modifiedAt;
+              mostRecentFileId = existingFile.id;
+            }
+            totalFiles++;
+          }
+        } else {
+          // Create new file
+          const fileId = get().createFileWithContent(diskFile.name, null, diskFile.content, {
+            companyId: company.id,
+            companyName: company.name,
+            jobUrl,
+            jobTitle,
+            matchScore,
+          });
+
+          if (diskFile.modifiedAt > mostRecentTime) {
+            mostRecentTime = diskFile.modifiedAt;
+            mostRecentFileId = fileId;
+          }
+          totalFiles++;
+        }
+      }
+    }
+
+    return mostRecentFileId;
   },
 
   updateFileCompany: (id: string, companyId: string | undefined, companyName: string | undefined) => {

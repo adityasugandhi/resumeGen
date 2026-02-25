@@ -23,12 +23,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import JobCard from '@/components/jobs/JobCard';
 import JobDetailsModal from '@/components/jobs/JobDetailsModal';
 import PreviewModal from '@/components/jobs/PreviewModal';
+import AgentDiscoveryModal from '@/components/agent/AgentDiscoveryModal';
 import { Button, IconButton } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { StatCard } from '@/components/ui/Card';
 import { Modal, ModalHeader, ModalTitle, ModalDescription, ModalContent, ModalFooter } from '@/components/ui/Modal';
-import { JobCardSkeleton, StatCardSkeleton } from '@/components/ui/Skeleton';
 import { Badge } from '@/components/ui/Badge';
+import { JobCardSkeleton, StatCardSkeleton } from '@/components/ui/Skeleton';
 import { useEditorStore } from '@/store/editorStore';
 import { useJobStore } from '@/store/jobStore';
 import { useResumeStore } from '@/store/resumeStore';
@@ -36,6 +37,7 @@ import { useResumeStore } from '@/store/resumeStore';
 export default function JobsPage() {
   const router = useRouter();
   const [showScanModal, setShowScanModal] = useState(false);
+  const [showAgentModal, setShowAgentModal] = useState(false);
   const [jobUrl, setJobUrl] = useState('');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState<string | null>(null);
@@ -245,14 +247,24 @@ export default function JobsPage() {
                   Track opportunities and generate tailored resumes for every application
                 </p>
               </div>
-              <Button
-                variant="primary"
-                size="lg"
-                leftIcon={<Plus className="w-5 h-5" />}
-                onClick={() => setShowScanModal(true)}
-              >
-                Scan New Job
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  leftIcon={<Plus className="w-5 h-5" />}
+                  onClick={() => setShowScanModal(true)}
+                >
+                  Scan New Job
+                </Button>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  leftIcon={<Sparkles className="w-5 h-5" />}
+                  onClick={() => setShowAgentModal(true)}
+                >
+                  AI Job Discovery
+                </Button>
+              </div>
             </div>
 
             {/* Stats Grid */}
@@ -330,15 +342,26 @@ export default function JobsPage() {
                 Scan job postings, extract requirements automatically, and generate perfectly tailored resumes in seconds
               </p>
 
-              <Button
-                variant="primary"
-                size="lg"
-                leftIcon={<Plus className="w-5 h-5" />}
-                onClick={() => setShowScanModal(true)}
-                className="text-lg px-8 py-4"
-              >
-                Scan Your First Job
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  leftIcon={<Plus className="w-5 h-5" />}
+                  onClick={() => setShowScanModal(true)}
+                  className="text-lg px-8 py-4"
+                >
+                  Scan Your First Job
+                </Button>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  leftIcon={<Sparkles className="w-5 h-5" />}
+                  onClick={() => setShowAgentModal(true)}
+                  className="text-lg px-8 py-4"
+                >
+                  AI Job Discovery
+                </Button>
+              </div>
 
             {/* Feature cards */}
             <div className="grid md:grid-cols-3 gap-6 mt-20">
@@ -554,6 +577,12 @@ export default function JobsPage() {
           onExport={handleExportResume}
         />
       )}
+
+      {/* Agent Discovery Modal */}
+      <AgentDiscoveryModal
+        isOpen={showAgentModal}
+        onClose={() => setShowAgentModal(false)}
+      />
     </div>
   );
 }

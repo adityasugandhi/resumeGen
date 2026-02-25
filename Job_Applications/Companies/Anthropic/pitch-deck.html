@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aditya Sugandhi — Software Engineer, People Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #faf9f7; color: #1a1a1a; }
+
+  /* Page structure - each section is a "slide" */
+  .slide {
+    min-height: 100vh;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    page-break-after: always;
+  }
+  .slide::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 80px;
+    right: 80px;
+    height: 1px;
+    background: #e5e2dc;
+  }
+  .slide:last-child::after { display: none; }
+
+  /* Title slide */
+  .slide-title { background: #1a1a1a; color: #faf9f7; }
+  .slide-title::after { display: none; }
+  .slide-title h1 { font-size: 48px; font-weight: 700; letter-spacing: -1px; margin-bottom: 16px; }
+  .slide-title .subtitle { font-size: 22px; font-weight: 400; color: #d4a27a; margin-bottom: 40px; }
+  .slide-title .meta { font-size: 15px; color: #999; line-height: 1.8; }
+  .slide-title .meta a { color: #d4a27a; text-decoration: none; }
+  .accent { color: #d4a27a; }
+
+  /* Section headers */
+  .slide h2 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #999;
+    margin-bottom: 32px;
+  }
+  .slide h3 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 40px;
+    line-height: 1.2;
+  }
+
+  /* Why me grid */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .match-card {
+    background: #fff;
+    border: 1px solid #e5e2dc;
+    border-radius: 12px;
+    padding: 28px;
+  }
+  .match-card .label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #999;
+    margin-bottom: 8px;
+  }
+  .match-card .jd {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0ede8;
+  }
+  .match-card .proof {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+  }
+  .match-card .proof strong { color: #1a1a1a; }
+
+  /* Architecture diagram */
+  .arch-container {
+    background: #fff;
+    border: 1px solid #e5e2dc;
+    border-radius: 12px;
+    padding: 40px;
+    margin-top: 20px;
+  }
+  .arch-flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .arch-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .arch-col .col-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #999;
+    margin-bottom: 4px;
+  }
+  .arch-box {
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 140px;
+  }
+  .arch-box.primary { background: #1a1a1a; color: #faf9f7; }
+  .arch-box.agent { background: #fdf2f0; color: #c4634a; border: 1px solid #e8c4b8; }
+  .arch-box.integration { background: #ebfbee; color: #2b8a3e; border: 1px solid #b2dfb5; }
+  .arch-box.storage { background: #dbe4ff; color: #364fc7; border: 1px solid #a5b4fc; }
+  .arch-box.frontend { background: #fff9db; color: #e67700; border: 1px solid #ffd43b; }
+  .arch-arrow {
+    display: flex;
+    align-items: center;
+    color: #ccc;
+    font-size: 24px;
+    padding-top: 30px;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 40px;
+  }
+  .stat {
+    text-align: center;
+    background: #fff;
+    border: 1px solid #e5e2dc;
+    border-radius: 12px;
+    padding: 24px 16px;
+  }
+  .stat .number { font-size: 36px; font-weight: 700; color: #1a1a1a; }
+  .stat .desc { font-size: 13px; color: #777; margin-top: 4px; }
+
+  /* Tech stack */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .tech-group h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+  }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tech-tag {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: #f0ede8;
+    color: #555;
+  }
+  .tech-tag.highlight { background: #1a1a1a; color: #faf9f7; }
+
+  /* CTA slide */
+  .slide-cta { background: #1a1a1a; color: #faf9f7; text-align: center; }
+  .slide-cta h3 { font-size: 36px; margin-bottom: 24px; }
+  .slide-cta .links { font-size: 16px; color: #999; }
+  .slide-cta .links a { color: #d4a27a; text-decoration: none; }
+
+  @media print {
+    .slide { min-height: auto; padding: 40px; }
+    body { background: #fff; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide slide-title">
+  <h1>Aditya Sugandhi</h1>
+  <div class="subtitle">Software Engineer, People Products — Anthropic</div>
+  <div class="meta">
+    <a href="mailto:adityasugandhi.work@outlook.com">adityasugandhi.work@outlook.com</a> · +1 448 500 6857<br>
+    <a href="https://github.com/adityasugandhi">github.com/adityasugandhi</a> · <a href="https://adityasugandhi.com">adityasugandhi.com</a><br><br>
+    Tallahassee, FL
+  </div>
+</div>
+
+<!-- SLIDE 2: Why I'm a fit -->
+<div class="slide">
+  <h2>Role Alignment</h2>
+  <h3>What the JD asks for — and what I've <span class="accent" style="color:#c4634a">already built</span></h3>
+  <div class="match-grid">
+    <div class="match-card">
+      <div class="label">JD Asks</div>
+      <div class="jd">Ship LLM-native features end-to-end</div>
+      <div class="proof">Built <strong>multi-agent orchestration</strong> with <strong>Claude Sonnet API</strong> — 3 agents, 11 tools, self-healing code agent. Prototype to production in days.</div>
+    </div>
+    <div class="match-card">
+      <div class="label">JD Asks</div>
+      <div class="jd">AI-native workflows (tools, evals, prompts)</div>
+      <div class="proof">Designed <strong>prompt engineering frameworks</strong>, <strong>tool-use patterns</strong>, <strong>MCP server</strong> (20+ tools), and <strong>evaluation pipelines</strong>. Real-time SSE streaming to production.</div>
+    </div>
+    <div class="match-card">
+      <div class="label">JD Asks</div>
+      <div class="jd">Greenfield, high-autonomy, ships fast</div>
+      <div class="proof">0→1 product development in <strong>low-structure environment</strong>. Full ownership of product and architecture decisions — no gatekeeping, rapid iteration with stakeholder feedback.</div>
+    </div>
+    <div class="match-card">
+      <div class="label">JD Asks</div>
+      <div class="jd">People/HR tooling domain</div>
+      <div class="proof">Production integrations with <strong>Greenhouse</strong>, <strong>Lever</strong>, and <strong>Ashby APIs</strong>. Platform abstraction layer supporting 5 ATS providers with auto-discovery.</div>
+    </div>
+    <div class="match-card">
+      <div class="label">JD Asks</div>
+      <div class="jd">Direct stakeholder engagement</div>
+      <div class="proof">Embedded with facility managers and operations teams. Gathered hard feedback, identified highest-impact problems, shipped iteratively.</div>
+    </div>
+    <div class="match-card">
+      <div class="label">JD Asks</div>
+      <div class="jd">Collaborative teammate</div>
+      <div class="proof"><strong>Mentored 5 engineers</strong> on distributed systems. Code review standards improved team velocity by 25%. Cross-functional with Product, Ops, QE.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: The proof — Architecture -->
+<div class="slide">
+  <h2>The Proof</h2>
+  <h3>AI Career Automation Platform — System Architecture</h3>
+  <div class="arch-container">
+    <div class="arch-flow">
+      <div class="arch-col">
+        <div class="col-label">Input</div>
+        <div class="arch-box primary">User Query</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-col">
+        <div class="col-label">Orchestration</div>
+        <div class="arch-box agent">Claude Sonnet<br>Orchestrator</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-col">
+        <div class="col-label">Agents</div>
+        <div class="arch-box agent">Discovery Agent</div>
+        <div class="arch-box agent">Company Workers</div>
+        <div class="arch-box agent">Job Processors</div>
+        <div class="arch-box" style="background:#fff9db;color:#e67700;border:1px solid #ffd43b;margin-top:8px;">Self-Healing<br>Code Agent</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-col">
+        <div class="col-label">Integrations</div>
+        <div class="arch-box integration">Greenhouse API</div>
+        <div class="arch-box integration">Lever API</div>
+        <div class="arch-box integration">Ashby API</div>
+        <div class="arch-box" style="background:#f8f9fa;color:#555;border:1px solid #ddd;margin-top:8px;">H1B Scan</div>
+      </div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-col">
+        <div class="col-label">Storage</div>
+        <div class="arch-box storage">PostgreSQL</div>
+        <div class="arch-box storage">LanceDB<br>Vector DB</div>
+        <div class="arch-box storage">IndexedDB</div>
+        <div class="arch-box storage">MCP Server<br>20+ tools</div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="number">3</div>
+      <div class="desc">Parallel Agents</div>
+    </div>
+    <div class="stat">
+      <div class="number">11</div>
+      <div class="desc">Specialized Tools</div>
+    </div>
+    <div class="stat">
+      <div class="number">5</div>
+      <div class="desc">ATS Providers</div>
+    </div>
+    <div class="stat">
+      <div class="number">20+</div>
+      <div class="desc">MCP Tools</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Tech stack -->
+<div class="slide">
+  <h2>Technical Stack</h2>
+  <h3>Built with the tools this team uses daily</h3>
+  <div class="tech-grid">
+    <div class="tech-group">
+      <h4>AI / LLM / Agents</h4>
+      <div class="tech-tags">
+        <span class="tech-tag highlight">Claude API</span>
+        <span class="tech-tag highlight">Tool Use</span>
+        <span class="tech-tag highlight">MCP</span>
+        <span class="tech-tag">Multi-Agent</span>
+        <span class="tech-tag">RAG Pipelines</span>
+        <span class="tech-tag">Prompt Engineering</span>
+        <span class="tech-tag">AI Evals</span>
+        <span class="tech-tag">Embeddings</span>
+        <span class="tech-tag">LanceDB</span>
+      </div>
+    </div>
+    <div class="tech-group">
+      <h4>Full-Stack & Product</h4>
+      <div class="tech-tags">
+        <span class="tech-tag">TypeScript</span>
+        <span class="tech-tag">React 18</span>
+        <span class="tech-tag">Next.js 14</span>
+        <span class="tech-tag">Python</span>
+        <span class="tech-tag">FastAPI</span>
+        <span class="tech-tag">Node.js</span>
+        <span class="tech-tag">SSE Streaming</span>
+        <span class="tech-tag">WebSocket</span>
+        <span class="tech-tag">Tailwind CSS</span>
+      </div>
+    </div>
+    <div class="tech-group">
+      <h4>Integrations</h4>
+      <div class="tech-tags">
+        <span class="tech-tag highlight">Greenhouse API</span>
+        <span class="tech-tag highlight">Lever API</span>
+        <span class="tech-tag highlight">Ashby API</span>
+        <span class="tech-tag">Playwright</span>
+        <span class="tech-tag">Slack API</span>
+        <span class="tech-tag">OAuth 2.0</span>
+      </div>
+    </div>
+    <div class="tech-group">
+      <h4>Data & Infrastructure</h4>
+      <div class="tech-tags">
+        <span class="tech-tag">PostgreSQL</span>
+        <span class="tech-tag">Redis</span>
+        <span class="tech-tag">Elasticsearch</span>
+        <span class="tech-tag">Docker</span>
+        <span class="tech-tag">AWS</span>
+        <span class="tech-tag">Kubernetes</span>
+        <span class="tech-tag">GitHub Actions</span>
+      </div>
+    </div>
+    <div class="tech-group">
+      <h4>Practices</h4>
+      <div class="tech-tags">
+        <span class="tech-tag">0→1 Product Dev</span>
+        <span class="tech-tag">End-to-End Ownership</span>
+        <span class="tech-tag">Rapid Prototyping</span>
+        <span class="tech-tag">TDD/BDD</span>
+        <span class="tech-tag">Agile/Scrum</span>
+      </div>
+    </div>
+    <div class="tech-group">
+      <h4>Key Metrics</h4>
+      <div class="tech-tags">
+        <span class="tech-tag">99.2% Reliability</span>
+        <span class="tech-tag">384-dim Embeddings</span>
+        <span class="tech-tag">37 API Endpoints</span>
+        <span class="tech-tag">85%+ Coverage</span>
+        <span class="tech-tag">25+ Companies</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: CTA -->
+<div class="slide slide-cta">
+  <h3>Let's build people tools<br>from first principles.</h3>
+  <div class="links">
+    <a href="mailto:adityasugandhi.work@outlook.com">adityasugandhi.work@outlook.com</a> · <a href="https://github.com/adityasugandhi">GitHub</a> · <a href="https://adityasugandhi.com">adityasugandhi.com</a>
+  </div>
+</div>
+
+</body>
+</html>

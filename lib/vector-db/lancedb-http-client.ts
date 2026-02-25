@@ -270,8 +270,8 @@ export async function connectRemote(serverUrl: string): Promise<RemoteLanceConne
 }
 
 export type {
-  RemoteLanceConnection,
-  RemoteLanceTable,
-  RemoteQuery,
-  RemoteVectorSearch,
+  RemoteLanceConnection as RemoteLanceConnectionType,
+  RemoteLanceTable as RemoteLanceTableType,
+  RemoteQuery as RemoteQueryType,
+  RemoteVectorSearch as RemoteVectorSearchType,
 };

@@ -1,0 +1,164 @@
+\documentclass[letterpaper,10pt]{article}
+
+% FONT AND COLOR SETUP
+\usepackage{xcolor}
+\definecolor{metablue}{RGB}{24,119,242}
+\definecolor{darkgray}{HTML}{333333}
+\definecolor{azureblue}{RGB}{0,120,215}
+
+% PACKAGES
+\usepackage{ragged2e,latexsym,enumitem,graphicx}
+\usepackage{titlesec,marvosym}
+\usepackage[hidelinks,colorlinks=true,linkcolor=azureblue,urlcolor=azureblue,citecolor=azureblue]{hyperref}
+\usepackage[english]{babel}
+\usepackage{tabularx,multicol}
+\usepackage[margin=0.225in]{geometry}
+\usepackage{charter}
+\usepackage{tcolorbox}
+\urlstyle{same}
+
+% LISTS
+\setlist[itemize]{topsep=2pt, parsep=2pt, itemsep=2pt, leftmargin=0.15in, label=\textbullet}
+
+% SECTION HEADING STYLE — blue rule to match template format
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\color{metablue}\titlerule\vspace{4pt}]
+
+
+% Resume macro definitions
+\newcommand{\resumeItem}[1]{\item\small #1}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{6pt}
+  \noindent
+  \textbf{#1} \hfill {\footnotesize #2} \\
+  [-1pt]
+  \noindent
+  \small #3 \hfill {\small #4}
+  \vspace{3pt}
+}
+
+\newcommand{\resumeItemsStart}{\vspace{-2pt}\begin{itemize}}
+\newcommand{\resumeItemsEnd}{\end{itemize}\vspace{6pt}}
+
+\begin{document}
+
+%---------- HEADING ----------
+\begin{center}
+{\huge\textbf{Aditya Sugandhi}} \\
++1 448 500 6857 \textbar\ \textcolor{metablue}{Tallahassee, FL} \textbar\
+\href{mailto:adityasugandhi.work@outlook.com}{adityasugandhi.work@outlook.com} \textbar\
+\href{https://github.com/adityasugandhi}{GitHub}
+\textbar \href{https://adityasugandhi.com}{adityasugandhi.com}
+\end{center}
+\vspace{-12pt}
+
+%---------- SUMMARY ----------
+\section{\textcolor{metablue}{SUMMARY}}
+\small
+\vspace{-6pt}
+Full-Stack Software Engineer with 5+ years building \textbf{scalable support platforms} and \textbf{developer tools}. Expert in \textbf{TypeScript (React, Next.js)}, \textbf{Python}, and \textbf{distributed systems} with production experience in \textbf{observability}, \textbf{debugging infrastructure}, and \textbf{API development}. Delivered \textbf{monitoring dashboards} and \textbf{troubleshooting tools} serving \textbf{35K+ devices} with \textbf{99.2\% reliability}.
+
+\vspace{-9pt}
+
+%---------- TECHNICAL SKILLS ----------
+\section{\textcolor{metablue}{TECHNICAL SKILLS}}
+\vspace{-5pt}
+\small
+\begin{itemize}
+\resumeItem{\textbf{Frontend:} React, TypeScript, Next.js, JavaScript, HTML/CSS, Cloudflare Workers, Component Libraries}
+\resumeItem{\textbf{Backend:} Python, FastAPI, Node.js, Java, gRPC, RESTful APIs, GraphQL, WebSocket, Event-Driven Architecture}
+\resumeItem{\textbf{Observability \& Debugging:} Grafana, Prometheus, CloudWatch, MLflow, Distributed Tracing, Real-time Monitoring, Alerting}
+\resumeItem{\textbf{Infrastructure:} PostgreSQL, Redis, MongoDB, Apache Kafka, AWS (EKS, Lambda, S3, CloudWatch), Kubernetes, Docker, Linux}
+\resumeItem{\textbf{Developer Tools:} SDK Development, CLI Tools, API Design, Documentation, CI/CD Pipelines, Troubleshooting Automation}
+\resumeItem{\textbf{Practices:} Incident Response, Root Cause Analysis, Cross-functional Collaboration, Agile/Scrum, Security-by-Design}
+\end{itemize}
+\vspace{-10pt}
+
+
+%---------- WORK EXPERIENCE ----------
+\section{\textcolor{metablue}{WORK EXPERIENCE}}
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer II}{Nov 2024 -- Present}
+{Florida State University}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built \textbf{37 RESTful API endpoints} with \textbf{real-time WebSocket streaming} serving \textbf{35K+ IoT devices}; implemented \textbf{comprehensive error handling} and \textbf{debugging interfaces} reducing incident resolution time by \textbf{40\%}.}
+\resumeItem{Developed \textbf{observability infrastructure} with \textbf{Grafana dashboards} and \textbf{CloudWatch monitoring} for real-time system health tracking; established \textbf{automated alerting} for \textbf{172+ networks} achieving \textbf{99.2\% uptime}.}
+\resumeItem{Architected \textbf{developer SDKs} and \textbf{tool connectors} enabling cross-system integrations; standardized \textbf{event schemas} and \textbf{API contracts} improving developer productivity across engineering teams.}
+\resumeItem{Implemented \textbf{fault-tolerant systems} with \textbf{Redis caching}, \textbf{idempotent retry logic}, and \textbf{state management} for distributed workflows; designed \textbf{troubleshooting tools} reducing manual investigation time by \textbf{40\%}.}
+\resumeItem{Collaborated with cross-functional teams to establish \textbf{monitoring best practices} and \textbf{incident response procedures}; created \textbf{documentation} and \textbf{runbooks} for operational excellence.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Machine Learning Researcher}{Jan 2023 -- Aug 2024}
+{Prof. Olmo Zavala Romero — FSU}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{Built \textbf{data processing pipelines} handling \textbf{1TB+ datasets} using \textbf{Python} and \textbf{Spark}; implemented \textbf{observability dashboards} (Grafana, MLflow) for \textbf{quality monitoring} and \textbf{latency tracking} across distributed systems.}
+\resumeItem{Developed \textbf{workflow orchestration systems} on \textbf{Kubernetes} with \textbf{automated retry patterns} and \textbf{state management}; achieved \textbf{50\% pipeline runtime reduction} with \textbf{99\% job success rate} through optimization.}
+\resumeItem{Created \textbf{Python SDKs} and \textbf{debugging tools} for data processing workflows; collaborated with researchers to iterate from experimentation to production deployment with comprehensive logging.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Software Engineer I}{Oct 2020 -- Jul 2022}
+{Aspire Systems}{Chennai, India}
+\resumeItemsStart
+\resumeItem{Led \textbf{full-stack development} using \textbf{Java/Spring} backend and \textbf{React/TypeScript} frontend; architected \textbf{microservices} processing \textbf{500K+ events/day} with \textbf{Kafka} event streaming and \textbf{99.5\% availability}.}
+\resumeItem{Built \textbf{observability pipelines} with \textbf{Prometheus/Grafana} for \textbf{real-time monitoring} and \textbf{alerting}; implemented \textbf{distributed tracing} and \textbf{debugging interfaces} reducing \textbf{MTTR by 60\%} through automated root cause analysis.}
+\resumeItem{Designed \textbf{RESTful APIs} and \textbf{tool integrations} enabling cross-system data flows; created \textbf{internal documentation} and \textbf{troubleshooting guides} for support teams.}
+\resumeItem{Mentored \textbf{5 engineers} on \textbf{event-driven architecture}, \textbf{debugging best practices}, and \textbf{security-first} coding; established \textbf{code review standards} improving team code quality.}
+\resumeItemsEnd
+\vspace{-12pt}
+
+\resumeSubheading
+{Associate Software Engineer}{Jun 2019 -- Sep 2020}
+{IMPETUS Technologies}{Noida, India}
+\resumeItemsStart
+\resumeItem{Developed \textbf{Python and TypeScript} backend services for real-time data processing; built \textbf{RESTful APIs} handling \textbf{100K+ daily requests} with \textbf{Redis caching} for low-latency responses.}
+\resumeItem{Implemented \textbf{workflow automation tools} and \textbf{monitoring systems} using \textbf{Node.js} and \textbf{Python}; created internal SDKs for data pipeline orchestration supporting engineering team productivity.}
+\resumeItem{Built \textbf{logging and debugging infrastructure} for data quality monitoring; worked with \textbf{PostgreSQL} and \textbf{MongoDB} implementing \textbf{idempotent operations} and \textbf{retry logic} for reliability.}
+\resumeItemsEnd
+\vspace{-8pt}
+
+
+%---------- PROJECTS ----------
+\section{\textcolor{metablue}{PROJECTS}}
+\vspace{-8pt}
+\begin{tcolorbox}[colback=white,colframe=metablue,boxrule=0.8pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt,before skip=0pt]
+\begin{itemize}
+\resumeItem{\textbf{Enterprise Slack Bot Integration} --- Deployed \textbf{24/7 Slack bot} with \textbf{Socket Mode API} for real-time team communication. Configured \textbf{OAuth 2.0}, \textbf{WebSocket connections}, and \textbf{PM2 process management} on \textbf{AWS EC2}. Built \textbf{monitoring infrastructure} and \textbf{troubleshooting CLI tools} achieving \textbf{sub-40-second response times}. Tech: \textbf{Node.js, Next.js, AWS, WebSocket, systemd}.}
+
+\resumeItem{\textbf{AI Developer CLI \& SDK} --- Developed \textbf{TypeScript-based SDK} for API integration enabling autonomous operations. Built \textbf{function-calling interfaces} with \textbf{retry logic}, \textbf{error handling}, and \textbf{idempotency} for enterprise tooling. Created \textbf{comprehensive documentation} and \textbf{debugging utilities}. Tech: \textbf{TypeScript, Node.js, REST APIs, CLI Development}.}
+
+\resumeItem{\textbf{Full-Stack Developer Platform} --- Built \textbf{TypeScript/Next.js} frontend and \textbf{Python/FastAPI} backend with \textbf{real-time workflow orchestration}. Implemented \textbf{monitoring dashboards}, \textbf{quality scoring}, and \textbf{semantic search}. Designed \textbf{RESTful APIs} with \textbf{comprehensive error handling}. Tech: \textbf{TypeScript, React, Next.js, Python, FastAPI, PostgreSQL}.}
+
+\end{itemize}
+\end{tcolorbox}
+\vspace{-5pt}
+
+
+%---------- EDUCATION ----------
+\section{\textcolor{metablue}{EDUCATION}}
+\vspace{-10pt}
+\resumeSubheading
+{Florida State University}{}
+{M.S. in Computer Science}{Tallahassee, FL}
+\resumeItemsStart
+\resumeItem{\textbf{Relevant Coursework:} Distributed Systems, Advanced Database Systems, Machine Learning, Data Communications}
+\resumeItemsEnd
+\vspace{-5pt}
+\resumeSubheading
+{SRM Institute of Science \& Technology}{}
+{B.Tech. in Computer Science}{Chennai, India}
+\vspace{-10pt}
+
+%---------- PUBLICATIONS & CERTIFICATIONS ----------
+\section{\textcolor{metablue}{PUBLICATIONS \& CERTIFICATIONS}}
+\vspace{-5pt}
+\begin{itemize}
+\resumeItem{Review Classification \& False Feedback Detection (IJAST) \textbar\ AWS Solutions Architect (Udemy, 2024)}
+\end{itemize}
+
+\end{document}

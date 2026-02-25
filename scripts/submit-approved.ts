@@ -29,7 +29,7 @@ async function main() {
   const engine = new JobApplicationEngine({
     firstName: 'Aditya',
     lastName: 'Sugandhi',
-    email: 'adityasugandhi.dev.ai@gmail.com',
+    email: 'adityasugandhi.work@outlook.com',
     phone: '+1 448 500 6857',
     githubUrl: 'https://github.com/adityasugandhi',
     websiteUrl: 'https://adityasugandhi.com',

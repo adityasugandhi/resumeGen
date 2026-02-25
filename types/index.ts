@@ -11,6 +11,9 @@ export interface FileNode {
   isPinned?: boolean; // For quick access
   companyId?: string; // Link to company for grouping
   companyName?: string; // Denormalized for display
+  jobUrl?: string; // Link to the job posting
+  jobTitle?: string; // Job title for display
+  matchScore?: number; // Match score from agent
 }
 
 // Company types for sidebar grouping
@@ -75,6 +78,8 @@ export interface FileSystemActions {
   toggleFolder: (id: string) => void;
   togglePin: (id: string) => void;
   updateFileCompany: (id: string, companyId: string | undefined, companyName: string | undefined) => void;
+  createFileWithContent: (name: string, parentId: string | null, content: string, meta?: { jobUrl?: string; jobTitle?: string; matchScore?: number; companyId?: string; companyName?: string }) => string;
+  importFromDisk: (companies: Array<{ name: string; files: Array<{ name: string; content: string; modifiedAt: number }> }>, agentResults?: Array<{ company: string; title: string; url: string; matchScore: number }>) => Promise<string | null>;
   getFile: (id: string) => FileNode | undefined;
   getNode: (id: string) => FileSystemNode | undefined;
   getAllFiles: () => FileNode[];
