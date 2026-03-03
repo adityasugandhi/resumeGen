@@ -53,3 +53,12 @@ latex-errors/
 
 # Claude Code
 .claude/settings.local.json
+
+# ML Training artifacts (large model weights)
+training/resume-lora/*.safetensors
+training/resume-model-merged/
+training/resume-model-hf/
+training/.venv/
+training/uv.lock
+training-data/chat-format/
+*.gguf

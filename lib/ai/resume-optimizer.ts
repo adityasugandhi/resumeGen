@@ -10,6 +10,25 @@ export interface OptimizationResult {
   confidenceScore: number;
 }
 
+export type OptimizerProvider = 'anthropic' | 'bedrock' | 'local';
+
+/** Response from the local AirLLM server at /generate */
+interface LocalModelResponse {
+  latex: string;
+  tokens_generated: number;
+  generation_time_seconds: number;
+  model: string;
+}
+
+function getOptimizerProvider(): OptimizerProvider {
+  if (process.env.RESUME_LLM_PROVIDER === 'local') return 'local';
+  if (process.env.AWS_BEARER_TOKEN_BEDROCK) return 'bedrock';
+  if (process.env.ANTHROPIC_API_KEY) return 'anthropic';
+  // Fallback: check if local server is configured
+  if (process.env.RESUME_LLM_URL) return 'local';
+  throw new Error('No AI API key configured. Set ANTHROPIC_API_KEY, AWS_BEARER_TOKEN_BEDROCK, or RESUME_LLM_URL for local model.');
+}
+
 function createOptimizerClient(): { client: Anthropic | AnthropicBedrock; model: string } {
   const bedrockToken = process.env.AWS_BEARER_TOKEN_BEDROCK;
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
@@ -116,99 +135,111 @@ function getRoleSpecificGuidance(roleType: RoleType): string {
 }
 
 export class ResumeOptimizer {
-  private client: Anthropic | AnthropicBedrock;
+  private client: Anthropic | AnthropicBedrock | null;
   private model: string;
+  private provider: OptimizerProvider;
+  private localUrl: string;
 
   constructor() {
-    const { client, model } = createOptimizerClient();
-    this.client = client;
-    this.model = model;
+    this.provider = getOptimizerProvider();
+    this.localUrl = process.env.RESUME_LLM_URL || 'http://127.0.0.1:8100';
+
+    if (this.provider === 'local') {
+      this.client = null;
+      this.model = 'local-resume-lm';
+    } else {
+      const { client, model } = createOptimizerClient();
+      this.client = client;
+      this.model = model;
+    }
   }
 
   /**
-   * Parse JSON that may contain LaTeX content with unescaped backslashes
+   * Call the local AirLLM server for resume generation.
+   * Falls back to cloud provider if local server is unavailable.
    */
-  private parseJsonWithLatex(jsonText: string): unknown {
-    // First try standard JSON.parse
-    try {
-      return JSON.parse(jsonText);
-    } catch {
-      // If standard parsing fails, try to fix LaTeX escape issues
-    }
+  private async callLocalModel(
+    jobTitle: string,
+    jobCompany: string,
+    jobRequirements: string[],
+    careerContext?: string,
+    jobDescription?: string,
+  ): Promise<{ latex: string; tokensGenerated: number; timeSeconds: number }> {
+    const url = `${this.localUrl}/generate`;
 
-    // Extract the tailoredLatex field value using regex
-    // The LaTeX content is likely between "tailoredLatex": " and the next ",
-    const latexMatch = jsonText.match(/"tailoredLatex"\s*:\s*"([\s\S]*?)(?:"\s*,\s*"changes"|"\s*,\s*"summary"|"\s*})/);
-
-    if (latexMatch) {
-      // Extract the latex content
-      let latexContent = latexMatch[1];
-
-      // Properly escape backslashes for JSON (but not already escaped ones)
-      // Replace single backslashes with double (but not \\ which are already escaped)
-      const escapedLatex = latexContent
-        .replace(/\\/g, '\\\\')  // Escape all backslashes
-        .replace(/\n/g, '\\n')   // Escape newlines
-        .replace(/\r/g, '\\r')   // Escape carriage returns
-        .replace(/\t/g, '\\t');  // Escape tabs
-
-      // Reconstruct the JSON with properly escaped LaTeX
-      const fixedJson = jsonText.replace(
-        /"tailoredLatex"\s*:\s*"[\s\S]*?(?="\s*,\s*"changes"|"\s*,\s*"summary"|"\s*})/,
-        `"tailoredLatex": "${escapedLatex}`
-      );
-
-      try {
-        return JSON.parse(fixedJson);
-      } catch {
-        // Still failed, continue with alternative approach
-      }
-    }
-
-    // Alternative: Try to parse by extracting each field separately
-    try {
-      // Extract using more flexible patterns
-      const tailoredLatexMatch = jsonText.match(/"tailoredLatex"\s*:\s*["`]([\s\S]*?)["`]\s*,\s*"changes"/);
-      const changesMatch = jsonText.match(/"changes"\s*:\s*(\[[\s\S]*?\])\s*,\s*"summary"/);
-      const summaryMatch = jsonText.match(/"summary"\s*:\s*"([^"]*?)"\s*,?\s*"?/);
-      const confidenceMatch = jsonText.match(/"confidenceScore"\s*:\s*(\d+)/);
-
-      if (tailoredLatexMatch) {
-        // Reconstruct the object
-        const tailoredLatex = tailoredLatexMatch[1];
-        let changes: Array<unknown> = [];
-
-        if (changesMatch) {
-          try {
-            // Try to parse changes array
-            changes = JSON.parse(changesMatch[1]);
-          } catch {
-            // Use empty array if changes parsing fails
-            changes = [];
-          }
-        }
-
-        return {
-          tailoredLatex,
-          changes,
-          summary: summaryMatch ? summaryMatch[1] : 'Resume optimized for target position',
-          confidenceScore: confidenceMatch ? parseInt(confidenceMatch[1], 10) : 75,
-        };
-      }
-    } catch {
-      // Continue to fallback
-    }
-
-    // Final fallback: return a basic structure with the original latex
-    console.warn('Could not parse AI response, returning minimal result');
-    return {
-      tailoredLatex: jsonText.includes('\\documentclass')
-        ? jsonText.match(/\\documentclass[\s\S]*/)?.[0] || ''
-        : '',
-      changes: [],
-      summary: 'Resume optimization completed',
-      confidenceScore: 70,
+    const body = {
+      job_title: jobTitle,
+      company: jobCompany,
+      requirements: jobRequirements,
+      career_context: careerContext || undefined,
+      job_description: jobDescription || undefined,
+      max_tokens: 3000,
+      temperature: 0.3,
     };
+
+    const controller = new AbortController();
+    // 20 minute timeout for CPU inference
+    const timeout = setTimeout(() => controller.abort(), 20 * 60 * 1000);
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => 'Unknown error');
+        throw new Error(`Local model server error (${res.status}): ${errText}`);
+      }
+
+      const data: LocalModelResponse = await res.json();
+      return {
+        latex: data.latex,
+        tokensGenerated: data.tokens_generated,
+        timeSeconds: data.generation_time_seconds,
+      };
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  /**
+   * Check if the local model server is healthy.
+   */
+  async isLocalModelAvailable(): Promise<boolean> {
+    try {
+      const res = await fetch(`${this.localUrl}/health`, {
+        signal: AbortSignal.timeout(3000),
+      });
+      if (!res.ok) return false;
+      const data = await res.json();
+      return data.model_loaded === true;
+    } catch {
+      return false;
+    }
+  }
+
+  private async callWithRetry<T>(
+    fn: () => Promise<T>,
+    maxRetries: number = 2,
+    baseDelay: number = 2000
+  ): Promise<T> {
+    let lastError: Error | unknown;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (err) {
+        lastError = err;
+        if (attempt < maxRetries) {
+          const delay = baseDelay * Math.pow(2, attempt);
+          console.warn(`[resume-optimizer] API call failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${delay}ms...`, err);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+      }
+    }
+    throw lastError;
   }
 
   /**
@@ -235,6 +266,46 @@ export class ResumeOptimizer {
     const topBulletsBlock = topBullets && topBullets.length > 0
       ? `\nHigh-performing bullets from past tailored resumes (use these as inspiration for rephrasing):\n${topBullets.map((b, i) => `  ${i + 1}. ${b}`).join('\n')}\n`
       : '';
+
+    // ── Local model path ───────────────────────────────────────────────────
+    if (this.provider === 'local') {
+      const localAvailable = await this.isLocalModelAvailable();
+      if (localAvailable) {
+        console.log('[resume-optimizer] Using local fine-tuned model');
+        const result = await this.callLocalModel(
+          jobTitle,
+          jobCompany,
+          jobRequirements,
+          deepContext || undefined,
+          gapAnalysis.length > 0 ? `Gaps to address: ${gapAnalysis.join(', ')}` : undefined,
+        );
+
+        return {
+          tailoredLatex: result.latex,
+          changes: [{
+            id: uuidv4(),
+            type: 'modified' as const,
+            section: 'Full Resume',
+            reasoning: `Generated by local fine-tuned model in ${result.timeSeconds}s (${result.tokensGenerated} tokens)`,
+          }],
+          summary: `Resume tailored for ${jobTitle} at ${jobCompany} using local model`,
+          confidenceScore: 70, // Local model has lower confidence than Claude
+        };
+      } else {
+        console.warn('[resume-optimizer] Local model unavailable, falling back to cloud provider');
+        // Fall through to cloud provider
+        try {
+          const { client, model } = createOptimizerClient();
+          this.client = client;
+          this.model = model;
+        } catch {
+          throw new Error(
+            'Local model server is not running and no cloud API key is configured. '
+            + 'Start the server with: python scripts/airllm-server.py --model resume-model-merged'
+          );
+        }
+      }
+    }
 
     // Classify role and determine section order
     const roleType = classifyRoleType(jobTitle, jobRequirements);
@@ -297,72 +368,116 @@ Your task:
 6. Focus on reframing existing experience to better match job requirements
 7. Emit sections in the recommended order: ${sectionOrder.join(' → ')}
 
-Return your response in this EXACT JSON format:
-{
-  "tailoredLatex": "FULL optimized LaTeX resume here",
-  "changes": [
-    {
-      "section": "Experience" | "Skills" | "Summary" | "Projects",
-      "type": "added" | "modified" | "deleted",
-      "originalContent": "original text if modified/deleted",
-      "newContent": "new text if added/modified",
-      "reasoning": "why this change improves the resume for this job",
-      "lineNumber": 42
-    }
-  ],
-  "summary": "2-3 sentence summary of key optimizations made",
-  "confidenceScore": 85 (0-100, how well the resume now matches the job)
-}
+RESPONSE FORMAT:
+1. Write the FULL optimized LaTeX resume in your text response (inside a \`\`\`latex code block)
+2. Then call the submit_optimization tool with the structured metadata (changes array, summary, and confidence score)
 
 Be strategic but honest. Focus on presenting existing qualifications in the most relevant way.`;
 
-    const response = await this.client.messages.create({
-      model: this.model,
-      max_tokens: 8192,
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.2,
-    });
+    const response = await this.callWithRetry(() =>
+      this.client!.messages.create({
+        model: this.model,
+        max_tokens: 8192,
+        messages: [
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        temperature: 0.2,
+        tools: [
+          {
+            name: 'submit_optimization',
+            description: 'Submit the optimization metadata (changes, summary, confidence score). The actual tailored LaTeX should be written in your text response.',
+            input_schema: {
+              type: 'object' as const,
+              properties: {
+                changes: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      section: { type: 'string' },
+                      type: { type: 'string', enum: ['added', 'modified', 'deleted'] },
+                      originalContent: { type: 'string' },
+                      newContent: { type: 'string' },
+                      reasoning: { type: 'string' },
+                      lineNumber: { type: 'number' },
+                    },
+                    required: ['section', 'type', 'reasoning'],
+                  },
+                },
+                summary: { type: 'string' },
+                confidenceScore: { type: 'number' },
+              },
+              required: ['changes', 'summary', 'confidenceScore'],
+            },
+          },
+        ],
+      })
+    );
 
-    const firstBlock = response.content[0];
-    const content = firstBlock && firstBlock.type === 'text' ? firstBlock.text : null;
-    if (!content) {
-      throw new Error('No text response from Claude');
+    // Track token usage
+    if (response.usage) {
+      const { TokenTracker } = await import('@/lib/ai/token-tracker');
+      TokenTracker.getInstance().record(
+        this.model,
+        response.usage.input_tokens,
+        response.usage.output_tokens,
+        'optimizer',
+        'current'
+      );
     }
 
-    // Extract JSON from response
-    let jsonText = content.trim();
+    // Extract LaTeX from text blocks and metadata from tool_use blocks
+    let tailoredLatex = '';
+    let metadata: { changes: Array<{ type: 'added' | 'modified' | 'deleted'; section: string; originalContent?: string; newContent?: string; reasoning: string; lineNumber?: number }>; summary: string; confidenceScore: number } = {
+      changes: [],
+      summary: 'Resume optimized for target position',
+      confidenceScore: 75,
+    };
 
-    // Remove markdown code blocks if present
-    if (jsonText.startsWith('```json')) {
-      jsonText = jsonText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
-    } else if (jsonText.startsWith('```')) {
-      jsonText = jsonText.replace(/^```\n?/, '').replace(/\n?```$/, '');
+    for (const block of response.content) {
+      if (block.type === 'text') {
+        // Extract LaTeX from the text response
+        const text = block.text.trim();
+        // Remove markdown code fences if present
+        const latexMatch = text.match(/```(?:latex)?\n?([\s\S]*?)```/);
+        if (latexMatch) {
+          tailoredLatex = latexMatch[1].trim();
+        } else if (text.includes('\\documentclass')) {
+          // Raw LaTeX without code fences
+          const docStart = text.indexOf('\\documentclass');
+          tailoredLatex = text.substring(docStart).trim();
+        }
+      } else if (block.type === 'tool_use' && block.name === 'submit_optimization') {
+        metadata = block.input as typeof metadata;
+      }
     }
 
-    interface ParsedResult {
-      tailoredLatex: string;
-      changes: Array<{
-        type: 'added' | 'modified' | 'deleted';
-        section: string;
-        originalContent?: string;
-        newContent?: string;
-        reasoning: string;
-        lineNumber?: number;
-      }>;
-      summary: string;
-      confidenceScore: number;
+    // Fallback: if no tool call, try to parse from text
+    if (metadata.changes.length === 0 && !response.content.some(b => b.type === 'tool_use')) {
+      // The model didn't call the tool — extract what we can from text
+      const textBlock = response.content.find(b => b.type === 'text');
+      if (textBlock && textBlock.type === 'text') {
+        // Try to find LaTeX content if not already extracted
+        if (!tailoredLatex && textBlock.text.includes('\\documentclass')) {
+          tailoredLatex = textBlock.text.substring(textBlock.text.indexOf('\\documentclass')).trim();
+          // Remove trailing non-LaTeX content
+          const endDoc = tailoredLatex.indexOf('\\end{document}');
+          if (endDoc !== -1) {
+            tailoredLatex = tailoredLatex.substring(0, endDoc + '\\end{document}'.length);
+          }
+        }
+      }
     }
 
-    // Parse JSON with special handling for LaTeX content
-    const result = this.parseJsonWithLatex(jsonText) as ParsedResult;
+    if (!tailoredLatex) {
+      throw new Error('No LaTeX content in Claude response');
+    }
 
     // Add IDs to changes
-    const changes: ResumeChange[] = result.changes.map((change) => ({
+    const changes: ResumeChange[] = metadata.changes.map((change) => ({
       id: uuidv4(),
       type: change.type,
       section: change.section,
@@ -373,10 +488,10 @@ Be strategic but honest. Focus on presenting existing qualifications in the most
     }));
 
     return {
-      tailoredLatex: result.tailoredLatex,
+      tailoredLatex,
       changes,
-      summary: result.summary,
-      confidenceScore: result.confidenceScore,
+      summary: metadata.summary,
+      confidenceScore: metadata.confidenceScore,
     };
   }
 
@@ -412,6 +527,10 @@ Tone: Professional, confident, but not arrogant. Show genuine interest.
 
 Return ONLY the cover letter text, no JSON or markdown.`;
 
+    if (!this.client) {
+      throw new Error('Cover letter generation requires a cloud API provider (Anthropic/Bedrock).');
+    }
+
     const response = await this.client.messages.create({
       model: this.model,
       max_tokens: 1024,
@@ -423,6 +542,18 @@ Return ONLY the cover letter text, no JSON or markdown.`;
       ],
       temperature: 0.4,
     });
+
+    // Track token usage
+    if (response.usage) {
+      const { TokenTracker } = await import('@/lib/ai/token-tracker');
+      TokenTracker.getInstance().record(
+        this.model,
+        response.usage.input_tokens,
+        response.usage.output_tokens,
+        'optimizer',
+        'current'
+      );
+    }
 
     const firstBlock = response.content[0];
     const content = firstBlock && firstBlock.type === 'text' ? firstBlock.text : null;

@@ -1,0 +1,29 @@
+[project]
+name = "resume-lm-training"
+version = "1.0.0"
+description = "Fine-tune Qwen 2.5 7B for LaTeX resume generation (MLX on Apple Silicon)"
+requires-python = ">=3.11,<3.14"
+
+dependencies = [
+    # Training (MLX on Apple Silicon)
+    "mlx>=0.22.0",
+    "mlx-lm>=0.21.0",
+    "transformers>=4.46.0",
+    "sentencepiece>=0.2.0",
+    "huggingface-hub>=0.26.0",
+    "safetensors>=0.4.0",
+    "numpy>=1.26.0",
+    # Inference (AirLLM for CPU deployment)
+    "airllm>=2.10.0",
+    "torch>=2.4.0",
+    # Server
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.10.0",
+]
+
+[project.scripts]
+train = "scripts.train_resume_lm:main"
+
+[tool.uv]
+managed = true

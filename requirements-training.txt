@@ -1,0 +1,21 @@
+# Resume LM Fine-Tuning (Apple Silicon MLX) & Inference (AirLLM)
+# Install: pip install -r requirements-training.txt
+
+# ── Training (Apple Silicon / MLX) ──────────────────────────────────────────
+mlx>=0.22.0                      # Apple MLX framework
+mlx-lm>=0.21.0                   # LoRA fine-tuning, merging, generation for MLX
+transformers>=4.46.0             # Tokenizers and model config
+sentencepiece>=0.2.0             # Tokenizer dependency
+huggingface-hub>=0.26.0          # Model downloads from HF Hub
+safetensors>=0.4.0               # Model weight format
+numpy>=1.26.0                    # Array operations
+
+# ── Inference (AirLLM for CPU deployment) ───────────────────────────────────
+airllm>=2.10.0                   # Layer-streaming inference for CPU
+# llama-cpp-python>=0.3.0        # Optional: GGUF inference (faster CPU alternative)
+torch>=2.4.0                     # Required by AirLLM (CPU-only is fine)
+
+# ── Server ──────────────────────────────────────────────────────────────────
+fastapi>=0.115.0                 # API server for inference endpoint
+uvicorn[standard]>=0.32.0        # ASGI server
+pydantic>=2.10.0                 # Request/response models
