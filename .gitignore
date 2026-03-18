@@ -62,3 +62,19 @@ training/.venv/
 training/uv.lock
 training-data/chat-format/
 *.gguf
+
+# LoRA model weights (multi-GB)
+resume-lora*/
+ollama/
+
+# Generated PDFs (compiled from .tex sources)
+Job_Applications/**/*.pdf
+
+# Test output artifacts
+test-output/
+
+# Drizzle migration snapshots
+drizzle/meta/
+
+# Docker (user-specific)
+# Keep Dockerfile and docker-compose.yml tracked
