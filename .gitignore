@@ -52,7 +52,7 @@ latex-errors/
 .playwright-mcp/
 
 # Claude Code
-.claude/settings.local.json
+.claude/
 
 # ML Training artifacts (large model weights)
 training/resume-lora/*.safetensors
@@ -60,15 +60,19 @@ training/resume-model-merged/
 training/resume-model-hf/
 training/.venv/
 training/uv.lock
-training-data/chat-format/
+training-data/
 *.gguf
 
 # LoRA model weights (multi-GB)
 resume-lora*/
 ollama/
 
-# Generated PDFs (compiled from .tex sources)
+# Generated PDFs and images (compiled from .tex sources)
 Job_Applications/**/*.pdf
+Job_Applications/**/*.png
+
+# Root-level test PDFs
+v3_test_output.pdf
 
 # Test output artifacts
 test-output/
